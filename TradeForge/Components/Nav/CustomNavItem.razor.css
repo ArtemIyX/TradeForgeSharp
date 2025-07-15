@@ -1,0 +1,5 @@
+﻿.nav-link-item:hover {
+    background-color: #3273dc !important; /* Bulma primary */
+    color: #fff !important;
+    transition: background-color .2s ease;
+}
