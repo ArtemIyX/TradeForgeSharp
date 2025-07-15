@@ -1,6 +1,8 @@
 ﻿@page "/datamanager"
 
+@using System.Linq.Expressions
 @using TradeForge.Core.Enums
+@using TradeForge.Core.Extensions
 @using TradeForge.Core.Models
 @using System.Globalization
 
@@ -8,18 +10,18 @@
     <table class="table is-fullwidth is-hoverable is-striped">
         <thead>
             <tr>
-                <th>Symbol</th>
-                <th>Description</th>
-                <th>Min TF</th>
-                <th>From</th>
-                <th>To</th>
-                <th>Days</th>
-                <th>Records</th>
-                <th>Category</th>
+                @Header("Symbol", s => s.Symbol)
+                @Header("Description", s => s.Description)
+                @Header("Min TF", s => s.MinimalTimeframe)
+                @Header("From", s => s.DateFrom)
+                @Header("To", s => s.DateTo)
+                @Header("Days", s => s.TotalDays)
+                @Header("Records", s => s.TotalRecords)
+                @Header("Category", s => s.Category)
             </tr>
         </thead>
         <tbody>
-            @foreach (var s in symbols)
+            @foreach (var s in sortedSymbols)
             {
                 <tr>
                     <td><strong>@s.Symbol</strong></td>
@@ -63,4 +65,41 @@
             Category = "Crypto"
         }
     };
+
+    private string? sortBy;
+    private bool sortDesc;
+
+    private IEnumerable<SymbolCoverage> sortedSymbols =>
+    sortBy is null
+        ? symbols
+        : symbols.OrderBy(x => x, new ComparisonComparer<SymbolCoverage>(SymbolCoverage.GetComparer(sortBy, sortDesc)));
+
+    private RenderFragment Header<TKey>(string title, Expression<Func<SymbolCoverage, TKey>> key)
+    {
+        var name = ((MemberExpression)key.Body).Member.Name;
+        return __builder =>
+        {
+            <th style="cursor:pointer" @onclick="() => ToggleSort(name)">
+                @title
+                @{
+                    var icon = sortBy == name
+                    ? (sortDesc ? "fa-sort-down" : "fa-sort-up")
+                    : "fa-sort";
+                }
+                <i class="fas @icon ml-2"></i>
+            </th>
+        };
+    }
+
+    private void ToggleSort(string property)
+    {
+        if (sortBy == property)
+            sortDesc = !sortDesc;
+        else
+        {
+            sortBy = property;
+            sortDesc = false;
+        }
+    }
+
 }
