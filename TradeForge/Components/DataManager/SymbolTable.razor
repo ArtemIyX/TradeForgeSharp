@@ -1,0 +1,112 @@
+﻿@using System.Linq.Expressions
+@using TradeForge.Core.Enums
+@using TradeForge.Core.Extensions
+@using TradeForge.Core.Models
+@using System.Globalization
+@using TradeForge.Components.DataManager
+
+<div class="table-container">
+    <table class="table is-fullwidth is-hoverable is-striped">
+        <thead>
+            <tr>
+                <SymbolTableHeader TItem="SymbolCoverage" TKey="string"
+                                        Title="Name"
+                                        CurrentSortBy="@sortBy"
+                                        CurrentDescending="@sortDesc"
+                                        KeyExpression="s => s.Symbol"
+                                        SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
+
+                <SymbolTableHeader TItem="SymbolCoverage" TKey="string"
+                                        Title="Description"
+                                        CurrentSortBy="@sortBy"
+                                        CurrentDescending="@sortDesc"
+                                        KeyExpression="s => s.Description"
+                                        SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
+
+                <SymbolTableHeader TItem="SymbolCoverage" TKey="Timeframe"
+                                        Title="Min TF"
+                                        CurrentSortBy="@sortBy"
+                                        CurrentDescending="@sortDesc"
+                                        KeyExpression="s => s.MinimalTimeframe"
+                                        SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
+
+                <SymbolTableHeader TItem="SymbolCoverage" TKey="DateTime"
+                                        Title="From"
+                                        CurrentSortBy="@sortBy"
+                                        CurrentDescending="@sortDesc"
+                                        KeyExpression="s => s.DateFrom"
+                                        SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
+
+                <SymbolTableHeader TItem="SymbolCoverage" TKey="DateTime"
+                                        Title="To"
+                                        CurrentSortBy="@sortBy"
+                                        CurrentDescending="@sortDesc"
+                                        KeyExpression="s => s.DateTo"
+                                        SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
+
+                <SymbolTableHeader TItem="SymbolCoverage" TKey="int"
+                                        Title="Days"
+                                        CurrentSortBy="@sortBy"
+                                        CurrentDescending="@sortDesc"
+                                        KeyExpression="s => s.TotalDays"
+                                        SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
+
+                <SymbolTableHeader TItem="SymbolCoverage" TKey="int"
+                                        Title="Records"
+                                        CurrentSortBy="@sortBy"
+                                        CurrentDescending="@sortDesc"
+                                        KeyExpression="s => s.TotalRecords"
+                                        SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
+
+                <SymbolTableHeader TItem="SymbolCoverage" TKey="string"
+                                        Title="Category"
+                                        CurrentSortBy="@sortBy"
+                                        CurrentDescending="@sortDesc"
+                                        KeyExpression="s => s.Category"
+                                        SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in sortedSymbols)
+            {
+                <tr>
+                    <td><strong>@s.Symbol</strong></td>
+                    <td>@s.Description</td>
+                    <td>@s.MinimalTimeframe</td>
+                    <td>@s.DateFrom.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)</td>
+                    <td>@s.DateTo.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)</td>
+                    <td>@s.TotalDays</td>
+                    <td>@s.TotalRecords</td>
+                    <td><span class="tag is-info is-light">@s.Category</span></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+@code {
+    [Parameter] public SymbolCoverage[] Symbols { get; set; } = Array.Empty<SymbolCoverage>();
+    
+
+    private string? sortBy;
+    private bool sortDesc;
+
+    private IEnumerable<SymbolCoverage> sortedSymbols =>
+    sortBy is null
+        ? Symbols
+        : Symbols.OrderBy(x => x, new ComparisonComparer<SymbolCoverage>(SymbolCoverage.GetComparer(sortBy, sortDesc)));
+
+
+    private void ToggleSort(string property)
+    {
+        if (sortBy == property)
+            sortDesc = !sortDesc;
+        else
+        {
+            sortBy = property;
+            sortDesc = false;
+        }
+    }
+
+}
