@@ -10,7 +10,6 @@ namespace TradeForge.Core.Models
     public sealed class SymbolCoverage
     {
         public string Symbol { get; set; } = string.Empty;
-        public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public Timeframe MinimalTimeframe { get; set; } = Timeframe.M1;
 

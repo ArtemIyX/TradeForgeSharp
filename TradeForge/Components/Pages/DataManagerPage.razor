@@ -1,8 +1,66 @@
 ﻿@page "/datamanager"
 
-<h1>HistoricalDataManager</h1>
+@using TradeForge.Core.Enums
+@using TradeForge.Core.Models
+@using System.Globalization
+
+<div class="table-container">
+    <table class="table is-fullwidth is-hoverable is-striped">
+        <thead>
+            <tr>
+                <th>Symbol</th>
+                <th>Description</th>
+                <th>Min TF</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Days</th>
+                <th>Records</th>
+                <th>Category</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in symbols)
+            {
+                <tr>
+                    <td><strong>@s.Symbol</strong></td>
+                    <td>@s.Description</td>
+                    <td>@s.MinimalTimeframe</td>
+                    <td>@s.DateFrom.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)</td>
+                    <td>@s.DateTo.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)</td>
+                    <td>@s.TotalDays</td>
+                    <td>@s.TotalRecords</td>
+                    <td><span class="tag is-info is-light">@s.Category</span></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 
 
 @code {
 
+    // demo array – replace with your real source
+    private SymbolCoverage[] symbols =
+    {
+        new()
+        {
+            Symbol = "EURUSD",
+            Description = "Euro vs US Dollar",
+            MinimalTimeframe = Timeframe.M1,
+            DateFrom = new DateTime(2020, 1, 1),
+            DateTo   = DateTime.UtcNow.Date,
+            TotalRecords = 1_250_000,
+            Category = "Forex"
+        },
+        new()
+        {
+            Symbol = "BTCUSDT",
+            Description = "Bitcoin / Tether",
+            MinimalTimeframe = Timeframe.M5,
+            DateFrom = new DateTime(2022, 6, 1),
+            DateTo   = DateTime.UtcNow.Date,
+            TotalRecords = 180_000,
+            Category = "Crypto"
+        }
+    };
 }
