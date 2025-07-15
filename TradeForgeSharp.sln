@@ -5,6 +5,8 @@ VisualStudioVersion = 17.14.36127.28
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TradeForge", "TradeForge\TradeForge.csproj", "{22896F24-2958-443E-B6CB-CE25471A89A9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TradeForge.Core", "TradeForge.Core\TradeForge.Core.csproj", "{693E1934-3810-4634-89C5-4BC5F5BAACE6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,6 +19,10 @@ Global
 		{22896F24-2958-443E-B6CB-CE25471A89A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{22896F24-2958-443E-B6CB-CE25471A89A9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{22896F24-2958-443E-B6CB-CE25471A89A9}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{693E1934-3810-4634-89C5-4BC5F5BAACE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{693E1934-3810-4634-89C5-4BC5F5BAACE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{693E1934-3810-4634-89C5-4BC5F5BAACE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{693E1934-3810-4634-89C5-4BC5F5BAACE6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
