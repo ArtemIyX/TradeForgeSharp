@@ -1,0 +1,203 @@
+## MAUI / Blazor Hybrid / Visual Studio
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio 2019/2022 cache/options
+.vs/
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+*.VC.db
+*.VC.VC.opendb
+
+# Auto-generated files
+Generated\ Files/
+[Bb]uild/
+*.tmp
+*.tmp_proj
+*_wpftmp.csproj
+*.log
+*.tlog
+*.lastbuild
+*.idb
+*.ipdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*.vspscc
+*.vssscc
+*.psess
+*.vsp
+*.vspx
+*.sap
+
+# NuGet
+*.nupkg
+*.snupkg
+.project.lock.json
+.project.fragment.lock.json
+artifacts/
+.nuget/
+packages/
+*.nuget.props
+*.nuget.targets
+
+# Test
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.VisualState.xml
+TestResult.xml
+[Bb]uild[Ll]og.*
+*.coverage
+*.coveragexml
+*.codecoverage
+
+# NCrunch
+_NCrunch_*/
+.*crunch*.local.xml
+nCrunchTemp_*
+
+# ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# JustCode
+.jc/
+
+# TeamCity
+_TeamCity*
+
+# DotCover
+*.dotCover
+
+# AxoCover
+.axoCover/*
+!.axoCover/settings.json
+
+# Visual Studio code coverage
+*.coverage
+*.coveragexml
+
+# Android / iOS / macOS
+*.apk
+*.apks
+*.aab
+*.ipa
+*.dSYM/
+*.dSYM.zip
+*.dSYM.zip*
+*.dmg
+*.pkg
+*.app/
+
+# Android
+**/android/**/bin/
+**/android/**/gen/
+**/android/**/obj/
+**/android/**/local.properties
+**/android/**/proguard/
+**/android/**/legacy_multidex_aapt_derived_proguard_rules.txt
+**/android/**/multidex_keep.txt
+**/android/**/R.txt
+**/android/**/r.jar
+**/android/**/build/
+**/android/**/gradle/
+**/android/**/gradlew
+**/android/**/gradlew.bat
+**/android/**/gradle-app.setting
+**/android/**/gradle-wrapper.jar
+**/android/**/gradle-wrapper.properties
+
+# iOS
+**/ios/**/bin/
+**/ios/**/obj/
+**/ios/**/build/
+**/ios/**/iOS.csproj.user
+**/ios/**/MlaunchArgs.txt
+**/ios/**/mtouch-cache/
+**/ios/**/archives/
+**/ios/**/devices/
+**/ios/**/symbols/
+**/ios/**/ipa/
+**/ios/**/ipa-build/
+
+# Windows
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.appx
+*.appxbundle
+*.appxsym
+
+# Publish profiles
+*.pubxml
+*.publishproj
+
+# SQL Server files
+*.mdf
+*.ldf
+*.ndf
+
+# Business Intelligence projects
+*.rdl.data
+*.bim.layout
+*.bim_*.settings
+*.rptproj.rsuser
+*- [Bb]ackup.rdl
+*- [Bb]ackup ([0-9]).rdl
+*- [Bb]ackup ([0-9][0-9]).rdl
+
+# Microsoft Fakes
+FakesAssemblies/
+
+# GhostDoc plugin
+*.GhostDoc.xml
+
+# Node.js / npm for Blazor WASM or hybrid SPA
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# TypeScript v1
+*.js
+*.js.map
+!wwwroot/lib/**/*.js
+!wwwroot/lib/**/*.js.map
+
+# Optional tooling
+.vscode/
+.idea/
+*.sln.iml
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# MAUI-specific generated files
+*.maui
+*.mobile
