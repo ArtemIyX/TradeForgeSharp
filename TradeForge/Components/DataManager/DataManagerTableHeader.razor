@@ -1,0 +1,30 @@
+﻿@using System.Linq.Expressions
+@typeparam TItem
+@typeparam TKey
+
+<th style="cursor:pointer" @onclick="OnSort">
+    @Title
+    @{
+        var icon = IsActive
+        ? (IsDescending ? "fa-sort-down" : "fa-sort-up")
+        : "fa-sort";
+    }
+    <i class="fas @icon ml-2"></i>
+</th>
+
+@code {
+    [Parameter] public string Title { get; set; } = "";
+    [Parameter] public Expression<Func<TItem, TKey>> KeyExpression { get; set; } = default!;
+    [Parameter] public string? CurrentSortBy { get; set; }
+    [Parameter] public bool CurrentDescending { get; set; }
+    [Parameter] public EventCallback<(string Property, bool Desc)> SortChanged { get; set; }
+
+    private string PropertyName =>
+        ((MemberExpression)KeyExpression.Body).Member.Name;
+
+    private bool IsActive => CurrentSortBy == PropertyName;
+    private bool IsDescending => CurrentDescending;
+
+    private async Task OnSort() =>
+        await SortChanged.InvokeAsync((PropertyName, IsActive ? !CurrentDescending : false));
+}

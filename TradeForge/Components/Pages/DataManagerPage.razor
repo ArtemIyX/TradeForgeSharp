@@ -5,19 +5,67 @@
 @using TradeForge.Core.Extensions
 @using TradeForge.Core.Models
 @using System.Globalization
+@using TradeForge.Components.DataManager
 
 <div class="table-container">
     <table class="table is-fullwidth is-hoverable is-striped">
         <thead>
             <tr>
-                @Header("Symbol", s => s.Symbol)
-                @Header("Description", s => s.Description)
-                @Header("Min TF", s => s.MinimalTimeframe)
-                @Header("From", s => s.DateFrom)
-                @Header("To", s => s.DateTo)
-                @Header("Days", s => s.TotalDays)
-                @Header("Records", s => s.TotalRecords)
-                @Header("Category", s => s.Category)
+                <DataManagerTableHeader TItem="SymbolCoverage" TKey="string"
+                                        Title="Name"
+                                        CurrentSortBy="@sortBy"
+                                        CurrentDescending="@sortDesc"
+                                        KeyExpression="s => s.Symbol"
+                                        SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
+
+                <DataManagerTableHeader TItem="SymbolCoverage" TKey="string"
+                                        Title="Description"
+                                        CurrentSortBy="@sortBy"
+                                        CurrentDescending="@sortDesc"
+                                        KeyExpression="s => s.Description"
+                                        SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
+
+                <DataManagerTableHeader TItem="SymbolCoverage" TKey="Timeframe"
+                                        Title="Min TF"
+                                        CurrentSortBy="@sortBy"
+                                        CurrentDescending="@sortDesc"
+                                        KeyExpression="s => s.MinimalTimeframe"
+                                        SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
+
+                <DataManagerTableHeader TItem="SymbolCoverage" TKey="DateTime"
+                                        Title="From"
+                                        CurrentSortBy="@sortBy"
+                                        CurrentDescending="@sortDesc"
+                                        KeyExpression="s => s.DateFrom"
+                                        SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
+
+                <DataManagerTableHeader TItem="SymbolCoverage" TKey="DateTime"
+                                        Title="To"
+                                        CurrentSortBy="@sortBy"
+                                        CurrentDescending="@sortDesc"
+                                        KeyExpression="s => s.DateTo"
+                                        SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
+
+                <DataManagerTableHeader TItem="SymbolCoverage" TKey="int"
+                                        Title="Days"
+                                        CurrentSortBy="@sortBy"
+                                        CurrentDescending="@sortDesc"
+                                        KeyExpression="s => s.TotalDays"
+                                        SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
+
+                <DataManagerTableHeader TItem="SymbolCoverage" TKey="int"
+                                        Title="Records"
+                                        CurrentSortBy="@sortBy"
+                                        CurrentDescending="@sortDesc"
+                                        KeyExpression="s => s.TotalRecords"
+                                        SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
+
+                <DataManagerTableHeader TItem="SymbolCoverage" TKey="string"
+                                        Title="Category"
+                                        CurrentSortBy="@sortBy"
+                                        CurrentDescending="@sortDesc"
+                                        KeyExpression="s => s.Category"
+                                        SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
             </tr>
         </thead>
         <tbody>
@@ -63,6 +111,16 @@
             DateTo   = DateTime.UtcNow.Date,
             TotalRecords = 180_000,
             Category = "Crypto"
+        },
+        new()
+        {
+            Symbol = "AAPL",
+            Description = "Apple tech",
+            MinimalTimeframe = Timeframe.D,
+            DateFrom = new DateTime(2000, 1, 1),
+            DateTo   = new DateTime(2025, 1, 1),
+            TotalRecords = 250_000,
+            Category = "Stocks"
         }
     };
 
@@ -74,22 +132,6 @@
         ? symbols
         : symbols.OrderBy(x => x, new ComparisonComparer<SymbolCoverage>(SymbolCoverage.GetComparer(sortBy, sortDesc)));
 
-    private RenderFragment Header<TKey>(string title, Expression<Func<SymbolCoverage, TKey>> key)
-    {
-        var name = ((MemberExpression)key.Body).Member.Name;
-        return __builder =>
-        {
-            <th style="cursor:pointer" @onclick="() => ToggleSort(name)">
-                @title
-                @{
-                    var icon = sortBy == name
-                    ? (sortDesc ? "fa-sort-down" : "fa-sort-up")
-                    : "fa-sort";
-                }
-                <i class="fas @icon ml-2"></i>
-            </th>
-        };
-    }
 
     private void ToggleSort(string property)
     {
