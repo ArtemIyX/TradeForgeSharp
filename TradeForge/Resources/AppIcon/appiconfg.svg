@@ -1,8 +1,18 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="456" height="456" viewBox="0 0 456 456" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
-    <path d="m 105.50037,281.60863 c -2.70293,0 -5.00091,-0.90042 -6.893127,-2.70209 -1.892214,-1.84778 -2.837901,-4.04181 -2.837901,-6.58209 0,-2.58722 0.945687,-4.80389 2.837901,-6.65167 1.892217,-1.84778 4.190197,-2.77167 6.893127,-2.77167 2.74819,0 5.06798,0.92389 6.96019,2.77167 1.93749,1.84778 2.90581,4.06445 2.90581,6.65167 0,2.54028 -0.96832,4.73431 -2.90581,6.58209 -1.89221,1.80167 -4.212,2.70209 -6.96019,2.70209 z" style="fill:#ffffff;fill-rule:nonzero;stroke-width:0.838376" />
-    <path d="M 213.56111,280.08446 H 195.99044 L 149.69953,207.0544 c -1.17121,-1.84778 -2.14037,-3.76515 -2.90581,-5.75126 h -0.40578 c 0.36051,2.12528 0.54076,6.67515 0.54076,13.6496 v 65.13172 h -15.54349 v -99.36009 h 18.71925 l 44.7374,71.29798 c 1.89222,2.95695 3.1087,4.98917 3.64945,6.09751 h 0.26996 c -0.45021,-2.6325 -0.67573,-7.09015 -0.67573,-13.37293 v -64.02256 h 15.47557 z" style="fill:#ffffff;fill-rule:nonzero;stroke-width:0.838376" />
-    <path d="m 289.25134,280.08446 h -54.40052 v -99.36009 h 52.23835 v 13.99669 h -36.15411 v 28.13085 h 33.31621 v 13.9271 h -33.31621 v 29.37835 h 38.31628 z" style="fill:#ffffff;fill-rule:nonzero;stroke-width:0.838376" />
-    <path d="M 366.56466,194.72106 H 338.7222 v 85.3634 h -16.08423 v -85.3634 h -27.77455 v -13.99669 h 71.70124 z" style="fill:#ffffff;fill-rule:nonzero;stroke-width:0.838376" />
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!-- License: CC0. Made by SVG Repo: https://www.svgrepo.com/svg/78649/chart -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+<circle style="fill:#C2D5D8;" cx="256" cy="256" r="256"/>
+<path style="fill:#5AB3A3;" d="M286.736,510.092c23.828-2.852,46.656-8.916,68-17.852V196h-68V510.092z"/>
+<path style="fill:#3F8C7F;" d="M354.736,492.244c24.924-10.424,47.812-24.724,68-42.076V196h-68V492.244z"/>
+<polygon style="fill:#45998B;" points="424,196 356,219.88 288,196 356,172.116 "/>
+<path style="fill:#CC665C;" d="M186.736,502.436c21.652,6.076,44.436,9.416,68,9.532V156h-68V502.436z"/>
+<path style="fill:#BF5347;" d="M254.736,511.968c0.424,0,0.84,0.032,1.264,0.032c23.092,0,45.452-3.108,66.736-8.844V156h-68
+	V511.968z"/>
+<polygon style="fill:#CC584C;" points="324,156 256,179.88 188,156 256,132.116 "/>
+<path style="fill:#FFDC80;" d="M86.736,447.976c20.116,17.752,43.016,32.4,68,43.172V216h-68
+	C86.736,216,86.736,447.976,86.736,447.976z"/>
+<path style="fill:#E6BF5A;" d="M154.736,491.148c21.324,9.196,44.148,15.532,68,18.624V216h-68V491.148z"/>
+<polygon style="fill:#FFD464;" points="224,216 156,239.88 88,216 156,192.116 "/>
 </svg>
