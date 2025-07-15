@@ -1,0 +1,12 @@
+aside {
+    width:44px; 
+    display:flex; 
+    flex-direction:column; 
+    align-items:center;
+}
+
+.navbar-item.is-active,
+.navbar-item:hover {
+    background-color: #00d1b2 !important;
+    color: #fff;
+}

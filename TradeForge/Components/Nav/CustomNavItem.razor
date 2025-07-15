@@ -1,0 +1,16 @@
+﻿@using Microsoft.AspNetCore.Components.Routing
+@inherits NavLink
+
+<a class="@CssClass navbar-item is-flex is-flex-direction-column is-align-items-center mb-3"
+   href="@Href">
+    <span class="icon is-medium">
+        <i class="@($"fas fa-{Icon}") fa-lg"></i>
+    </span>
+    <small class="is-size-7">@Label</small>
+</a>
+
+@code {
+    [Parameter] public string? Href { get; set; } = "";
+    [Parameter] public string Icon { get; set; } = "";
+    [Parameter] public string Label { get; set; } = "";
+}
