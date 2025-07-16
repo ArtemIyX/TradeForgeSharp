@@ -7,8 +7,4 @@
     <AssemblyVersion>1.0.0716.0</AssemblyVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
-
 </Project>
