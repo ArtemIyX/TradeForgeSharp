@@ -1,0 +1,22 @@
+﻿
+<div class="field is-horizontal">
+    <div class="field-label is-normal">
+        <label class="label has-text-light">@Label</label>
+    </div>
+    <div class="field-body">
+        <div class="field">
+            <div class="control">
+                <input class="input has-background-grey-darker has-text-light"
+                       type="text"
+                       value="@Value"
+                       @onchange="e => ValueChanged.InvokeAsync(e.Value?.ToString())" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string Label { get; set; } = string.Empty;
+    [Parameter] public string Value { get; set; } = string.Empty;
+    [Parameter] public EventCallback<string> ValueChanged { get; set; }
+}

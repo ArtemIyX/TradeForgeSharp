@@ -17,7 +17,7 @@ using System.Text.Json.Serialization;
 "leverage": 0.05,
 "trade_mode": "full"
  */
-public class InstrumentSettings
+public record  InstrumentSettings
 {
     [JsonPropertyName("ticker")]
     public string Ticker { get; set; } = string.Empty;
@@ -45,9 +45,7 @@ public class InstrumentSettings
 
     [JsonPropertyName("leverage")]
     public decimal Leverage { get; set; }
-
+    
     [JsonPropertyName("trade_mode")]
-    public string TradeModeStr { get; set; } = string.Empty;
-
-    public TradeMode TradeMode => TradeModeStr.ToTradeMode();
+    public TradeMode TradeMode { get; set; }
 }

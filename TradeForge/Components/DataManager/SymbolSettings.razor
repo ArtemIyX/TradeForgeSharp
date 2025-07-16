@@ -1,5 +1,79 @@
-﻿<h3>SymbolSettings</h3>
+﻿@using TradeForge.Core.Enums
+@using TradeForge.Core.Extensions
+@using TradeForge.Core.Models
+@using TradeForge.Components.DataManager.Inputs
 
-@code {
+<div class="columns">
+    <div class="column is-half-desktop is-offset-one-quarter-desktop">
+        <div class="box has-background-dark">
 
+            <TextInput Label="Ticker" @bind-Value="Settings.Ticker" />
+            <TextInput Label="Description" @bind-Value="Settings.Description" />
+            <TextInput Label="Units" @bind-Value="Settings.Units" />
+
+            <NumberInput Label="Contract Size" @bind-Value="Settings.ContractSize" />
+            <NumberInput Label="Min Volume" @bind-Value="Settings.MinVolume" />
+            <NumberInput Label="Max Volume" @bind-Value="Settings.MaxVolume" />
+            <NumberInput Label="Volume Step" @bind-Value="Settings.VolumeStep" />
+            <NumberInput Label="Min Tick" @bind-Value="Settings.MinTick" />
+            <NumberInput Label="Leverage" @bind-Value="Settings.Leverage" />
+
+            <EnumInput Label="Trade Mode" @bind-Value="Settings.TradeMode" />
+
+            <div class="field is-grouped is-grouped-right mt-5">
+                <div class="control">
+                    <button class="button is-primary" @onclick="SaveAsync">Save</button>
+                </div>
+                <div class="control">
+                    <button class="button is-light" @onclick="ResetAsync">Reset</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@code
+{
+    private InstrumentSettings Settings { get; set; } = new();
+    private InstrumentSettings? _original;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _original = await LoadAsync();
+        Settings = _original with { };
+    }
+
+    private async Task SaveAsync()
+    {
+        await SaveAsync(Settings);
+        _original = Settings with { };
+    }
+
+    private async Task ResetAsync()
+    {
+        Settings = _original with { };
+    }
+
+    /* --- persistence stubs --- */
+    private async Task<InstrumentSettings> LoadAsync()
+    {
+        // TODO: load from service or preferences
+        return await Task.FromResult(new InstrumentSettings
+        {
+            Ticker = "EURUSD",
+            Description = "EUR/USD",
+            ContractSize = 1,
+            Units = "Share(s)",
+            MinVolume = 1,
+            MaxVolume = 100_000_000,
+            VolumeStep = 0.01m,
+            MinTick = 0.00001m,
+            Leverage = 0.05m,
+            TradeMode = TradeMode.Full
+        });
+    }
+
+    private async Task SaveAsync(InstrumentSettings settings) =>
+        await Task.CompletedTask; // TODO: persist
 }
