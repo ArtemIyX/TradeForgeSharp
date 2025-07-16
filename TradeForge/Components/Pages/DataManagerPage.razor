@@ -10,12 +10,18 @@
         <li class="@(ActiveTab == "symbols" ? "is-active" : "")">
             <a @onclick="@(() => SetTab("symbols"))">Symbols</a>
         </li>
-        <li class="@(ActiveTab == "ohlc" ? "is-active" : "")">
-            <a @onclick="@(() => SetTab("ohlc"))">OHLC</a>
-        </li>
-        <li class="@(ActiveTab == "chart" ? "is-active" : "")">
-            <a @onclick="@(() => SetTab("chart"))">Chart</a>
-        </li>
+        @if (selectedSymbol is not null)
+        {
+            <li class="@(ActiveTab == "settings" ? "is-active" : "")">
+                <a @onclick="@(() => SetTab("settings"))">Settings</a>
+            </li>
+            <li class="@(ActiveTab == "ohlc" ? "is-active" : "")">
+                <a @onclick="@(() => SetTab("ohlc"))">OHLC</a>
+            </li>
+            <li class="@(ActiveTab == "chart" ? "is-active" : "")">
+                <a @onclick="@(() => SetTab("chart"))">Chart</a>
+            </li>
+        }
     </ul>
 </div>
 
@@ -24,7 +30,12 @@
     @switch (ActiveTab)
     {
         case "symbols":
-            <SymbolTable Symbols="@symbols" />
+            <SymbolTable Symbols="@symbols"
+                         SelectedSymbol="@selectedSymbol"
+                         OnSymbolSelected="@(s => selectedSymbol = s)"/>
+            break;
+        case "settings":
+            <SymbolSettings/>
             break;
         case "ohlc":
             <OHLCTable />
@@ -40,6 +51,8 @@
 {
     private string ActiveTab = "symbols";
     private void SetTab(string tab) => ActiveTab = tab;
+
+    private SymbolCoverage? selectedSymbol = null;
 
    // demo array – replace with your real source
     private SymbolCoverage[] symbols =

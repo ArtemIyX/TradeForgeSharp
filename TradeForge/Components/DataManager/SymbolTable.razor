@@ -69,7 +69,8 @@
         <tbody>
             @foreach (var s in sortedSymbols)
             {
-                <tr>
+                <tr class="@(s == SelectedSymbol ? "is-selected" : "")"
+                    @onclick="() => OnSymbolSelected.InvokeAsync(s)">
                     <td><strong>@s.Symbol</strong></td>
                     <td>@s.Description</td>
                     <td>@s.MinimalTimeframe</td>
@@ -86,8 +87,9 @@
 
 
 @code {
+    [Parameter] public SymbolCoverage? SelectedSymbol { get; set; }
     [Parameter] public SymbolCoverage[] Symbols { get; set; } = Array.Empty<SymbolCoverage>();
-    
+    [Parameter] public EventCallback<SymbolCoverage> OnSymbolSelected { get; set; }
 
     private string? sortBy;
     private bool sortDesc;
