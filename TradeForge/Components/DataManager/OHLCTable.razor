@@ -1,13 +1,84 @@
-﻿
-<table class="table is-fullwidth">
-    <thead><tr><th>Col 1</th><th>Col 2</th></tr></thead>
-    <tbody>
-        <tr><td>A</td><td>B</td></tr>
-        <tr><td>C</td><td>D</td></tr>
-    </tbody>
-</table>
+﻿@using System.Globalization
+@using TradeForge.Core.Models
 
+@if (Rows is null || !Rows.Any())
+{
+    <p>No data.</p>
+}
+else
+{
+    <div class="table-container">
+        <table class="table is-bordered is-striped is-hoverable is-fullwidth">
+            <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Open</th>
+                <th>High</th>
+                <th>Low</th>
+                <th>Close</th>
+                <th>Volume</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var r in PagedRows)
+            {
+                <tr>
+                    <td>@r.Timestamp.ToString("g", CultureInfo.CurrentCulture)</td>
+                    <td>@r.Open.ToString("N4")</td>
+                    <td>@r.High.ToString("N4")</td>
+                    <td>@r.Low.ToString("N4")</td>
+                    <td>@r.Close.ToString("N4")</td>
+                    <td>@r.Volume.ToString("N0")</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Pagination -->
+    <nav class="pagination is-centered" role="navigation" aria-label="pagination">
+        <a class="pagination-previous"
+           disabled="@(CurrentPage == 1)"
+           @onclick="() => ChangePage(CurrentPage - 1)">
+            Previous
+        </a>
+        <a class="pagination-next"
+           disabled="@(CurrentPage == TotalPages)"
+           @onclick="() => ChangePage(CurrentPage + 1)">
+            Next
+        </a>
+
+        <ul class="pagination-list">
+            @for (var p = 1; p <= TotalPages; p++)
+            {
+                <li>
+                    <a class="pagination-link @(p == CurrentPage ? "is-current" : "")"
+                       @onclick="() => ChangePage(p)">
+                        @p
+                    </a>
+                </li>
+            }
+        </ul>
+    </nav>
+}
 
 @code {
+    [Parameter] public List<OHLC>? Rows { get; set; }
 
+    private int CurrentPage  { get; set; } = 1;
+    private int PageSize     { get; set; } = 20;
+
+    private int TotalPages   => Rows is null ? 0 : (int)Math.Ceiling((double)Rows.Count / PageSize);
+
+    private IEnumerable<OHLC> PagedRows =>
+        Rows?
+            .Skip((CurrentPage - 1) * PageSize)
+            .Take(PageSize)
+        ?? [];
+
+    private void ChangePage(int page)
+    {
+        if (page < 1 || page > TotalPages) return;
+        CurrentPage = page;
+    }
 }

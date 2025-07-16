@@ -38,7 +38,7 @@
             <SymbolSettings/>
             break;
         case "ohlc":
-            <OHLCTable />
+            <OHLCTable Rows="@OHLCRows"/>
             break;
         case "chart":
             <SymbolChart />
@@ -54,6 +54,29 @@
 
     private SymbolCoverage? selectedSymbol = null;
 
+
+    private List<OHLC> OHLCRows = Enumerable.Range(0, 100)
+        .Select(i =>
+        {
+            var date = DateTime.UtcNow.Date.AddDays(-19 + i);
+            var open  = 100m + i * 0.5m + (decimal)Math.Sin(i) * 2m;
+            var close = open + (decimal)(Math.Cos(i) * (double)1.5m);
+            var high  = Math.Max(open, close) + (decimal)Math.Abs(Math.Sin(i * 2)) * 1.2m;
+            var low   = Math.Min(open, close) - (decimal)Math.Abs(Math.Cos(i * 2)) * 1.1m;
+            var volume = 1_000_000 + i * 50_000 + (int)(Math.Sin(i) * 100_000);
+
+            return new OHLC
+            {
+                Timestamp = date,
+                Open      = Math.Round(open, 4),
+                High      = Math.Round(high, 4),
+                Low       = Math.Round(low, 4),
+                Close     = Math.Round(close, 4),
+                Volume    = volume
+            };
+        })
+        .ToList();
+    
    // demo array – replace with your real source
     private SymbolCoverage[] symbols =
     {
@@ -88,4 +111,6 @@
             Category = "Stocks"
         }
     };
+
+   
 }
