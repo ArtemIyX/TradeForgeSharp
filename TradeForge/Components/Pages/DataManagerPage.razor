@@ -41,7 +41,7 @@
             <OHLCTable Rows="@OHLCRows"/>
             break;
         case "chart":
-            <SymbolChart />
+            <SymbolChart Symbol="@selectedSymbol?.Symbol" Data="@OHLCRows" />
             break;
     }
 </div>
@@ -59,10 +59,10 @@
         .Select(i =>
         {
             var date = DateTime.UtcNow.Date.AddDays(-19 + i);
-            var open  = 100m + i * 0.5m + (decimal)Math.Sin(i) * 2m;
-            var close = open + (decimal)(Math.Cos(i) * (double)1.5m);
-            var high  = Math.Max(open, close) + (decimal)Math.Abs(Math.Sin(i * 2)) * 1.2m;
-            var low   = Math.Min(open, close) - (decimal)Math.Abs(Math.Cos(i * 2)) * 1.1m;
+            var open  = 100 + i * 0.5 + Math.Sin(i) * 2;
+            var close = open + (Math.Cos(i) * 1.5);
+            var high  = Math.Max(open, close) + Math.Abs(Math.Sin(i * 2)) * 1.2;
+            var low   = Math.Min(open, close) - Math.Abs(Math.Cos(i * 2)) * 1.1;
             var volume = 1_000_000 + i * 50_000 + (int)(Math.Sin(i) * 100_000);
 
             return new OHLC

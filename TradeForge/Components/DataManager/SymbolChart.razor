@@ -1,6 +1,9 @@
-﻿<h1 class="title">Placeholder View</h1>
-<p>This tab is intentionally empty for now.</p>
+﻿@using TradeForge.Components.Shared
+@using TradeForge.Core.Models
+
+<TVChart Symbol="@Symbol" Data="@Data"/>
 
 @code {
-
+    [Parameter] public string Symbol { get; set; } = "DEMO";
+    [Parameter] public IEnumerable<OHLC> Data { get; set; } = Array.Empty<OHLC>();
 }

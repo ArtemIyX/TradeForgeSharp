@@ -1,0 +1,93 @@
+﻿@using System.Drawing
+@using TradeForge.Core.Models
+@implements IAsyncDisposable
+@using LightweightCharts.Blazor.Charts
+@using LightweightCharts.Blazor.Customization.Chart
+@using LightweightCharts.Blazor.Customization.Enums
+@using LightweightCharts.Blazor.DataItems
+@using LightweightCharts.Blazor.Series
+
+@using LightweightCharts.Blazor.Customization.Series
+@using LightweightCharts.Blazor.Utilities
+@using Extensions = LightweightCharts.Blazor.Utilities.Extensions
+@inject IJSRuntime JS
+
+<div class="card">
+    <header class="card-header">
+        <p class="card-header-title">@Symbol</p>
+    </header>
+
+    <div class="card-content">
+        <div id="@ChartId" class="tv-chart-container"
+             style="height: 400px; width: 100%;">
+            <ChartComponent @ref="ChartComponent"/>
+        </div>
+    </div>
+</div>
+
+@code
+{
+    [Parameter] public string Symbol { get; set; } = "DEMO";
+    [Parameter] public IEnumerable<OHLC> Data { get; set; } = Array.Empty<OHLC>();
+
+    private string ChartId { get; } = $"tv_{Guid.NewGuid()}";
+    public ChartComponent? ChartComponent { get; set; }
+    ISeriesApi<long, CandlestickStyleOptions>? _candlestick;
+
+    public async ValueTask DisposeAsync()
+    {
+        if (ChartComponent is not null)
+        {
+            await ChartComponent.DisposeAsync();
+        }
+    }
+
+    ChartOptions DarkOptions => new ChartOptions
+    {
+        Layout = new LayoutOptions
+        {
+            Background = new SolidColor { Color = Extensions.ParseColorCode("#111827") }, // Tailwind gray-900
+            TextColor = Extensions.ParseColorCode("#D1D5DB")                            // Tailwind gray-300
+        },
+        Grid = new GridOptions
+        {
+            VerticalLines  = new GridLineOptions { Color = Extensions.ParseColorCode("#374151") }, // gray-700
+            HorizontalLines  = new GridLineOptions { Color = Extensions.ParseColorCode("#374151") }
+        },
+        Crosshair = new CrosshairOptions
+        {
+            VerticalLine = new CrosshairLineOption { Color = Extensions.ParseColorCode("#4B5563"), Width = 1, Style = LineStyle.Dashed },
+            HorizontalLine= new CrosshairLineOption { Color = Extensions.ParseColorCode("#4B5563"), Width = 1, Style = LineStyle.Dashed }
+        },
+        RightPriceScale = new PriceScaleOptions
+        {
+            BorderColor = Extensions.ParseColorCode("#4B5563")
+        },
+        TimeScale = new TimeScaleOptions
+        {
+            BorderColor = Extensions.ParseColorCode("#4B5563")
+        }
+    };
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (ChartComponent is not null)
+        {
+            await ChartComponent.InitializationCompleted;
+
+            await ChartComponent.ApplyOptions(DarkOptions);
+
+            _candlestick = (ISeriesApi<long, CandlestickStyleOptions>)await ChartComponent.AddSeries<CandlestickStyleOptions>(SeriesType.Candlestick);
+            await _candlestick.SetData(Data.OrderBy(x => x.Timestamp).Select(x => new CandlestickData<long>
+            {
+                Time = x.Timestamp.ToUnix(),
+                Open = x.Open,
+                Close = x.Close,
+                High = x.High,
+                Low = x.Low,
+            }));
+        }
+    }
+
+}
