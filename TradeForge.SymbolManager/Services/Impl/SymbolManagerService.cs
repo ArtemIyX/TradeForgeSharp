@@ -8,23 +8,23 @@ namespace TradeForge.SymbolManager.Services.Impl;
 public class SymbolManagerService : ISymbolManager
 {
     private readonly ILogger<SymbolManagerService> _logger;
-    private readonly ITradeForgeSerializer<SymbolCoverage> _symbolSerializer;
-    public List<SymbolCoverage> LoadedSymbols { get; set; } = new();
+    private readonly ITradeForgeSerializer<InstrumentSettings> _symbolSerializer;
+    public List<InstrumentSettings> LoadedSymbols { get; set; } = new();
 
     //TODO: Folder mannager
     private const string Folder = "Data/Symbols";
 
     public SymbolManagerService(ILogger<SymbolManagerService> logger,
-        ITradeForgeSerializer<SymbolCoverage> symbolSerializer)
+        ITradeForgeSerializer<InstrumentSettings> symbolSerializer)
     {
         _logger = logger;
         _symbolSerializer = symbolSerializer;
     }
 
-    public ICollection<SymbolCoverage> GetAllSymbols()
+    public ICollection<InstrumentSettings> GetAllSymbols()
     {
         if (!Directory.Exists(Folder))
-            return Array.Empty<SymbolCoverage>();
+            return Array.Empty<InstrumentSettings>();
 
         // Enumerate → deserialize → collect into a List<T>
         LoadedSymbols = Directory
@@ -34,21 +34,21 @@ public class SymbolManagerService : ISymbolManager
         return LoadedSymbols;
     }
 
-    public SymbolCoverage? GetSymbol(string symbol)
+    public InstrumentSettings? GetSymbol(string symbol)
     {
         throw new NotImplementedException();
     }
 
-    public SymbolCoverage CreateSymbol(string symbol)
+    public InstrumentSettings CreateSymbol(string symbol)
     {
         if (string.IsNullOrWhiteSpace(symbol))
             throw new ArgumentException("Symbol cannot be null or empty.", nameof(symbol));
 
         Directory.CreateDirectory(Folder); // ensures “Data/Symbols” exists
 
-        var sc = new SymbolCoverage
+        var sc = new InstrumentSettings
         {
-            Symbol = symbol
+            Ticker = symbol
         };
 
         var fileName = Path.Combine(Folder, $"{symbol}.sym");
@@ -57,7 +57,7 @@ public class SymbolManagerService : ISymbolManager
         return sc;
     }
 
-    public SymbolCoverage EditSymbol(string symbol, SymbolCoverage coverage)
+    public InstrumentSettings EditSymbol(string symbol, InstrumentSettings coverage)
     {
         throw new NotImplementedException();
     }

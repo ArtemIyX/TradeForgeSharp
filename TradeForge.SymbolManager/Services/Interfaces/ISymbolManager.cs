@@ -4,10 +4,10 @@ namespace TradeForge.SymbolManager.Services.Interfaces;
 
 public interface ISymbolManager
 {
-    public ICollection<SymbolCoverage> GetAllSymbols();
-    public SymbolCoverage? GetSymbol(string symbol);
-    public SymbolCoverage CreateSymbol(string symbol);
-    public SymbolCoverage EditSymbol(string symbol, SymbolCoverage coverage);
+    public ICollection<InstrumentSettings> GetAllSymbols();
+    public InstrumentSettings? GetSymbol(string symbol);
+    public InstrumentSettings CreateSymbol(string symbol);
+    public InstrumentSettings EditSymbol(string symbol, InstrumentSettings coverage);
     public bool DeleteSymbol(string symbol);
     public bool DoesSymbolExist(string symbol);
 }

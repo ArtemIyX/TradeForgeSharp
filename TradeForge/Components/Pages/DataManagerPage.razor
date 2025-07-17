@@ -41,7 +41,7 @@
             <OHLCTable Rows="@OHLCRows"/>
             break;
         case "chart":
-            <SymbolChart Symbol="@selectedSymbol?.Symbol" Data="@OHLCRows" />
+            <SymbolChart Symbol="@selectedSymbol?.Ticker" Data="@OHLCRows" />
             break;
     }
 </div>
@@ -52,7 +52,7 @@
     private string ActiveTab = "symbols";
     private void SetTab(string tab) => ActiveTab = tab;
 
-    private SymbolCoverage? selectedSymbol = null;
+    private InstrumentSettings? selectedSymbol = null;
 
 
     private List<OHLC> OHLCRows = Enumerable.Range(0, 100)
@@ -78,11 +78,11 @@
         .ToList();
     
    // demo array – replace with your real source
-    private SymbolCoverage[] symbols =
+    private InstrumentSettings[] symbols =
     {
         new()
         {
-            Symbol = "EURUSD",
+            Ticker = "EURUSD",
             Description = "Euro vs US Dollar",
             MinimalTimeframe = Timeframe.M1,
             DateFrom = new DateTime(2020, 1, 1),
@@ -92,7 +92,7 @@
         },
         new()
         {
-            Symbol = "BTCUSDT",
+            Ticker = "BTCUSDT",
             Description = "Bitcoin / Tether",
             MinimalTimeframe = Timeframe.M5,
             DateFrom = new DateTime(2022, 6, 1),
@@ -102,7 +102,7 @@
         },
         new()
         {
-            Symbol = "AAPL",
+            Ticker = "AAPL",
             Description = "Apple tech",
             MinimalTimeframe = Timeframe.D,
             DateFrom = new DateTime(2000, 1, 1),

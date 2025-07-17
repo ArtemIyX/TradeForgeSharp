@@ -4,7 +4,7 @@ using TradeForge.Core.Services.Interfaces;
 
 namespace TradeForge.Core.Services.Impl;
 
-public class SymbolCoverageSerializer : ITradeForgeSerializer<SymbolCoverage>
+public class InstrumentSettingsSerializer : ITradeForgeSerializer<InstrumentSettings>
 {
    
 }

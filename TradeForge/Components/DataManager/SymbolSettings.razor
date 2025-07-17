@@ -41,18 +41,18 @@
     protected override async Task OnInitializedAsync()
     {
         _original = await LoadAsync();
-        Settings = _original with { };
+        Settings = new InstrumentSettings();
     }
 
     private async Task SaveAsync()
     {
         await SaveAsync(Settings);
-        _original = Settings with { };
+        _original = new InstrumentSettings();
     }
 
     private async Task ResetAsync()
     {
-        Settings = _original with { };
+        Settings = new InstrumentSettings();
     }
 
     /* --- persistence stubs --- */
@@ -67,9 +67,9 @@
             Units = "Share(s)",
             MinVolume = 1,
             MaxVolume = 100_000_000,
-            VolumeStep = 0.01m,
-            MinTick = 0.00001m,
-            Leverage = 0.05m,
+            VolumeStep = 0.01,
+            MinTick = 0.00001,
+            Leverage = 0.05,
             TradeMode = TradeMode.Full
         });
     }

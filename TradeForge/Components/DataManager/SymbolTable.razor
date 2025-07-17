@@ -9,56 +9,56 @@
     <table class="table is-fullwidth is-hoverable is-striped">
         <thead>
             <tr>
-                <SymbolTableHeader TItem="SymbolCoverage" TKey="string"
+                <SymbolTableHeader TItem="InstrumentSettings" TKey="string"
                                         Title="Name"
                                         CurrentSortBy="@sortBy"
                                         CurrentDescending="@sortDesc"
-                                        KeyExpression="s => s.Symbol"
+                                        KeyExpression="s => s.Ticker"
                                         SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
 
-                <SymbolTableHeader TItem="SymbolCoverage" TKey="string"
+                <SymbolTableHeader TItem="InstrumentSettings" TKey="string"
                                         Title="Description"
                                         CurrentSortBy="@sortBy"
                                         CurrentDescending="@sortDesc"
                                         KeyExpression="s => s.Description"
                                         SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
 
-                <SymbolTableHeader TItem="SymbolCoverage" TKey="Timeframe"
+                <SymbolTableHeader TItem="InstrumentSettings" TKey="Timeframe"
                                         Title="Min TF"
                                         CurrentSortBy="@sortBy"
                                         CurrentDescending="@sortDesc"
                                         KeyExpression="s => s.MinimalTimeframe"
                                         SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
 
-                <SymbolTableHeader TItem="SymbolCoverage" TKey="DateTime"
+                <SymbolTableHeader TItem="InstrumentSettings" TKey="DateTime"
                                         Title="From"
                                         CurrentSortBy="@sortBy"
                                         CurrentDescending="@sortDesc"
                                         KeyExpression="s => s.DateFrom"
                                         SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
 
-                <SymbolTableHeader TItem="SymbolCoverage" TKey="DateTime"
+                <SymbolTableHeader TItem="InstrumentSettings" TKey="DateTime"
                                         Title="To"
                                         CurrentSortBy="@sortBy"
                                         CurrentDescending="@sortDesc"
                                         KeyExpression="s => s.DateTo"
                                         SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
 
-                <SymbolTableHeader TItem="SymbolCoverage" TKey="int"
+                <SymbolTableHeader TItem="InstrumentSettings" TKey="int"
                                         Title="Days"
                                         CurrentSortBy="@sortBy"
                                         CurrentDescending="@sortDesc"
                                         KeyExpression="s => s.TotalDays"
                                         SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
 
-                <SymbolTableHeader TItem="SymbolCoverage" TKey="int"
+                <SymbolTableHeader TItem="InstrumentSettings" TKey="int"
                                         Title="Records"
                                         CurrentSortBy="@sortBy"
                                         CurrentDescending="@sortDesc"
                                         KeyExpression="s => s.TotalRecords"
                                         SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
 
-                <SymbolTableHeader TItem="SymbolCoverage" TKey="string"
+                <SymbolTableHeader TItem="InstrumentSettings" TKey="string"
                                         Title="Category"
                                         CurrentSortBy="@sortBy"
                                         CurrentDescending="@sortDesc"
@@ -71,7 +71,7 @@
             {
                 <tr class="@(s == SelectedSymbol ? "is-selected" : "")"
                     @onclick="() => OnSymbolSelected.InvokeAsync(s)">
-                    <td><strong>@s.Symbol</strong></td>
+                    <td><strong>@s.Ticker</strong></td>
                     <td>@s.Description</td>
                     <td>@s.MinimalTimeframe</td>
                     <td>@s.DateFrom.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)</td>
@@ -87,17 +87,17 @@
 
 
 @code {
-    [Parameter] public SymbolCoverage? SelectedSymbol { get; set; }
-    [Parameter] public SymbolCoverage[] Symbols { get; set; } = Array.Empty<SymbolCoverage>();
-    [Parameter] public EventCallback<SymbolCoverage> OnSymbolSelected { get; set; }
+    [Parameter] public InstrumentSettings? SelectedSymbol { get; set; }
+    [Parameter] public InstrumentSettings[] Symbols { get; set; } = Array.Empty<InstrumentSettings>();
+    [Parameter] public EventCallback<InstrumentSettings> OnSymbolSelected { get; set; }
 
     private string? sortBy;
     private bool sortDesc;
 
-    private IEnumerable<SymbolCoverage> sortedSymbols =>
+    private IEnumerable<InstrumentSettings> sortedSymbols =>
     sortBy is null
         ? Symbols
-        : Symbols.OrderBy(x => x, new ComparisonComparer<SymbolCoverage>(SymbolCoverage.GetComparer(sortBy, sortDesc)));
+        : Symbols.OrderBy(x => x, new ComparisonComparer<InstrumentSettings>(InstrumentSettings.GetComparer(sortBy, sortDesc)));
 
 
     private void ToggleSort(string property)
