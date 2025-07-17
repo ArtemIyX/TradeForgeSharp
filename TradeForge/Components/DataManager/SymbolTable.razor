@@ -4,7 +4,7 @@
 @using TradeForge.Core.Models
 @using System.Globalization
 @using TradeForge.Components.DataManager
-
+@inject IJSRuntime JS
 
 <button class="button is-primary" @onclick="ShowModal">
     <span class="icon"><i class="fas fa-plus"></i></span>
@@ -108,7 +108,9 @@
         @foreach (var s in sortedSymbols)
         {
             <tr class="@(s == SelectedSymbol ? "is-selected" : "")"
-                @onclick="() => OnSymbolSelected.InvokeAsync(s)">
+                @onclick="() => OnSymbolSelected.InvokeAsync(s)"
+                @oncontextmenu:preventDefault
+                @oncontextmenu="(e) => ShowContextMenu(e, s)">
                 <td><strong>@s.Ticker</strong></td>
                 <td>@s.Description</td>
                 <td>@s.Summary.MinimalTimeframe</td>
@@ -153,7 +155,23 @@
     </div>
 }
 
-
+@if (contextSymbol is not null)
+{
+    <div class="dropdown is-active context-menu"
+         style="position: fixed;
+             left: @(contextMenuX)px;
+         top:  @(contextMenuY)px;
+         z-index: 1000;">
+        <div class="dropdown-menu" role="menu">
+            <div class="dropdown-content">
+                <a class="dropdown-item" @onclick="Import">Import</a>
+                <a class="dropdown-item" @onclick="Clear">Clear</a>
+                <a class="dropdown-item" @onclick="Download">Download</a>
+                <a class="dropdown-item" @onclick="Edit">Edit</a>
+            </div>
+        </div>
+    </div>
+}
 
 
 @code {
@@ -167,10 +185,41 @@
     private string? sortBy;
     private bool sortDesc;
 
+    InstrumentSettings? contextSymbol;
+    double contextMenuX;
+    double contextMenuY;
+
+    private DotNetObjectReference<SymbolTable>? selfRef;
+    private IJSObjectReference? module;
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            selfRef = DotNetObjectReference.Create(this);
+            module = await JS.InvokeAsync<IJSObjectReference>("import", "./Components/DataManager/SymbolTable.razor.js");
+            await module.InvokeVoidAsync("registerContextMenuCloser", selfRef);
+        }
+    }
+
     private IEnumerable<InstrumentSettings> sortedSymbols =>
         sortBy is null
             ? Symbols
             : Symbols.OrderBy(x => x, new ComparisonComparer<InstrumentSettings>(InstrumentSettings.GetComparer(sortBy, sortDesc)));
+
+    // ----------------------------------------------------------
+    void ShowContextMenu(MouseEventArgs e, InstrumentSettings symbol)
+    {
+        contextSymbol = symbol;
+        contextMenuX = e.ClientX;
+        contextMenuY = e.ClientY;
+    }
+
+    void HideContextMenu()
+    {
+        contextSymbol = null;
+    }
 
     private void ShowModal()
     {
@@ -195,6 +244,38 @@
     private void OnSymbolCreated(string symbol)
     {
         // your logic here
+    }
+
+    // ----------------------------------------------------------
+    void Import()
+    {
+        /* TODO */
+        HideContextMenu();
+    }
+
+    void Clear()
+    {
+        /* TODO */
+        HideContextMenu();
+    }
+
+    void Download()
+    {
+        /* TODO */
+        HideContextMenu();
+    }
+
+    void Edit()
+    {
+        /* TODO */
+        HideContextMenu();
+    }
+
+    [JSInvokable]
+    public void CloseMenu() // JS will call this
+    {
+        contextSymbol = null;
+        StateHasChanged();
     }
 
 }

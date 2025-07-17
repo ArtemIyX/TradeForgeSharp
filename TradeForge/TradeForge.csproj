@@ -78,6 +78,11 @@
       <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Components\DataManager\SymbolTable.razor.js" />
+      <Content Include="Components\DataManager\SymbolTable.razor.js" />
+    </ItemGroup>
+
     
 
 </Project>
