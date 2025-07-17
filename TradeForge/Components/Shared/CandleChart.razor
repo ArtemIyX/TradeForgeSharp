@@ -12,14 +12,14 @@
 @using Extensions = LightweightCharts.Blazor.Utilities.Extensions
 @inject IJSRuntime JS
 
+
 <div class="card">
     <header class="card-header">
         <p class="card-header-title">@Symbol</p>
     </header>
-
+    
     <div class="card-content">
-        <div id="@ChartId" class="tv-chart-container"
-             style="height: 400px; width: 100%;">
+        <div class="chart @(_chartReady ? "chart-show" : "chart-hide")">
             <ChartComponent @ref="ChartComponent"/>
         </div>
     </div>
@@ -27,10 +27,11 @@
 
 @code
 {
+    private bool _chartReady = false;
+    
     [Parameter] public string Symbol { get; set; } = "DEMO";
     [Parameter] public IEnumerable<OHLC> Data { get; set; } = Array.Empty<OHLC>();
-
-    private string ChartId { get; } = $"tv_{Guid.NewGuid()}";
+    
     public ChartComponent? ChartComponent { get; set; }
     ISeriesApi<long, CandlestickStyleOptions>? _candlestick;
 
@@ -72,22 +73,30 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (ChartComponent is not null)
+        if (firstRender)
         {
-            await ChartComponent.InitializationCompleted;
-
-            await ChartComponent.ApplyOptions(DarkOptions);
-
-            _candlestick = (ISeriesApi<long, CandlestickStyleOptions>)await ChartComponent.AddSeries<CandlestickStyleOptions>(SeriesType.Candlestick);
-            await _candlestick.SetData(Data.OrderBy(x => x.Timestamp).Select(x => new CandlestickData<long>
+            if (ChartComponent is not null)
             {
-                Time = x.Timestamp.ToUnix(),
-                Open = x.Open,
-                Close = x.Close,
-                High = x.High,
-                Low = x.Low,
-            }));
+                await ChartComponent.InitializationCompleted;
+
+                await ChartComponent.ApplyOptions(DarkOptions);
+            
+                _candlestick = (ISeriesApi<long, CandlestickStyleOptions>)await ChartComponent.AddSeries<CandlestickStyleOptions>(SeriesType.Candlestick);
+                await _candlestick.SetData(Data.OrderBy(x => x.Timestamp).Select(x => new CandlestickData<long>
+                {
+                    Time = x.Timestamp.ToUnix(),
+                    Open = x.Open,
+                    Close = x.Close,
+                    High = x.High,
+                    Low = x.Low,
+                }));
+
+                await Task.Delay(TimeSpan.FromSeconds(1.0/100.0));
+                _chartReady = true;
+                StateHasChanged();
+            }
         }
+       
     }
 
 }

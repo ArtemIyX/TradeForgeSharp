@@ -1,0 +1,12 @@
+﻿.chart-hide {
+    visibility: hidden;
+}
+
+.chart-show {
+    visibility: visible;
+}
+
+.chart {
+    height: 400px;
+    width: 100%;
+}
