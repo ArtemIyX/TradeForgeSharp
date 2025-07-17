@@ -87,37 +87,28 @@
         {
             Ticker = "EURUSD",
             Description = "Euro vs US Dollar",
-            MinimalTimeframe = Timeframe.M1,
-            DateFrom = new DateTime(2020, 1, 1),
-            DateTo = DateTime.UtcNow.Date,
-            TotalRecords = 1_250_000,
+            
             Category = "Forex"
         },
         new()
         {
             Ticker = "BTCUSDT",
             Description = "Bitcoin / Tether",
-            MinimalTimeframe = Timeframe.M5,
-            DateFrom = new DateTime(2022, 6, 1),
-            DateTo = DateTime.UtcNow.Date,
-            TotalRecords = 180_000,
+
             Category = "Crypto"
         },
         new()
         {
             Ticker = "AAPL",
             Description = "Apple tech",
-            MinimalTimeframe = Timeframe.D,
-            DateFrom = new DateTime(2000, 1, 1),
-            DateTo = new DateTime(2025, 1, 1),
-            TotalRecords = 250_000,
+
             Category = "Stocks"
         }
     };
 
     protected override async Task OnInitializedAsync()
     {
-        throw new Exception("Hello world lol");
+        
     }
 
 }
