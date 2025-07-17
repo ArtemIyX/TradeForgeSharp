@@ -27,35 +27,35 @@
                                         Title="Min TF"
                                         CurrentSortBy="@sortBy"
                                         CurrentDescending="@sortDesc"
-                                        KeyExpression="s => s.MinimalTimeframe"
+                                        KeyExpression="s => s.Summary.MinimalTimeframe"
                                         SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
 
                 <SymbolTableHeader TItem="InstrumentSettings" TKey="DateTime"
                                         Title="From"
                                         CurrentSortBy="@sortBy"
                                         CurrentDescending="@sortDesc"
-                                        KeyExpression="s => s.DateFrom"
+                                        KeyExpression="s => s.Summary.DateFrom"
                                         SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
 
                 <SymbolTableHeader TItem="InstrumentSettings" TKey="DateTime"
                                         Title="To"
                                         CurrentSortBy="@sortBy"
                                         CurrentDescending="@sortDesc"
-                                        KeyExpression="s => s.DateTo"
+                                        KeyExpression="s => s.Summary.DateTo"
                                         SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
 
                 <SymbolTableHeader TItem="InstrumentSettings" TKey="int"
                                         Title="Days"
                                         CurrentSortBy="@sortBy"
                                         CurrentDescending="@sortDesc"
-                                        KeyExpression="s => s.TotalDays"
+                                        KeyExpression="s => s.Summary.TotalDays"
                                         SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
 
                 <SymbolTableHeader TItem="InstrumentSettings" TKey="int"
                                         Title="Records"
                                         CurrentSortBy="@sortBy"
                                         CurrentDescending="@sortDesc"
-                                        KeyExpression="s => s.TotalRecords"
+                                        KeyExpression="s => s.Summary.TotalRecords"
                                         SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
 
                 <SymbolTableHeader TItem="InstrumentSettings" TKey="string"
@@ -73,11 +73,11 @@
                     @onclick="() => OnSymbolSelected.InvokeAsync(s)">
                     <td><strong>@s.Ticker</strong></td>
                     <td>@s.Description</td>
-                    <td>@s.MinimalTimeframe</td>
-                    <td>@s.DateFrom.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)</td>
-                    <td>@s.DateTo.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)</td>
-                    <td>@s.TotalDays</td>
-                    <td>@s.TotalRecords</td>
+                    <td>@s.Summary.MinimalTimeframe</td>
+                    <td>@s.Summary.DateFrom.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)</td>
+                    <td>@s.Summary.DateTo.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)</td>
+                    <td>@s.Summary.TotalDays</td>
+                    <td>@s.Summary.TotalRecords</td>
                     <td><span class="tag is-info is-light">@s.Category</span></td>
                 </tr>
             }
@@ -99,16 +99,6 @@
         ? Symbols
         : Symbols.OrderBy(x => x, new ComparisonComparer<InstrumentSettings>(InstrumentSettings.GetComparer(sortBy, sortDesc)));
 
-
-    private void ToggleSort(string property)
-    {
-        if (sortBy == property)
-            sortDesc = !sortDesc;
-        else
-        {
-            sortBy = property;
-            sortDesc = false;
-        }
-    }
+    
 
 }

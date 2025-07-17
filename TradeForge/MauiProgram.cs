@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
+
 namespace TradeForge
 {
     public static class MauiProgram
@@ -9,19 +10,21 @@ namespace TradeForge
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
-                .ConfigureFonts(fonts =>
-                {
-                    fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-                });
+                .ConfigureFonts(fonts => { fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular"); });
 
             builder.Services.AddMauiBlazorWebView();
 
 #if DEBUG
-    		builder.Services.AddBlazorWebViewDeveloperTools();
-    		builder.Logging.AddDebug();
-#endif
+            builder.Services.AddBlazorWebViewDeveloperTools();
+            builder.Logging.AddDebug();
 
-            return builder.Build();
+
+#else
+#endif
+            
+            var app = builder.Build();
+            
+            return app;
         }
     }
 }

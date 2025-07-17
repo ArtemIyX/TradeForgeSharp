@@ -25,6 +25,19 @@ public sealed class ComparisonComparer<T> : IComparer<T>
 "leverage": 0.05,
 "trade_mode": "full"
  */
+
+public record SymbolDataSummary
+{
+    public Timeframe MinimalTimeframe { get; init; } = Timeframe.M1;
+    public DateTime DateFrom { get; init; } = DateTime.MinValue;
+    public DateTime DateTo { get; init; } = DateTime.MinValue;
+    public int TotalRecords { get; init; } = 0;
+
+    public int TotalDays => DateTo == DateTime.MinValue
+        ? 0
+        : (DateTo - DateFrom).Days + 1;
+}
+
 [ProtoContract]
 public class InstrumentSettings
 {
@@ -68,28 +81,23 @@ public class InstrumentSettings
     [ProtoMember(10)]
     public TradeMode TradeMode { get; set; } = TradeMode.Full;
 
-    [JsonIgnore] [ProtoMember(11)] public Timeframe MinimalTimeframe { get; set; } = Timeframe.M1;
-    [JsonIgnore] [ProtoMember(12)] public DateTime DateFrom { get; set; } = DateTime.MinValue;
-    [JsonIgnore] [ProtoMember(13)] public DateTime DateTo { get; set; } = DateTime.MinValue;
-    [JsonIgnore] [ProtoMember(14)] public int TotalRecords { get; set; }
-    [JsonIgnore] [ProtoMember(15)] public string Category { get; set; } = string.Empty;
-
-    [JsonIgnore] [ProtoIgnore] public int TotalDays => (DateTo - DateFrom).Days + 1;
+    [JsonIgnore] [ProtoMember(11)] public string Category { get; set; } = string.Empty;
+    [JsonIgnore] [ProtoIgnore] public SymbolDataSummary Summary { get; set; } = new SymbolDataSummary();
 
     public static Comparison<InstrumentSettings> GetComparer(string prop, bool desc)
     {
         Comparison<InstrumentSettings>? cmp = prop switch
         {
-            nameof(InstrumentSettings.Ticker) => (a, b) =>
+            nameof(Ticker) => (a, b) =>
                 string.Compare(a.Ticker, b.Ticker, StringComparison.OrdinalIgnoreCase),
-            nameof(InstrumentSettings.Description) => (a, b) =>
+            nameof(Description) => (a, b) =>
                 string.Compare(a.Description, b.Description, StringComparison.OrdinalIgnoreCase),
-            nameof(InstrumentSettings.MinimalTimeframe) => (a, b) => a.MinimalTimeframe.CompareTo(b.MinimalTimeframe),
-            nameof(InstrumentSettings.DateFrom) => (a, b) => a.DateFrom.CompareTo(b.DateFrom),
-            nameof(InstrumentSettings.DateTo) => (a, b) => a.DateTo.CompareTo(b.DateTo),
-            nameof(InstrumentSettings.TotalDays) => (a, b) => a.TotalDays.CompareTo(b.TotalDays),
-            nameof(InstrumentSettings.TotalRecords) => (a, b) => a.TotalRecords.CompareTo(b.TotalRecords),
-            nameof(InstrumentSettings.Category) => (a, b) =>
+            nameof(Summary.MinimalTimeframe) => (a, b) => a.Summary.MinimalTimeframe.CompareTo(b.Summary.MinimalTimeframe),
+            nameof(Summary.DateFrom) => (a, b) => a.Summary.DateFrom.CompareTo(b.Summary.DateFrom),
+            nameof(Summary.DateTo) => (a, b) => a.Summary.DateTo.CompareTo(b.Summary.DateTo),
+            nameof(Summary.TotalDays) => (a, b) => a.Summary.TotalDays.CompareTo(b.Summary.TotalDays),
+            nameof(Summary.TotalRecords) => (a, b) => a.Summary.TotalRecords.CompareTo(b.Summary.TotalRecords),
+            nameof(Category) => (a, b) =>
                 string.Compare(a.Category, b.Category, StringComparison.OrdinalIgnoreCase),
             _ => throw new ArgumentOutOfRangeException(nameof(prop))
         };
