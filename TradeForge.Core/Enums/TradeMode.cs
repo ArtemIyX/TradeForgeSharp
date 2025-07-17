@@ -1,7 +1,9 @@
 ﻿using System.Text.Json.Serialization;
+using ProtoBuf;
 
 namespace TradeForge.Core.Enums;
 
+[ProtoContract]
 public enum TradeMode
 {
     [JsonPropertyName("full")]
