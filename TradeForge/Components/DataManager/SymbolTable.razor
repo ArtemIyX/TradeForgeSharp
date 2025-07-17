@@ -5,85 +5,155 @@
 @using System.Globalization
 @using TradeForge.Components.DataManager
 
-<div class="table-container">
+
+<button class="button is-primary" @onclick="ShowModal">
+    <span class="icon"><i class="fas fa-plus"></i></span>
+    <span>Add Symbol</span>
+</button>
+
+<div class="table-container mt-4">
     <table class="table is-fullwidth is-hoverable is-striped">
         <thead>
-            <tr>
-                <SymbolTableHeader TItem="InstrumentSettings" TKey="string"
-                                        Title="Name"
-                                        CurrentSortBy="@sortBy"
-                                        CurrentDescending="@sortDesc"
-                                        KeyExpression="s => s.Ticker"
-                                        SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
+        <tr>
+            <SymbolTableHeader TItem="InstrumentSettings" TKey="string"
+                               Title="Name"
+                               CurrentSortBy="@sortBy"
+                               CurrentDescending="@sortDesc"
+                               KeyExpression="s => s.Ticker"
+                               SortChanged="@(e =>
+                                            {
+                                                sortBy = e.Property;
+                                                sortDesc = e.Desc;
+                                            })"/>
 
-                <SymbolTableHeader TItem="InstrumentSettings" TKey="string"
-                                        Title="Description"
-                                        CurrentSortBy="@sortBy"
-                                        CurrentDescending="@sortDesc"
-                                        KeyExpression="s => s.Description"
-                                        SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
+            <SymbolTableHeader TItem="InstrumentSettings" TKey="string"
+                               Title="Description"
+                               CurrentSortBy="@sortBy"
+                               CurrentDescending="@sortDesc"
+                               KeyExpression="s => s.Description"
+                               SortChanged="@(e =>
+                                            {
+                                                sortBy = e.Property;
+                                                sortDesc = e.Desc;
+                                            })"/>
 
-                <SymbolTableHeader TItem="InstrumentSettings" TKey="Timeframe"
-                                        Title="Min TF"
-                                        CurrentSortBy="@sortBy"
-                                        CurrentDescending="@sortDesc"
-                                        KeyExpression="s => s.Summary.MinimalTimeframe"
-                                        SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
+            <SymbolTableHeader TItem="InstrumentSettings" TKey="Timeframe"
+                               Title="Min TF"
+                               CurrentSortBy="@sortBy"
+                               CurrentDescending="@sortDesc"
+                               KeyExpression="s => s.Summary.MinimalTimeframe"
+                               SortChanged="@(e =>
+                                            {
+                                                sortBy = e.Property;
+                                                sortDesc = e.Desc;
+                                            })"/>
 
-                <SymbolTableHeader TItem="InstrumentSettings" TKey="DateTime"
-                                        Title="From"
-                                        CurrentSortBy="@sortBy"
-                                        CurrentDescending="@sortDesc"
-                                        KeyExpression="s => s.Summary.DateFrom"
-                                        SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
+            <SymbolTableHeader TItem="InstrumentSettings" TKey="DateTime"
+                               Title="From"
+                               CurrentSortBy="@sortBy"
+                               CurrentDescending="@sortDesc"
+                               KeyExpression="s => s.Summary.DateFrom"
+                               SortChanged="@(e =>
+                                            {
+                                                sortBy = e.Property;
+                                                sortDesc = e.Desc;
+                                            })"/>
 
-                <SymbolTableHeader TItem="InstrumentSettings" TKey="DateTime"
-                                        Title="To"
-                                        CurrentSortBy="@sortBy"
-                                        CurrentDescending="@sortDesc"
-                                        KeyExpression="s => s.Summary.DateTo"
-                                        SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
+            <SymbolTableHeader TItem="InstrumentSettings" TKey="DateTime"
+                               Title="To"
+                               CurrentSortBy="@sortBy"
+                               CurrentDescending="@sortDesc"
+                               KeyExpression="s => s.Summary.DateTo"
+                               SortChanged="@(e =>
+                                            {
+                                                sortBy = e.Property;
+                                                sortDesc = e.Desc;
+                                            })"/>
 
-                <SymbolTableHeader TItem="InstrumentSettings" TKey="int"
-                                        Title="Days"
-                                        CurrentSortBy="@sortBy"
-                                        CurrentDescending="@sortDesc"
-                                        KeyExpression="s => s.Summary.TotalDays"
-                                        SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
+            <SymbolTableHeader TItem="InstrumentSettings" TKey="int"
+                               Title="Days"
+                               CurrentSortBy="@sortBy"
+                               CurrentDescending="@sortDesc"
+                               KeyExpression="s => s.Summary.TotalDays"
+                               SortChanged="@(e =>
+                                            {
+                                                sortBy = e.Property;
+                                                sortDesc = e.Desc;
+                                            })"/>
 
-                <SymbolTableHeader TItem="InstrumentSettings" TKey="int"
-                                        Title="Records"
-                                        CurrentSortBy="@sortBy"
-                                        CurrentDescending="@sortDesc"
-                                        KeyExpression="s => s.Summary.TotalRecords"
-                                        SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
+            <SymbolTableHeader TItem="InstrumentSettings" TKey="int"
+                               Title="Records"
+                               CurrentSortBy="@sortBy"
+                               CurrentDescending="@sortDesc"
+                               KeyExpression="s => s.Summary.TotalRecords"
+                               SortChanged="@(e =>
+                                            {
+                                                sortBy = e.Property;
+                                                sortDesc = e.Desc;
+                                            })"/>
 
-                <SymbolTableHeader TItem="InstrumentSettings" TKey="string"
-                                        Title="Category"
-                                        CurrentSortBy="@sortBy"
-                                        CurrentDescending="@sortDesc"
-                                        KeyExpression="s => s.Category"
-                                        SortChanged="@(e => { sortBy = e.Property; sortDesc = e.Desc; })" />
-            </tr>
+            <SymbolTableHeader TItem="InstrumentSettings" TKey="string"
+                               Title="Category"
+                               CurrentSortBy="@sortBy"
+                               CurrentDescending="@sortDesc"
+                               KeyExpression="s => s.Category"
+                               SortChanged="@(e =>
+                                            {
+                                                sortBy = e.Property;
+                                                sortDesc = e.Desc;
+                                            })"/>
+        </tr>
         </thead>
         <tbody>
-            @foreach (var s in sortedSymbols)
-            {
-                <tr class="@(s == SelectedSymbol ? "is-selected" : "")"
-                    @onclick="() => OnSymbolSelected.InvokeAsync(s)">
-                    <td><strong>@s.Ticker</strong></td>
-                    <td>@s.Description</td>
-                    <td>@s.Summary.MinimalTimeframe</td>
-                    <td>@s.Summary.DateFrom.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)</td>
-                    <td>@s.Summary.DateTo.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)</td>
-                    <td>@s.Summary.TotalDays</td>
-                    <td>@s.Summary.TotalRecords</td>
-                    <td><span class="tag is-info is-light">@s.Category</span></td>
-                </tr>
-            }
+        @foreach (var s in sortedSymbols)
+        {
+            <tr class="@(s == SelectedSymbol ? "is-selected" : "")"
+                @onclick="() => OnSymbolSelected.InvokeAsync(s)">
+                <td><strong>@s.Ticker</strong></td>
+                <td>@s.Description</td>
+                <td>@s.Summary.MinimalTimeframe</td>
+                <td>@s.Summary.DateFrom.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)</td>
+                <td>@s.Summary.DateTo.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)</td>
+                <td>@s.Summary.TotalDays</td>
+                <td>@s.Summary.TotalRecords</td>
+                <td><span class="tag is-info is-light">@s.Category</span></td>
+            </tr>
+        }
         </tbody>
     </table>
 </div>
+
+@if (isModalVisible)
+{
+    <div class="modal is-active">
+        <div class="modal-background" @onclick="HideModal"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Add new symbol</p>
+                <button class="delete" aria-label="close" @onclick="HideModal"></button>
+            </header>
+            <section class="modal-card-body">
+                <div class="field">
+                    <label class="label">Enter symbol name</label>
+                    <div class="control">
+                        <input class="input" type="text" @bind="newSymbolName" @bind:event="oninput"/>
+                    </div>
+                </div>
+            </section>
+            <footer class="modal-card-foot">
+                <div class="buttons is-right">
+                    <button class="button is-success" disabled="@string.IsNullOrWhiteSpace(newSymbolName)"
+                            @onclick="CreateSymbol">
+                        Create
+                    </button>
+                    <button class="button" @onclick="HideModal">Cancel</button>
+                </div>
+            </footer>
+        </div>
+    </div>
+}
+
+
 
 
 @code {
@@ -91,14 +161,40 @@
     [Parameter] public InstrumentSettings[] Symbols { get; set; } = Array.Empty<InstrumentSettings>();
     [Parameter] public EventCallback<InstrumentSettings> OnSymbolSelected { get; set; }
 
+    private bool isModalVisible;
+    private string? newSymbolName;
+
     private string? sortBy;
     private bool sortDesc;
 
     private IEnumerable<InstrumentSettings> sortedSymbols =>
-    sortBy is null
-        ? Symbols
-        : Symbols.OrderBy(x => x, new ComparisonComparer<InstrumentSettings>(InstrumentSettings.GetComparer(sortBy, sortDesc)));
+        sortBy is null
+            ? Symbols
+            : Symbols.OrderBy(x => x, new ComparisonComparer<InstrumentSettings>(InstrumentSettings.GetComparer(sortBy, sortDesc)));
 
-    
+    private void ShowModal()
+    {
+        isModalVisible = true;
+    }
+
+    private void HideModal()
+    {
+        isModalVisible = false;
+        newSymbolName = null;
+    }
+
+    private void CreateSymbol()
+    {
+        if (!string.IsNullOrWhiteSpace(newSymbolName))
+        {
+            OnSymbolCreated(newSymbolName);
+            HideModal();
+        }
+    }
+
+    private void OnSymbolCreated(string symbol)
+    {
+        // your logic here
+    }
 
 }

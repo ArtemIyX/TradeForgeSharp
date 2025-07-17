@@ -71,6 +71,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\TradeForge.Core\TradeForge.Core.csproj" />
+      <ProjectReference Include="..\TradeForge.SymbolManager\TradeForge.SymbolManager.csproj" />
     </ItemGroup>
 
     <ItemGroup>
