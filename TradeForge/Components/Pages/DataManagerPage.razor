@@ -93,16 +93,37 @@
 
     protected void RefreshSymbols()
     {
-        symbols = SymbolManager.GetAllSymbols().ToList();
-        StateHasChanged();
+        try
+        {
+            symbols = SymbolManager.GetAllSymbols().ToList();
+            StateHasChanged();
+            if (symbols.Count == 0)
+            {
+                Alert.ShowWarning($"No symbols loaded");
+            }
+            else
+            {
+                Alert.ShowInfo($"Loaded {symbols.Count} symbols");
+            }
+        }
+        catch (Exception ex)
+        {
+            Alert.ShowError($"Failed to get symbols: {ex.Message}");
+        }
     }
 
     protected async Task SymbolCreateRequest(string symbol)
     {
-        SymbolManager.CreateSymbol(symbol);
-        await Task.Delay(1000); // fake work
-        RefreshSymbols();
-        Alert.ShowInfo("Successfully finished downloading");
+        try
+        {
+            SymbolManager.CreateSymbol(symbol);
+            Alert.ShowInfo($"Creating '{symbol}' symbol...");
+            RefreshSymbols();
+        }
+        catch (Exception ex)
+        {
+            Alert.ShowError($"Failed to create symbol: {ex.Message}");
+        }
     }
 
 }
