@@ -1,0 +1,67 @@
+﻿@if (_isVisible)
+{
+    <div class="modal is-active">
+        <div class="modal-background" @onclick="Close"></div>
+
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">@Title</p>
+                <button class="delete" aria-label="close" @onclick="Close"></button>
+            </header>
+
+            <section class="modal-card-body has-text-centered">
+                <p class="is-size-5">@Message</p>
+            </section>
+
+            <footer class="modal-card-foot">
+                <div class="buttons is-right">
+                    <button class="button is-success" @onclick="Confirm">
+                        @YesText
+                    </button>
+                    <button class="button" @onclick="Close">
+                        @NoText
+                    </button>
+                </div>
+            </footer>
+        </div>
+    </div>
+}
+
+@code {
+    private bool _isVisible;
+
+    /* Parent-supplied parameters */
+    [Parameter] public string Title       { get; set; } = "Confirm";
+    [Parameter] public string Message     { get; set; } = "Are you sure?";
+    [Parameter] public string YesText     { get; set; } = "Yes";
+    [Parameter] public string NoText      { get; set; } = "No";
+
+    /* Parent callbacks */
+    [Parameter] public EventCallback OnSuccess { get; set; }
+    [Parameter] public EventCallback OnDiscard { get; set; }
+
+    /* Public API */
+    public void Show()
+    {
+        _isVisible = true;
+        StateHasChanged();
+    }
+
+    /* Internal callbacks */
+    private async Task Confirm()
+    {
+        await OnSuccess.InvokeAsync();
+        CloseCore();
+    }
+
+    private async Task Close()
+    {
+        await OnDiscard.InvokeAsync();
+        CloseCore();
+    }
+
+    private void CloseCore()
+    {
+        _isVisible = false;
+    }
+}

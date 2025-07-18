@@ -6,6 +6,7 @@
 @using TradeForge.Core.Models
 @using TradeForge.Services
 @using TradeForge.SymbolManager.Services.Interfaces
+@using TradeForge.Components.Shared
 @inject ISymbolManager SymbolManager
 @inject IAlertService Alert
 
@@ -38,7 +39,8 @@
             <SymbolTable Symbols="@symbols"
                          SelectedSymbol="@selectedSymbol"
                          OnSymbolSelected="@(s => selectedSymbol = s)"
-                         OnSymbolCreated="@(s => SymbolCreateRequest(s))"/>
+                         OnSymbolCreated="@(s => SymbolCreateRequest(s))"
+                         OnSymbolDelete="@(s => SymbolDeleteRequest(s))"/>
             break;
         case "settings":
             <SymbolSettings/>
@@ -52,14 +54,23 @@
     }
 </div>
 
+<ConfirmationModal @ref="DeleteSymbolModal"
+                   OnSuccess="DeleteSymbolSuccess"
+                   YesText="Yes"
+                   NoText="No"
+                   Title="Symbol deletion"
+                   Message=@DeleteSymbolMessageStr/>
 
 @code
 {
     private string ActiveTab = "symbols";
+    public ConfirmationModal DeleteSymbolModal { get; set; }
+
     private void SetTab(string tab) => ActiveTab = tab;
 
     private InstrumentSettings? selectedSymbol = null;
-
+    private InstrumentSettings? deleteSymbolChose = null;
+    private string DeleteSymbolMessageStr => $"Are you sure you want delete symbol '{deleteSymbolChose?.Ticker}'?";
 
     private List<OHLC> OHLCRows = Enumerable.Range(0, 100)
         .Select(i =>
@@ -112,7 +123,7 @@
         }
     }
 
-    protected async Task SymbolCreateRequest(string symbol)
+    protected void SymbolCreateRequest(string symbol)
     {
         try
         {
@@ -126,4 +137,41 @@
         }
     }
 
+
+    private void SymbolDeleteRequest(InstrumentSettings arg)
+    {
+        try
+        {
+            deleteSymbolChose = arg;
+            DeleteSymbolModal.Show();
+        }
+        catch (Exception ex)
+        {
+            Alert.ShowError($"Failed to delete symbol: {ex.Message}");
+        }
+    }
+
+    private void DeleteSymbolSuccess()
+    {
+        try
+        {
+            if (deleteSymbolChose is null)
+            {
+                throw new NullReferenceException("Delete chose is null");
+            }
+
+            string sym = deleteSymbolChose.Ticker;
+            
+            SymbolManager.DeleteSymbol(sym);
+            
+            Alert.ShowInfo($"Symbol '{sym}' has been deleted");
+            deleteSymbolChose = null;
+            
+            RefreshSymbols();
+        }
+        catch (Exception ex)
+        {
+            Alert.ShowError($"Failed to delete symbol: {ex.Message}");
+        }
+    }
 }

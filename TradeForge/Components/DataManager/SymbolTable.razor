@@ -108,12 +108,12 @@
         </tr>
         </thead>
         <tbody>
-        @foreach (var s in sortedSymbols)
+        @foreach (var s in SortedSymbols)
         {
             <tr class="@(s == SelectedSymbol ? "is-selected" : "")"
                 @onclick="() => OnSymbolSelected.InvokeAsync(s)"
                 @oncontextmenu:preventDefault
-                @oncontextmenu="e => _menu1!.ShowAsync(e.ClientX, e.ClientY)">
+                @oncontextmenu="e => ShowContextMenu(s, e)">
                 <td><strong>@s.Ticker</strong></td>
                 <td>@s.Description</td>
                 <td>@s.Summary.MinimalTimeframe</td>
@@ -128,36 +128,38 @@
     </table>
 </div>
 
-<GenericPromptModal @ref="_createSymbolModal"
+<GenericPromptModal @ref="_createSymbolModalRef"
                     Title="Add new symbol"
                     Label="Enter symbol name"
                     Placeholder="BTCUSDT"
                     ButtonText="Create"
                     OnSuccess="SymbolCreateRequest"
-                    OnDiscard="() => { }" />
+                    OnDiscard="() => { }"/>
 
-<ContextMenu @ref="_menu1" Items="_items1"/>
+<ContextMenu @ref="_contextMenuRef" Items="_contextMenuItems"/>
 
 
 @code {
-    private GenericPromptModal _createSymbolModal = default!;
-    
+    private GenericPromptModal _createSymbolModalRef = default!;
+
     [Inject] protected ILogger<SymbolTable> Logger { get; set; }
-    private ContextMenu? _menu1;
-    private ContextMenu? _menu2;
+    private ContextMenu? _contextMenuRef;
 
-    private List<ContextMenuItem> _items1;
+    private List<ContextMenuItem> _contextMenuItems;
 
-    private List<ContextMenuItem> _items2 = new()
-    {
-        new() { Text = "Delete", OnClick = () => Task.CompletedTask }
-    };
+    private InstrumentSettings? _contextSymbol = null;
 
     [Parameter] public InstrumentSettings? SelectedSymbol { get; set; }
     [Parameter] public List<InstrumentSettings> Symbols { get; set; } = [];
     [Parameter] public EventCallback<InstrumentSettings> OnSymbolSelected { get; set; }
     [Parameter] public EventCallback<string> OnSymbolCreated { get; set; }
-    
+
+    [Parameter] public EventCallback<InstrumentSettings> OnSymbolEdit { get; set; }
+    [Parameter] public EventCallback<InstrumentSettings> OnSymbolDelete { get; set; }
+    [Parameter] public EventCallback<InstrumentSettings> OnSymbolClear { get; set; }
+    [Parameter] public EventCallback<InstrumentSettings> OnSymbolImport { get; set; }
+    [Parameter] public EventCallback<InstrumentSettings> OnSymbolDownload { get; set; }
+
     private string? newSymbolName;
 
     private string? sortBy;
@@ -165,32 +167,22 @@
 
     public SymbolTable()
     {
-        _items1 = new List<ContextMenuItem>
+        _contextMenuItems = new List<ContextMenuItem>
         {
-            new()
-            {
-                Text = "Copy", OnClick = () =>
-                {
-                    Logger.LogError("Copy");
-                    return Task.CompletedTask;
-                }
-            }
+            new ContextMenuItem("Edit", EditSymbol),
+            new ContextMenuItem("Delete", DeleteSymbol),
+            new ContextMenuItem("Clear Data", ClearSymbol),
+            new ContextMenuItem("Import Data", ImportSymbol),
+            new ContextMenuItem("Download", DownloadSymbol)
         };
     }
     
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-        }
-    }
-
-    private IEnumerable<InstrumentSettings> sortedSymbols =>
+    private IEnumerable<InstrumentSettings> SortedSymbols =>
         sortBy is null
             ? Symbols
             : Symbols.OrderBy(x => x, new ComparisonComparer<InstrumentSettings>(InstrumentSettings.GetComparer(sortBy, sortDesc)));
-    
+
 
     private async Task SymbolCreateRequest(string symbol)
     {
@@ -199,7 +191,32 @@
 
     private void ShowCreateSymbolModal()
     {
-        _createSymbolModal.Show();
+        _createSymbolModalRef.Show();
     }
+
+
+    private async Task ShowContextMenu(InstrumentSettings instrumentSettings, MouseEventArgs mouseEventArgs)
+    {
+        if (_contextMenuRef != null)
+        {
+            await _contextMenuRef.ShowAsync(mouseEventArgs.ClientX, mouseEventArgs.ClientY);
+            _contextSymbol = instrumentSettings;
+        }
+    }
+
+    #region ContextMenuCallbacks
+
+    private async Task EditSymbol() => await OnSymbolEdit.InvokeAsync(_contextSymbol);
+
+    private async Task DownloadSymbol() => await OnSymbolDownload.InvokeAsync(_contextSymbol);
+
+    private async Task DeleteSymbol() => await OnSymbolDelete.InvokeAsync(_contextSymbol);
+
+    private async Task ImportSymbol() => await OnSymbolImport.InvokeAsync(_contextSymbol);
+
+    private async Task ClearSymbol() => await OnSymbolClear.InvokeAsync(_contextSymbol);
+
+    #endregion
+
 
 }

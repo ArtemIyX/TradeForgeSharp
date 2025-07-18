@@ -113,6 +113,11 @@ public class SymbolManagerService : ISymbolManager
         if (string.IsNullOrWhiteSpace(symbol))
             throw new ArgumentException("Symbol cannot be null or empty.", nameof(symbol));
 
+        if (DoesSymbolHasData(symbol))
+        {
+            ClearData(symbol);
+        }
+
         var filePath = Path.Combine(DataSymbolsFolder, $"{symbol}.sym");
 
         if (!File.Exists(filePath))
