@@ -9,7 +9,7 @@
 @using TradeForge.Models
 @inject IJSRuntime JS
 
-<button class="button is-primary" @onclick="ShowModal">
+<button class="button is-primary" @onclick="ShowCreateSymbolModal">
     <span class="icon"><i class="fas fa-plus"></i></span>
     <span>Add Symbol</span>
 </button>
@@ -128,41 +128,20 @@
     </table>
 </div>
 
-@if (isModalVisible)
-{
-    <div class="modal is-active">
-        <div class="modal-background" @onclick="HideModal"></div>
-        <div class="modal-card">
-            <header class="modal-card-head">
-                <p class="modal-card-title">Add new symbol</p>
-                <button class="delete" aria-label="close" @onclick="HideModal"></button>
-            </header>
-            <section class="modal-card-body">
-                <div class="field">
-                    <label class="label">Enter symbol name</label>
-                    <div class="control">
-                        <input class="input" type="text" @bind="newSymbolName" @bind:event="oninput"/>
-                    </div>
-                </div>
-            </section>
-            <footer class="modal-card-foot">
-                <div class="buttons is-right">
-                    <button class="button is-success" disabled="@string.IsNullOrWhiteSpace(newSymbolName)"
-                            @onclick="CreateSymbol">
-                        Create
-                    </button>
-                    <button class="button" @onclick="HideModal">Cancel</button>
-                </div>
-            </footer>
-        </div>
-    </div>
-}
+<GenericPromptModal @ref="_createSymbolModal"
+                    Title="Add new symbol"
+                    Label="Enter symbol name"
+                    Placeholder="BTCUSDT"
+                    ButtonText="Create"
+                    OnSuccess="OnSymbolCreated"
+                    OnDiscard="() => { }" />
 
 <ContextMenu @ref="_menu1" Items="_items1"/>
-<ContextMenu @ref="_menu2" Items="_items2"/>
 
 
 @code {
+    private GenericPromptModal _createSymbolModal = default!;
+    
     [Inject] protected ILogger<SymbolTable> Logger { get; set; }
     private ContextMenu? _menu1;
     private ContextMenu? _menu2;
@@ -177,8 +156,7 @@
     [Parameter] public InstrumentSettings? SelectedSymbol { get; set; }
     [Parameter] public InstrumentSettings[] Symbols { get; set; } = Array.Empty<InstrumentSettings>();
     [Parameter] public EventCallback<InstrumentSettings> OnSymbolSelected { get; set; }
-
-    private bool isModalVisible;
+    
     private string? newSymbolName;
 
     private string? sortBy;
@@ -198,12 +176,7 @@
             }
         };
     }
-
-    private async Task OpenMenu1(MouseEventArgs e)
-        => await _menu1!.ShowAsync(e.ClientX, e.ClientY);
-
-    private async Task OpenMenu2(MouseEventArgs e)
-        => await _menu2!.ShowAsync(e.ClientX, e.ClientY);
+    
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -216,31 +189,16 @@
         sortBy is null
             ? Symbols
             : Symbols.OrderBy(x => x, new ComparisonComparer<InstrumentSettings>(InstrumentSettings.GetComparer(sortBy, sortDesc)));
-
-
-    private void ShowModal()
-    {
-        isModalVisible = true;
-    }
-
-    private void HideModal()
-    {
-        isModalVisible = false;
-        newSymbolName = null;
-    }
-
-    private void CreateSymbol()
-    {
-        if (!string.IsNullOrWhiteSpace(newSymbolName))
-        {
-            OnSymbolCreated(newSymbolName);
-            HideModal();
-        }
-    }
+    
 
     private void OnSymbolCreated(string symbol)
     {
         // your logic here
+    }
+
+    private void ShowCreateSymbolModal()
+    {
+        _createSymbolModal.Show();
     }
 
 }

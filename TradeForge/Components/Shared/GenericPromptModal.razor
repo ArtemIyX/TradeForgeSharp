@@ -1,0 +1,81 @@
+﻿
+@if (IsVisible)
+{
+    <div class="modal is-active">
+        <div class="modal-background" @onclick="Close"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">@Title</p>
+                <button class="delete" aria-label="close" @onclick="Close"></button>
+            </header>
+
+            <section class="modal-card-body">
+                <div class="field">
+                    <label class="label">@Label</label>
+                    <div class="control">
+                        <input class="input"
+                               type="@InputType"
+                               placeholder="@Placeholder"
+                               @bind="CurrentValue"
+                               @bind:event="oninput" />
+                    </div>
+                </div>
+            </section>
+
+            <footer class="modal-card-foot">
+                <div class="buttons is-right">
+                    <button class="button is-success"
+                            disabled="@string.IsNullOrWhiteSpace(CurrentValue)"
+                            @onclick="Confirm">
+                        @ButtonText
+                    </button>
+                    <button class="button" @onclick="Close">Cancel</button>
+                </div>
+            </footer>
+        </div>
+    </div>
+}
+
+@code {
+    private bool IsVisible;
+    private string? CurrentValue;
+
+    /*  Parent-supplied parameters  */
+    [Parameter] public string Title { get; set; } = "Prompt";
+    [Parameter] public string Label { get; set; } = "Enter value";
+    [Parameter] public string Placeholder { get; set; } = "";
+    [Parameter] public string InputType { get; set; } = "text";   // text, number, email, etc.
+    [Parameter] public string ButtonText { get; set; } = "OK";
+
+    /*  Parent callbacks  */
+    [Parameter] public EventCallback<string> OnSuccess { get; set; }
+    [Parameter] public EventCallback OnDiscard { get; set; }
+
+    /*  Public API  */
+    public void Show()
+    {
+        CurrentValue = null;
+        IsVisible = true;
+        StateHasChanged();
+    }
+
+    /*  Internal callbacks  */
+    private async Task Confirm()
+    {
+        if (string.IsNullOrWhiteSpace(CurrentValue)) return;
+        await OnSuccess.InvokeAsync(CurrentValue);
+        CloseCore();
+    }
+
+    private async Task Close()
+    {
+        await OnDiscard.InvokeAsync();
+        CloseCore();
+    }
+
+    private void CloseCore()
+    {
+        IsVisible = false;
+        CurrentValue = null;
+    }
+}
