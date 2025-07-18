@@ -1,0 +1,68 @@
+﻿@using TradeForge.Models
+@inject IJSRuntime JS
+
+<div @ref="_root"
+     class="dropdown @(IsVisible ? "is-active" : "")"
+     style="position:fixed; left:@Left; top:@Top; z-index:9999;">
+    <div class="dropdown-menu" role="menu">
+        <div class="dropdown-content">
+            @foreach (var item in Items)
+            {
+                <a class="dropdown-item" @onclick="() => OnItemClick(item)">
+                    @item.Text
+                </a>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private ElementReference _root;
+    
+    [Parameter] public List<ContextMenuItem> Items { get; set; } = new();
+
+    public bool IsVisible { get; private set; }
+    public string Left { get; private set; } = "-1000px";
+    public string Top  { get; private set; } = "-1000px";
+    
+    private async Task OnItemClick(ContextMenuItem? el)
+    {
+        if (el is not null)
+        {
+            if (el.OnClick is not null)
+            {
+                await el.OnClick.Invoke();
+            }
+        }
+        Hide();
+    }
+    
+    public async Task ShowAsync(double x, double y)
+    {
+        Left = $"{x}px";
+        Top  = $"{y}px";
+        IsVisible = true;
+        StateHasChanged();
+        await _root.FocusAsync();
+
+        await JS.InvokeVoidAsync("contextMenu.registerOutsideClick", _root,
+            DotNetObjectReference.Create(this),
+            nameof(JSHide));
+    }
+
+    
+    public void Hide()
+    {
+        IsVisible = false;
+        StateHasChanged();
+    }
+
+    [JSInvokable] public void JSHide() => Hide();
+
+    private async Task InvokeAsync(ContextMenuItem item)
+    {
+        Hide();
+        if (item.OnClick is not null)
+            await item.OnClick();
+    }
+}

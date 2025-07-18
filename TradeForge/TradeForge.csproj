@@ -80,7 +80,6 @@
 
     <ItemGroup>
       <None Remove="Components\DataManager\SymbolTable.razor.js" />
-      <Content Include="Components\DataManager\SymbolTable.razor.js" />
     </ItemGroup>
 
     

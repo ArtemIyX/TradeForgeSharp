@@ -3,7 +3,10 @@
 @using TradeForge.Core.Extensions
 @using TradeForge.Core.Models
 @using System.Globalization
+@using Microsoft.Extensions.Logging
 @using TradeForge.Components.DataManager
+@using TradeForge.Components.Shared
+@using TradeForge.Models
 @inject IJSRuntime JS
 
 <button class="button is-primary" @onclick="ShowModal">
@@ -110,7 +113,7 @@
             <tr class="@(s == SelectedSymbol ? "is-selected" : "")"
                 @onclick="() => OnSymbolSelected.InvokeAsync(s)"
                 @oncontextmenu:preventDefault
-                @oncontextmenu="(e) => ShowContextMenu(e, s)">
+                @oncontextmenu="e => _menu1!.ShowAsync(e.ClientX, e.ClientY)">
                 <td><strong>@s.Ticker</strong></td>
                 <td>@s.Description</td>
                 <td>@s.Summary.MinimalTimeframe</td>
@@ -155,26 +158,22 @@
     </div>
 }
 
-@if (contextSymbol is not null)
-{
-    <div class="dropdown is-active context-menu"
-         style="position: fixed;
-             left: @(contextMenuX)px;
-         top:  @(contextMenuY)px;
-         z-index: 1000;">
-        <div class="dropdown-menu" role="menu">
-            <div class="dropdown-content">
-                <a class="dropdown-item" @onclick="Import">Import</a>
-                <a class="dropdown-item" @onclick="Clear">Clear</a>
-                <a class="dropdown-item" @onclick="Download">Download</a>
-                <a class="dropdown-item" @onclick="Edit">Edit</a>
-            </div>
-        </div>
-    </div>
-}
+<ContextMenu @ref="_menu1" Items="_items1"/>
+<ContextMenu @ref="_menu2" Items="_items2"/>
 
 
 @code {
+    [Inject] protected ILogger<SymbolTable> Logger { get; set; }
+    private ContextMenu? _menu1;
+    private ContextMenu? _menu2;
+
+    private List<ContextMenuItem> _items1;
+
+    private List<ContextMenuItem> _items2 = new()
+    {
+        new() { Text = "Delete", OnClick = () => Task.CompletedTask }
+    };
+
     [Parameter] public InstrumentSettings? SelectedSymbol { get; set; }
     [Parameter] public InstrumentSettings[] Symbols { get; set; } = Array.Empty<InstrumentSettings>();
     [Parameter] public EventCallback<InstrumentSettings> OnSymbolSelected { get; set; }
@@ -185,21 +184,31 @@
     private string? sortBy;
     private bool sortDesc;
 
-    InstrumentSettings? contextSymbol;
-    double contextMenuX;
-    double contextMenuY;
+    public SymbolTable()
+    {
+        _items1 = new List<ContextMenuItem>
+        {
+            new()
+            {
+                Text = "Copy", OnClick = () =>
+                {
+                    Logger.LogError("Copy");
+                    return Task.CompletedTask;
+                }
+            }
+        };
+    }
 
-    private DotNetObjectReference<SymbolTable>? selfRef;
-    private IJSObjectReference? module;
+    private async Task OpenMenu1(MouseEventArgs e)
+        => await _menu1!.ShowAsync(e.ClientX, e.ClientY);
 
+    private async Task OpenMenu2(MouseEventArgs e)
+        => await _menu2!.ShowAsync(e.ClientX, e.ClientY);
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            selfRef = DotNetObjectReference.Create(this);
-            module = await JS.InvokeAsync<IJSObjectReference>("import", "./Components/DataManager/SymbolTable.razor.js");
-            await module.InvokeVoidAsync("registerContextMenuCloser", selfRef);
         }
     }
 
@@ -208,18 +217,6 @@
             ? Symbols
             : Symbols.OrderBy(x => x, new ComparisonComparer<InstrumentSettings>(InstrumentSettings.GetComparer(sortBy, sortDesc)));
 
-    // ----------------------------------------------------------
-    void ShowContextMenu(MouseEventArgs e, InstrumentSettings symbol)
-    {
-        contextSymbol = symbol;
-        contextMenuX = e.ClientX;
-        contextMenuY = e.ClientY;
-    }
-
-    void HideContextMenu()
-    {
-        contextSymbol = null;
-    }
 
     private void ShowModal()
     {
@@ -244,38 +241,6 @@
     private void OnSymbolCreated(string symbol)
     {
         // your logic here
-    }
-
-    // ----------------------------------------------------------
-    void Import()
-    {
-        /* TODO */
-        HideContextMenu();
-    }
-
-    void Clear()
-    {
-        /* TODO */
-        HideContextMenu();
-    }
-
-    void Download()
-    {
-        /* TODO */
-        HideContextMenu();
-    }
-
-    void Edit()
-    {
-        /* TODO */
-        HideContextMenu();
-    }
-
-    [JSInvokable]
-    public void CloseMenu() // JS will call this
-    {
-        contextSymbol = null;
-        StateHasChanged();
     }
 
 }
