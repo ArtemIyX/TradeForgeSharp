@@ -1,10 +1,10 @@
 ﻿using System.IO.Compression;
 
-namespace TradeForge.Core.Services.Interfaces;
+namespace TradeForge.Core.Generic;
 
-public interface ITradeForgeSerializer<T>
+public static class TradeForgeSerializer<T>
 {
-    public byte[] Serialize(T source)
+    public static byte[] Serialize(T source)
     {
         using var ms = new MemoryStream();
         using (var deflate = new DeflateStream(ms, CompressionLevel.Optimal, leaveOpen: true))
@@ -12,7 +12,7 @@ public interface ITradeForgeSerializer<T>
         return ms.ToArray();
     }
 
-    public T Deserialize(byte[] data)
+    public static T Deserialize(byte[] data)
     {
         using var ms = new MemoryStream(data);
         using var deflate = new DeflateStream(ms, CompressionMode.Decompress);

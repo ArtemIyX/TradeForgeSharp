@@ -133,7 +133,7 @@
                     Label="Enter symbol name"
                     Placeholder="BTCUSDT"
                     ButtonText="Create"
-                    OnSuccess="OnSymbolCreated"
+                    OnSuccess="SymbolCreateRequest"
                     OnDiscard="() => { }" />
 
 <ContextMenu @ref="_menu1" Items="_items1"/>
@@ -154,8 +154,9 @@
     };
 
     [Parameter] public InstrumentSettings? SelectedSymbol { get; set; }
-    [Parameter] public InstrumentSettings[] Symbols { get; set; } = Array.Empty<InstrumentSettings>();
+    [Parameter] public List<InstrumentSettings> Symbols { get; set; } = [];
     [Parameter] public EventCallback<InstrumentSettings> OnSymbolSelected { get; set; }
+    [Parameter] public EventCallback<string> OnSymbolCreated { get; set; }
     
     private string? newSymbolName;
 
@@ -191,9 +192,9 @@
             : Symbols.OrderBy(x => x, new ComparisonComparer<InstrumentSettings>(InstrumentSettings.GetComparer(sortBy, sortDesc)));
     
 
-    private void OnSymbolCreated(string symbol)
+    private async Task SymbolCreateRequest(string symbol)
     {
-        // your logic here
+        await OnSymbolCreated.InvokeAsync(symbol);
     }
 
     private void ShowCreateSymbolModal()

@@ -1,0 +1,56 @@
+﻿<!-- Shared/AlertHost.razor -->
+@inject IAlertService AlertService
+@using TradeForge.Models
+@using TradeForge.Services
+@implements IDisposable
+
+<div class="is-overlay is-flex is-justify-content-flex-end is-align-items-flex-end p-4"
+     style="pointer-events:none; z-index:9999;">
+    @foreach (var alert in _alerts)
+    {
+        <div class="notification mb-2 @(Color(alert.Type)) animate__animated animate__fadeInRight"
+             style="pointer-events:auto; min-width:280px;">
+            <button class="delete" @onclick="() => Remove(alert)"></button>
+            @alert.Text
+        </div>
+    }
+</div>
+
+@code {
+    private List<AlertMessage> _alerts = new();
+
+    protected override void OnInitialized()
+    {
+        AlertService.OnAlert += Handle;
+    }
+
+    void Handle(AlertMessage alert)
+    {
+        InvokeAsync(() =>
+        {
+            _alerts.Insert(0, alert);
+            StateHasChanged();
+
+            // auto-dismiss after 5 s
+            _ = Task.Delay(5000).ContinueWith(_ =>
+            {
+                InvokeAsync(() => Remove(alert));
+            });
+        });
+    }
+
+    void Remove(AlertMessage alert)
+    {
+        _alerts.Remove(alert);
+        StateHasChanged();
+    }
+
+    string Color(AlertType t) => t switch
+    {
+        AlertType.Warning => "is-warning",
+        AlertType.Error   => "is-danger",
+        _                 => "is-info"
+    };
+
+    public void Dispose() => AlertService.OnAlert -= Handle;
+}

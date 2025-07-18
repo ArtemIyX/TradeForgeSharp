@@ -4,8 +4,10 @@
 @using TradeForge.Components.DataManager
 @using TradeForge.Core.Enums
 @using TradeForge.Core.Models
-
-
+@using TradeForge.Services
+@using TradeForge.SymbolManager.Services.Interfaces
+@inject ISymbolManager SymbolManager
+@inject IAlertService Alert
 
 <!-- Bulma tabs -->
 <div class="tabs is-boxed">
@@ -35,7 +37,8 @@
         case "symbols":
             <SymbolTable Symbols="@symbols"
                          SelectedSymbol="@selectedSymbol"
-                         OnSymbolSelected="@(s => selectedSymbol = s)"/>
+                         OnSymbolSelected="@(s => selectedSymbol = s)"
+                         OnSymbolCreated="@(s => SymbolCreateRequest(s))"/>
             break;
         case "settings":
             <SymbolSettings/>
@@ -81,34 +84,25 @@
         .ToList();
 
     // demo array – replace with your real source
-    private InstrumentSettings[] symbols =
-    {
-        new()
-        {
-            Ticker = "EURUSD",
-            Description = "Euro vs US Dollar",
-            
-            Category = "Forex"
-        },
-        new()
-        {
-            Ticker = "BTCUSDT",
-            Description = "Bitcoin / Tether",
-
-            Category = "Crypto"
-        },
-        new()
-        {
-            Ticker = "AAPL",
-            Description = "Apple tech",
-
-            Category = "Stocks"
-        }
-    };
+    private List<InstrumentSettings> symbols = [];
 
     protected override async Task OnInitializedAsync()
     {
-        
+        RefreshSymbols();
+    }
+
+    protected void RefreshSymbols()
+    {
+        symbols = SymbolManager.GetAllSymbols().ToList();
+        StateHasChanged();
+    }
+
+    protected async Task SymbolCreateRequest(string symbol)
+    {
+        SymbolManager.CreateSymbol(symbol);
+        await Task.Delay(1000); // fake work
+        RefreshSymbols();
+        Alert.ShowInfo("Successfully finished downloading");
     }
 
 }

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
+using TradeForge.Core.Generic;
 using TradeForge.Core.Models;
-using TradeForge.Core.Services.Interfaces;
 using TradeForge.SymbolManager.Services.Interfaces;
 
 namespace TradeForge.SymbolManager.Services.Impl;
@@ -8,21 +8,16 @@ namespace TradeForge.SymbolManager.Services.Impl;
 public class SymbolManagerService : ISymbolManager
 {
     private readonly ILogger<SymbolManagerService> _logger;
-    private readonly ITradeForgeSerializer<InstrumentSettings> _symbolSerializer;
-    private readonly ITradeForgeSerializer<InstrumentDataContainer> _dataSerializer;
+
 
     //TODO: Folder mannager
     private static readonly string DataSymbolsFolder = Path.Combine(
         AppContext.BaseDirectory, // folder that contains the exe/dll
         "Data", "Symbols");
 
-    public SymbolManagerService(ILogger<SymbolManagerService> logger,
-        ITradeForgeSerializer<InstrumentSettings> symbolSerializer,
-        ITradeForgeSerializer<InstrumentDataContainer> dataSerializer)
+    public SymbolManagerService(ILogger<SymbolManagerService> logger)
     {
         _logger = logger;
-        _symbolSerializer = symbolSerializer;
-        _dataSerializer = dataSerializer;
     }
 
     public ICollection<InstrumentSettings> GetAllSymbols()
@@ -33,7 +28,7 @@ public class SymbolManagerService : ISymbolManager
         // Enumerate → deserialize → collect into a List<T>
         return Directory
             .EnumerateFiles(DataSymbolsFolder, "*.sym")
-            .Select(f => _symbolSerializer.Deserialize(File.ReadAllBytes(f)))
+            .Select(f => TradeForgeSerializer<InstrumentSettings>.Deserialize(File.ReadAllBytes(f)))
             .ToList(); // materialises the sequence
     }
 
@@ -43,7 +38,7 @@ public class SymbolManagerService : ISymbolManager
             return null;
 
         string path = Path.Combine(DataSymbolsFolder, $"{symbol}.sym");
-        InstrumentSettings settings = _symbolSerializer.Deserialize(File.ReadAllBytes(path));
+        InstrumentSettings settings = TradeForgeSerializer<InstrumentSettings>.Deserialize(File.ReadAllBytes(path));
 
         if (DoesSymbolHasData(symbol))
         {
@@ -86,7 +81,7 @@ public class SymbolManagerService : ISymbolManager
         };
 
         var fileName = Path.Combine(DataSymbolsFolder, $"{symbol}.sym");
-        File.WriteAllBytes(fileName, _symbolSerializer.Serialize(sc));
+        File.WriteAllBytes(fileName, TradeForgeSerializer<InstrumentSettings>.Serialize(sc));
 
         return sc;
     }
@@ -109,7 +104,7 @@ public class SymbolManagerService : ISymbolManager
         if (!DoesSymbolExist(symbol))
             throw new FileNotFoundException($"Symbol file '{symbol}.sym' not found.", fileName);
 
-        File.WriteAllBytes(fileName, _symbolSerializer.Serialize(coverage));
+        File.WriteAllBytes(fileName, TradeForgeSerializer<InstrumentSettings>.Serialize(coverage));
         return coverage;
     }
 
@@ -154,7 +149,7 @@ public class SymbolManagerService : ISymbolManager
             return null;
 
         byte[] bytes = File.ReadAllBytes(fullPath);
-        return _dataSerializer.Deserialize(bytes);
+        return TradeForgeSerializer<InstrumentDataContainer>.Deserialize(bytes);
     }
 
     public void ImportData(string symbol, List<OHLC> ohlc)
@@ -176,7 +171,7 @@ public class SymbolManagerService : ISymbolManager
             OHLC = ohlc
         };
 
-        File.WriteAllBytes(fullPath, _dataSerializer.Serialize(container));
+        File.WriteAllBytes(fullPath, TradeForgeSerializer<InstrumentDataContainer>.Serialize(container));
     }
 
     public void ClearData(string symbol)
