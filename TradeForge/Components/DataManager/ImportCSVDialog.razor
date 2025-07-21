@@ -1,4 +1,10 @@
-﻿<!-- File selection -->
+﻿@using CsvHelper.Configuration
+@using TradeForge.Core.Models
+
+@using CsvHelper.Configuration
+@using System.Globalization
+
+<!-- File selection -->
 <div class="field">
     <label class="label">CSV file</label>
     <div class="field has-addons">
@@ -17,27 +23,86 @@
     </div>
 </div>
 
-<!-- Header template -->
-<div class="field">
-    <label class="label">Header template</label>
-    <div class="control">
-        <textarea class="textarea"
-                  rows="2"
-                  placeholder="e.g. Date,High,Low,Open,Close,Volume"
-                  @bind="HeaderTemplate"/>
-    </div>
-</div>
+@*<div class="box">
+    <h5 class="title is-5 mb-4">Map CSV headers to OHLC fields</h5>
 
+    @foreach (var f in _fields)
+    {
+        <div class="field">
+            <label class="label is-small">@f.Label</label>
+            <div class="control">
+                <input class="input is-small"
+                       type="text"
+                       placeholder="CSV column name"
+                       @bind="f.Header"/>
+            </div>
+        </div>
+    }
+</div>*@
+
+<table class="table is-narrow is-fullwidth mb-2">
+    <tbody>
+    @foreach (var f in _fields)
+    {
+        <tr>
+            <td class="has-text-weight-semibold is-vcentered is-narrow"
+                style="white-space:nowrap;">
+                @f.Label
+            </td>
+            <td style="padding: 0.25rem 0;">
+                <input class="input is-small"
+                       type="text"
+                       placeholder="CSV header"
+                       @bind="f.Header" />
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
 
 
 @code {
 
+    public class FieldMap
+    {
+        public string Label { get; init; } = "";
+        public string Header { get; set; } = "";
+        public Action<ClassMap<OHLC>, string> Apply { get; init; } = (_, __) => { };
+    }
+
     public string FilePath { get; set; } = "";
-    public string HeaderTemplate { get; set; } = "Date,High,Low,Open,Close,Volume";
-    public string Delimiter { get; set; } = ",";
+
+    private readonly List<FieldMap> _fields = new()
+    {
+        new() { Label = "Timestamp", Header = "Datetime", Apply = (m, h) => m.Map(x => x.Timestamp).Name(h) },
+        new() { Label = "Open", Header = "Open", Apply = (m, h) => m.Map(x => x.Open).Name(h) },
+        new() { Label = "High", Header = "High", Apply = (m, h) => m.Map(x => x.High).Name(h) },
+        new() { Label = "Low", Header = "Low", Apply = (m, h) => m.Map(x => x.Low).Name(h) },
+        new() { Label = "Close", Header = "Close", Apply = (m, h) => m.Map(x => x.Close).Name(h) },
+        new() { Label = "Volume", Header = "Volume", Apply = (m, h) => m.Map(x => x.Volume).Name(h) }
+    };
 
     private void BrowseClick()
     {
+    }
+
+    private sealed class DynamicOhlcMap : ClassMap<OHLC>
+    {
+    }
+
+    /// <summary>
+    /// Builds a ClassMap<OHLC> from the user-supplied header names.
+    /// </summary>
+    public ClassMap<OHLC> BuildClassMap()
+    {
+        var map = new DynamicOhlcMap();
+        foreach (var f in _fields)
+        {
+            if (!string.IsNullOrWhiteSpace(f.Header))
+                f.Apply(map, f.Header.Trim());
+        }
+
+        return map;
     }
 
 }
