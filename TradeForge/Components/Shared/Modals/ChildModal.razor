@@ -1,0 +1,49 @@
+﻿@if (IsVisible)
+{
+    <div class="modal is-active">
+        <div class="modal-background" @onclick="Close"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">@Title</p>
+                <button class="delete" aria-label="close" @onclick="Close"></button>
+            </header>
+
+            <section class="modal-card-body">
+                @BodyContent
+            </section>
+
+            @if (FooterContent is not null)
+            {
+                <footer class="modal-card-foot">
+                    @FooterContent
+                </footer>
+            }
+
+        </div>
+    </div>
+}
+
+@code {
+    private bool IsVisible;
+    [Parameter] public string Title { get; set; } = "Prompt";
+    [Parameter] public EventCallback OnDiscard { get; set; }
+    
+    [Parameter] public RenderFragment? BodyContent { get; set; }
+    [Parameter] public RenderFragment? FooterContent { get; set; }
+
+    /*  Public API  */
+    public void Show()
+    {
+        IsVisible = true;
+        StateHasChanged();
+    }
+
+    public async Task Close()
+    {
+        await OnDiscard.InvokeAsync();
+        IsVisible = false;
+        StateHasChanged();
+    }
+
+
+}

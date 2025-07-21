@@ -7,6 +7,7 @@
 @using TradeForge.Services
 @using TradeForge.SymbolManager.Services.Interfaces
 @using TradeForge.Components.Shared
+@using TradeForge.Components.Shared.Modals
 @inject ISymbolManager SymbolManager
 @inject IAlertService Alert
 
@@ -40,7 +41,8 @@
                          SelectedSymbol="@selectedSymbol"
                          OnSymbolSelected="@(s => selectedSymbol = s)"
                          OnSymbolCreated="@(s => SymbolCreateRequest(s))"
-                         OnSymbolDelete="@(s => SymbolDeleteRequest(s))"/>
+                         OnSymbolDelete="@(s => SymbolDeleteRequest(s))"
+                         OnSymbolImport="@(s => SymbolImportRequest(s))"/>
             break;
         case "settings":
             <SymbolSettings/>
@@ -61,10 +63,22 @@
                    Title="Symbol deletion"
                    Message=@DeleteSymbolMessageStr/>
 
+<ChildModal @ref="ImportCSVModal">
+    <BodyContent>
+        <ImportCSVDialog/>
+        
+    </BodyContent>
+    <FooterContent>
+        <p>Footer lol</p>
+    </FooterContent>
+</ChildModal>
+
 @code
 {
     private string ActiveTab = "symbols";
     public ConfirmationModal DeleteSymbolModal { get; set; }
+    
+    public ChildModal ImportCSVModal { get; set; }
 
     private void SetTab(string tab) => ActiveTab = tab;
 
@@ -96,6 +110,7 @@
 
     // demo array – replace with your real source
     private List<InstrumentSettings> symbols = [];
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -173,5 +188,10 @@
         {
             Alert.ShowError($"Failed to delete symbol: {ex.Message}");
         }
+    }
+
+    private async Task SymbolImportRequest(InstrumentSettings instrumentSettings)
+    {
+        ImportCSVModal.Show();
     }
 }
