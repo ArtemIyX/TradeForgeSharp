@@ -63,10 +63,9 @@
                    Title="Symbol deletion"
                    Message=@DeleteSymbolMessageStr/>
 
-<ChildModal @ref="ImportCSVModal">
+<ChildModal Title="Import CSV" @ref="ImportCSVModal">
     <BodyContent>
         <ImportCSVDialog/>
-        
     </BodyContent>
     <FooterContent>
         <p>Footer lol</p>
@@ -77,7 +76,7 @@
 {
     private string ActiveTab = "symbols";
     public ConfirmationModal DeleteSymbolModal { get; set; }
-    
+
     public ChildModal ImportCSVModal { get; set; }
 
     private void SetTab(string tab) => ActiveTab = tab;
@@ -176,12 +175,12 @@
             }
 
             string sym = deleteSymbolChose.Ticker;
-            
+
             SymbolManager.DeleteSymbol(sym);
-            
+
             Alert.ShowInfo($"Symbol '{sym}' has been deleted");
             deleteSymbolChose = null;
-            
+
             RefreshSymbols();
         }
         catch (Exception ex)
