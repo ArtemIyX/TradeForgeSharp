@@ -37,6 +37,8 @@ public sealed class OhlcCsvImporter : IOhlcCsvImporter
 
                 bytesRead = reader.BaseStream.Position;
                 request.Progress?.Report((int)(bytesRead * 100 / length));
+
+                //await Task.Delay(TimeSpan.FromMilliseconds(25), cancellationToken);
             }
 
             request.Progress?.Report(100);

@@ -8,7 +8,7 @@ using TradeForge.SymbolManager.Services.Interfaces;
 
 namespace TradeForge.Components.Pages;
 
-public partial class DataManagerPage : ComponentBase
+public partial class DataManagerPage : ComponentBase, IDisposable
 {
     private string ActiveTab = "symbols";
 
@@ -145,18 +145,18 @@ public partial class DataManagerPage : ComponentBase
         ImportCSVModal.Show();
     }
 
-    private async Task OnImportDiscard()
+    private void OnImportDiscard()
     {
         if (_isImporting && _importCancellation != null)
         {
-            await _importCancellation?.CancelAsync();
             _isImporting = false;
+            _importCancellation?.Cancel();
             Alert.ShowWarning("Import cancelled");
         }
         ImportCSVModal?.Close();
     }
 
-    private const int ThrottleMs = 33; // ~30 fps
+
     private CancellationTokenSource? _importCancellation;
 
     private async Task OnImport()
@@ -178,7 +178,7 @@ public partial class DataManagerPage : ComponentBase
         ImportCSVFooter.ErrorMessage = null;
         ImportCSVFooter.SetLoading(true);
         ImportCSVFooter.Progress = 0;
-
+        _isImporting = true;
         _importCancellation = new CancellationTokenSource();
 
         try
@@ -187,15 +187,23 @@ public partial class DataManagerPage : ComponentBase
             {
                 throw new Exception("Please specify a file path");
             }
-
-
+            
             var progress = new Progress<int>(OnImportProgressReport);
-            IReadOnlyList<OHLC> ohlc = await ImporterService.ImportAsync(new CsvImportRequest()
+            var request = new CsvImportRequest()
             {
                 FilePath = ImportCSVDialog.FilePath,
                 HeaderTemplate = ImportCSVDialog.BuildClassMap(),
                 Progress = progress
-            }, _importCancellation.Token);
+            };
+            IReadOnlyList<OHLC> ohlc = await Task.Run(() =>
+                    ImporterService.ImportAsync(request, _importCancellation.Token).Result,
+                _importCancellation.Token);
+
+            await Task.Run(() =>
+            {
+                SymbolManager.ImportData(symbolInStorage.Ticker, ohlc.ToList());
+            });
+            
             ImportCSVFooter.SetLoading(false);
             ImportCSVModal.Close();
 
@@ -213,20 +221,26 @@ public partial class DataManagerPage : ComponentBase
         }
     }
 
-    private async void OnImportProgressReport(int value)
+    private void OnImportProgressReport(int value)
     {
         try
         {
             ImportCSVFooter.Progress = value;
-            await InvokeAsync(async () =>
+            InvokeAsync(async () =>
             {
-                await Task.Delay(ThrottleMs); // throttle
                 StateHasChanged();
+                await Task.Delay(1); // throttle
             });
         }
         catch (Exception e)
         {
             Alert.ShowError($"Failed report progress: {e.Message}");
         }
+    }
+
+
+    public void Dispose()
+    {
+        _importCancellation?.Dispose();
     }
 }
