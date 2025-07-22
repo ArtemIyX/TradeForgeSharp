@@ -1,5 +1,6 @@
 ﻿@using System.Globalization
 @using TradeForge.Core.Models
+@using TradeForge.SymbolManager.Services.Interfaces
 
 @if (Rows is null || !Rows.Any())
 {
@@ -34,7 +35,7 @@ else
             </tbody>
         </table>
     </div>
-    
+
     <!-- Pagination -->
     <nav class="pagination is-centered" role="navigation" aria-label="pagination">
         <a class="pagination-previous"
@@ -49,11 +50,15 @@ else
         </a>
 
         <ul class="pagination-list">
-            @for (var p = 1; p <= TotalPages; p++)
+            @for (int p = 1; p <= TotalPages; p++)
             {
                 <li>
+
+                    @{
+                        var p1 = p;
+                    }
                     <a class="pagination-link @(p == CurrentPage ? "is-current" : "")"
-                       @onclick="() => ChangePage(p)">
+                       @onclick="() => ChangePage(p1)">
                         @p
                     </a>
                 </li>
@@ -63,7 +68,13 @@ else
 }
 
 @code {
-    [Parameter] public List<OHLC>? Rows { get; set; }
+    
+    [Inject]
+    public ISymbolManager SymbolManager { get; set; }
+
+    [Parameter] public InstrumentSettings? SelectedSymbol { get; set; }
+
+    public List<OHLC> Rows { get; set; } = new List<OHLC>();
 
     private int CurrentPage  { get; set; } = 1;
     private int PageSize     { get; set; } = 20;
@@ -80,5 +91,26 @@ else
     {
         if (page < 1 || page > TotalPages) return;
         CurrentPage = page;
+        StateHasChanged();
     }
+
+    protected override Task OnInitializedAsync()
+    {
+        Rows.Clear();
+        if (SelectedSymbol == null)
+        {
+            return Task.CompletedTask;
+        }
+
+        return Task.Run(() =>
+        {
+            InstrumentDataContainer? data = SymbolManager.GetSymbolData(SelectedSymbol.Ticker);
+            if (data != null)
+            {
+                Rows = data.OHLC;
+                InvokeAsync(StateHasChanged);
+            }
+        });
+    }
+
 }

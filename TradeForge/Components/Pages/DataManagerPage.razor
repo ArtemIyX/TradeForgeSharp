@@ -42,7 +42,7 @@
             <SymbolSettings/>
             break;
         case "ohlc":
-            <OHLCTable Rows="@OHLCRows"/>
+            <OHLCTable SelectedSymbol="@selectedSymbol"/>
             break;
         case "chart":
             <SymbolChart Symbol="@selectedSymbol?.Ticker" Data="@OHLCRows"/>

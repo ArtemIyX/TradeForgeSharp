@@ -26,19 +26,22 @@ public class SymbolManagerService : ISymbolManager
             return Array.Empty<InstrumentSettings>();
 
         // Enumerate → deserialize → collect into a List<T>
-        return Directory
+        List<InstrumentSettings> res = Directory
             .EnumerateFiles(DataSymbolsFolder, "*.sym")
-            .Select(f => TradeForgeSerializer<InstrumentSettings>.Deserialize(File.ReadAllBytes(f)))
+            .Select(f =>
+            {
+                // f is the full path, e.g. "C:\Data\AAPL.sym"
+                var symbol = Path.GetFileNameWithoutExtension(f); // -> "AAPL"
+                return ReadSymbol(symbol, f); // string, string
+            })
             .ToList(); // materialises the sequence
+
+        return res;
     }
 
-    public InstrumentSettings? GetSymbol(string symbol)
+    private InstrumentSettings ReadSymbol(string symbol, string file)
     {
-        if (!DoesSymbolExist(symbol))
-            return null;
-
-        string path = Path.Combine(DataSymbolsFolder, $"{symbol}.sym");
-        InstrumentSettings settings = TradeForgeSerializer<InstrumentSettings>.Deserialize(File.ReadAllBytes(path));
+        InstrumentSettings settings = TradeForgeSerializer<InstrumentSettings>.Deserialize(File.ReadAllBytes(file));
 
         if (DoesSymbolHasData(symbol))
         {
@@ -54,6 +57,16 @@ public class SymbolManagerService : ISymbolManager
         }
 
         return settings;
+    }
+
+    public InstrumentSettings? GetSymbol(string symbol)
+    {
+        if (!DoesSymbolExist(symbol))
+            return null;
+
+        string path = Path.Combine(DataSymbolsFolder, $"{symbol}.sym");
+
+        return ReadSymbol(symbol, path);
     }
 
     public bool DoesSymbolExist(string symbol)
