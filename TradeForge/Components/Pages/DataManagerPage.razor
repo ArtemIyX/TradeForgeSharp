@@ -8,6 +8,7 @@
 @using TradeForge.SymbolManager.Services.Interfaces
 @using TradeForge.Components.Shared
 @using TradeForge.Components.Shared.Modals
+@using TradeForge.Components.DataManager.Import
 @inject ISymbolManager SymbolManager
 @inject IAlertService Alert
 
@@ -65,10 +66,12 @@
 
 <ChildModal Title="Import CSV" @ref="ImportCSVModal">
     <BodyContent>
-        <ImportCSVDialog/>
+        <ImportCSVDialog @ref="ImportCSVDialog"/>
     </BodyContent>
     <FooterContent>
-        <p>Footer lol</p>
+        <ImportCSVFooter @ref="ImportCSVFooter" 
+                         OnDiscard="OnImportDiscard"
+                         OnImport="OnImport"/>
     </FooterContent>
 </ChildModal>
 
@@ -76,6 +79,8 @@
 {
     private string ActiveTab = "symbols";
     public ConfirmationModal DeleteSymbolModal { get; set; }
+    public ImportCSVFooter ImportCSVFooter { get; set; }
+    public ImportCSVDialog ImportCSVDialog { get; set; }
 
     public ChildModal ImportCSVModal { get; set; }
 
@@ -192,5 +197,15 @@
     private async Task SymbolImportRequest(InstrumentSettings instrumentSettings)
     {
         ImportCSVModal.Show();
+    }
+
+    private void OnImportDiscard()
+    {
+        ImportCSVModal?.Close();
+    }
+
+    private void OnImport()
+    {
+        ImportCSVFooter.SetLoading(true);
     }
 }

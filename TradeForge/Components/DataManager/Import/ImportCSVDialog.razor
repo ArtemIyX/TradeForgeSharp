@@ -23,23 +23,6 @@
     </div>
 </div>
 
-@*<div class="box">
-    <h5 class="title is-5 mb-4">Map CSV headers to OHLC fields</h5>
-
-    @foreach (var f in _fields)
-    {
-        <div class="field">
-            <label class="label is-small">@f.Label</label>
-            <div class="control">
-                <input class="input is-small"
-                       type="text"
-                       placeholder="CSV column name"
-                       @bind="f.Header"/>
-            </div>
-        </div>
-    }
-</div>*@
-
 <table class="table is-narrow is-fullwidth mb-2">
     <tbody>
     @foreach (var f in _fields)
