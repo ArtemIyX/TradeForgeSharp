@@ -25,6 +25,7 @@ namespace TradeForge
 
             builder.Services.AddSingleton<IAlertService, AlertService>();
             builder.Services.AddScoped<ISymbolManager, SymbolManagerService>();
+            builder.Services.AddScoped<IOhlcCsvImporter, OhlcCsvImporter>();
             
             var app = builder.Build();
             
