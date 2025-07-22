@@ -3,6 +3,8 @@
 
 @using CsvHelper.Configuration
 @using System.Globalization
+@using TradeForge.Services
+@using Microsoft.Maui.Storage
 
 <!-- File selection -->
 <div class="field">
@@ -36,7 +38,7 @@
                 <input class="input is-small"
                        type="text"
                        placeholder="CSV header"
-                       @bind="f.Header" />
+                       @bind="f.Header"/>
             </td>
         </tr>
     }
@@ -45,9 +47,9 @@
 
 
 @code {
-
+    [Inject] IAlertService Alert { get; set; }
     public bool IsFileSelected { get; private set; }
-    
+
     public class FieldMap
     {
         public string Label { get; init; } = "";
@@ -67,8 +69,30 @@
         new() { Label = "Volume", Header = "Volume", Apply = (m, h) => m.Map(x => x.Volume).Name(h) }
     };
 
-    private void BrowseClick()
+    private async Task BrowseClick()
     {
+        try
+        {
+            var result = await FilePicker.Default.PickAsync(new PickOptions
+            {
+                PickerTitle = "Please select a CSV file",
+                FileTypes = new FilePickerFileType(
+                    new Dictionary<DevicePlatform, IEnumerable<string>>
+                    {
+                        { DevicePlatform.WinUI, [".csv"] },
+                        { DevicePlatform.Android, ["text/comma-separated-values"] },
+                        { DevicePlatform.iOS, ["public.comma-separated-values-text"] },
+                        { DevicePlatform.macOS, [".csv"] }
+                    })
+            });
+
+            if (result != null)
+                FilePath = result.FullPath;
+        }
+        catch (Exception ex)
+        {
+            Alert.ShowError($"Failed to select file: {ex.Message}");
+        }
     }
 
     private sealed class DynamicOhlcMap : ClassMap<OHLC>
