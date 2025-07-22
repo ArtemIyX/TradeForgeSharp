@@ -1,16 +1,21 @@
 ﻿<div class="is-flex is-align-items-center is-flex-grow-1">
+    <!-- ERROR MESSAGE – appears only when set -->
+    @if (!string.IsNullOrEmpty(ErrorMessage))
+    {
+        <p class="has-text-danger mb-2">@ErrorMessage</p>
+    }
+
     <!-- SPACER – keeps progress width reserved -->
     <div class="is-flex-grow-1 mr-4">
         <!-- Progress bar – only VISIBLE when loading -->
         <progress class="progress is-info m-0 @(_isLoading ? "" : "is-invisible")"
-                  value="@_progress"
+                  value="@Progress"
                   max="100"
                   style="height:6px;"></progress>
     </div>
 
     <!-- Buttons – never move -->
     <button class="button is-success @(_isLoading ? "is-loading" : "")"
-            disabled="@(!ImportEnabled)"
             @onclick="HandleImportAsync">
         Import
     </button>
@@ -18,14 +23,15 @@
     <button class="button ml-2" @onclick="HandleDiscard">
         Discard
     </button>
+
 </div>
 
 @code {
     private bool _isLoading;
-    private int _progress = 50;
+    public int Progress { get; set; } = 0;
 
-    [Parameter] public bool  ImportEnabled  { get; set; } = true;
-    [Parameter] public EventCallback OnImport  { get; set; }
+    [Parameter] public string? ErrorMessage { get; set; }
+    [Parameter] public EventCallback OnImport { get; set; }
     [Parameter] public EventCallback OnDiscard { get; set; }
 
     public void SetLoading(bool loading)
@@ -45,4 +51,5 @@
         if (OnDiscard.HasDelegate)
             await OnDiscard.InvokeAsync();
     }
+
 }

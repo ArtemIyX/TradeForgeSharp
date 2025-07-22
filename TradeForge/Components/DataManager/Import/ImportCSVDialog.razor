@@ -48,7 +48,7 @@
 
 @code {
     [Inject] IAlertService Alert { get; set; }
-    public bool IsFileSelected { get; private set; }
+
 
     public class FieldMap
     {
@@ -107,8 +107,12 @@
         var map = new DynamicOhlcMap();
         foreach (var f in _fields)
         {
-            if (!string.IsNullOrWhiteSpace(f.Header))
-                f.Apply(map, f.Header.Trim());
+            if (string.IsNullOrWhiteSpace(f.Header))
+            {
+                throw new NullReferenceException($"'{f.Label}' can not be empty");
+            }
+
+            f.Apply(map, f.Header.Trim());
         }
 
         return map;

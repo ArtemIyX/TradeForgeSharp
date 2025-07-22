@@ -3,6 +3,7 @@ using TradeForge.Components.DataManager.Import;
 using TradeForge.Components.Shared.Modals;
 using TradeForge.Core.Models;
 using TradeForge.Services;
+using TradeForge.SymbolManager.Models;
 using TradeForge.SymbolManager.Services.Interfaces;
 
 namespace TradeForge.Components.Pages;
@@ -29,7 +30,7 @@ public partial class DataManagerPage : ComponentBase
 
     [Inject] public IOhlcCsvImporter ImporterService { get; set; }
 
-    public bool ImportEnabled => ImportCSVDialog != null && ImportCSVDialog.IsFileSelected;
+
     private bool _isImporting = false;
 
     private List<OHLC> OHLCRows = Enumerable.Range(0, 100)
@@ -136,21 +137,96 @@ public partial class DataManagerPage : ComponentBase
         }
     }
 
-    private async Task SymbolImportRequest(InstrumentSettings instrumentSettings)
+    private InstrumentSettings? _importSymbolSelect = null;
+
+    private async Task SymbolImportRequest(InstrumentSettings symbol)
     {
+        _importSymbolSelect = symbol;
         ImportCSVModal.Show();
     }
 
-    private void OnImportDiscard()
+    private async Task OnImportDiscard()
     {
+        if (_isImporting && _importCancellation != null)
+        {
+            await _importCancellation?.CancelAsync();
+            _isImporting = false;
+            Alert.ShowWarning("Import cancelled");
+        }
         ImportCSVModal?.Close();
     }
 
-    private void OnImport()
+    private const int ThrottleMs = 33; // ~30 fps
+    private CancellationTokenSource? _importCancellation;
+
+    private async Task OnImport()
     {
         if (_isImporting)
             return;
 
+        InstrumentSettings? symbolInStorage =
+            _importSymbolSelect ?? SymbolManager.GetSymbol(_importSymbolSelect?.Ticker ?? "");
+        if (symbolInStorage is null)
+        {
+            ImportCSVModal.Close();
+            Alert.ShowError("Failed to found symbol in storage");
+            RefreshSymbols();
+            return;
+        }
+
+        // Reset
+        ImportCSVFooter.ErrorMessage = null;
         ImportCSVFooter.SetLoading(true);
+        ImportCSVFooter.Progress = 0;
+
+        _importCancellation = new CancellationTokenSource();
+
+        try
+        {
+            if (string.IsNullOrEmpty(ImportCSVDialog.FilePath))
+            {
+                throw new Exception("Please specify a file path");
+            }
+
+
+            var progress = new Progress<int>(OnImportProgressReport);
+            IReadOnlyList<OHLC> ohlc = await ImporterService.ImportAsync(new CsvImportRequest()
+            {
+                FilePath = ImportCSVDialog.FilePath,
+                HeaderTemplate = ImportCSVDialog.BuildClassMap(),
+                Progress = progress
+            }, _importCancellation.Token);
+            ImportCSVFooter.SetLoading(false);
+            ImportCSVModal.Close();
+
+            Alert.ShowInfo($"Imported {ohlc.Count} rows for '{symbolInStorage.Ticker}'");
+        }
+        catch (Exception ex)
+        {
+            ImportCSVFooter.ErrorMessage = $"Error: {ex.Message}";
+            ImportCSVFooter.SetLoading(false);
+        }
+        finally
+        {
+            ImportCSVFooter.Progress = 0;
+            _isImporting = false;
+        }
+    }
+
+    private async void OnImportProgressReport(int value)
+    {
+        try
+        {
+            ImportCSVFooter.Progress = value;
+            await InvokeAsync(async () =>
+            {
+                await Task.Delay(ThrottleMs); // throttle
+                StateHasChanged();
+            });
+        }
+        catch (Exception e)
+        {
+            Alert.ShowError($"Failed report progress: {e.Message}");
+        }
     }
 }

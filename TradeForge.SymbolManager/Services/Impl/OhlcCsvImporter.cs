@@ -2,7 +2,6 @@
 using CsvHelper;
 using CsvHelper.Configuration;
 using TradeForge.Core.Models;
-
 using TradeForge.SymbolManager.Models;
 using TradeForge.SymbolManager.Services.Interfaces;
 
@@ -14,32 +13,34 @@ public sealed class OhlcCsvImporter : IOhlcCsvImporter
         CsvImportRequest request,
         CancellationToken cancellationToken = default)
     {
-        if (!File.Exists(request.FilePath))
-            throw new FileNotFoundException(request.FilePath);
-        
-        var map = request.HeaderTemplate;
-        using var reader = new StreamReader(request.FilePath);
-        using var csv    = new CsvReader(reader, CultureInfo.InvariantCulture);
-
-        csv.Context.RegisterClassMap(map);
-
-        var rows   = new List<OHLC>(1024);
-        var length = new FileInfo(request.FilePath).Length;
-        long bytesRead = 0;
-
-        while (await csv.ReadAsync())
+        return await Task.Run(async () =>
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            if (!File.Exists(request.FilePath))
+                throw new FileNotFoundException(request.FilePath);
 
-            var record = csv.GetRecord<OHLC>();
-            rows.Add(record);
+            var map = request.HeaderTemplate;
+            using var reader = new StreamReader(request.FilePath);
+            using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
-            bytesRead = reader.BaseStream.Position;
-            request.Progress?.Report((int)(bytesRead * 100 / length));
-        }
+            csv.Context.RegisterClassMap(map);
 
-        request.Progress?.Report(100);
-        return rows;
+            var rows = new List<OHLC>(1024);
+            var length = new FileInfo(request.FilePath).Length;
+            long bytesRead = 0;
+
+            while (await csv.ReadAsync())
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var record = csv.GetRecord<OHLC>();
+                rows.Add(record);
+
+                bytesRead = reader.BaseStream.Position;
+                request.Progress?.Report((int)(bytesRead * 100 / length));
+            }
+
+            request.Progress?.Report(100);
+            return rows;
+        }, cancellationToken);
     }
-
 }
