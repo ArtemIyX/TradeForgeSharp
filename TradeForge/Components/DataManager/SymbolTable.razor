@@ -12,10 +12,42 @@
 @using TradeForge.SymbolManager.Services.Interfaces
 @inject IJSRuntime JS
 
-<button class="button is-primary" @onclick="ShowCreateSymbolModal">
+@*<button class="button is-primary" @onclick="ShowCreateSymbolModal">
     <span class="icon"><i class="fas fa-plus"></i></span>
     <span>Add Symbol</span>
-</button>
+</button>*@
+
+<!-- Toolbar -->
+<nav class="level mb-4">
+    <!-- Left side – buttons -->
+    <div class="level-left">
+        <div class="level-item">
+            <button class="button is-primary" @onclick="ShowCreateSymbolModal">
+                <span class="icon"><i class="fas fa-plus"></i></span>
+                <span>Add Symbol</span>
+            </button>
+        </div>
+
+        <div class="level-item">
+            <button class="button is-info" @onclick="RefreshCall">
+                <span class="icon"><i class="fas fa-sync-alt"></i></span>
+                <span>Refresh</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Right side – search -->
+    <div class="level-right">
+        <div class="level-item">
+            <input class="input"
+                   type="search"
+                   placeholder="Search…"
+                   @bind-value="SearchText"
+                   @bind-value:event="oninput"
+                   @bind-value:after="FilterSymbols"/>
+        </div>
+    </div>
+</nav>
 
 <div class="table-container mt-4">
     <table class="table is-fullwidth is-hoverable is-striped">
@@ -145,11 +177,11 @@
 @code {
     private GenericPromptModal _createSymbolModalRef = default!;
 
-    [Inject] protected ILogger<SymbolTable> Logger { get; set; }
-    [Inject] public ISymbolManager SymbolManager { get; set; }
+    [Inject] protected ILogger<SymbolTable> Logger { get; set; } = null!;
+    [Inject] public ISymbolManager SymbolManager { get; set; } = null!;
 
-    [Inject] public IAlertService Alert { get; set; }
-    
+    [Inject] public IAlertService Alert { get; set; } = null!;
+
     private ContextMenu? _contextMenuRef;
 
     private List<ContextMenuItem> _contextMenuItems;
@@ -171,8 +203,10 @@
 
     private string? sortBy;
     private bool sortDesc;
-    
+
     private List<InstrumentSettings> symbols = [];
+
+    public string SearchText { get; set; } = string.Empty;
 
     public SymbolTable()
     {
@@ -191,21 +225,36 @@
         RefreshSymbols();
         return Task.CompletedTask;
     }
-    
-    public void RefreshSymbols()
+
+    public void RefreshSymbols(string? searchRequest = null, bool notify = true)
     {
         try
         {
-            symbols = SymbolManager.GetAllSymbols().ToList();
+            IEnumerable<InstrumentSettings> symbolsFromDisk = SymbolManager.GetAllSymbols();
+
+            if (!string.IsNullOrEmpty(searchRequest))
+            {
+                symbolsFromDisk = symbolsFromDisk.Where(s => 
+                    s.Ticker?.Contains(searchRequest, StringComparison.OrdinalIgnoreCase) == true);
+            }
+
+            symbols = symbolsFromDisk.ToList();
+
             InvokeAsync(StateHasChanged);
-            if (symbols.Count == 0)
+
+            if (notify)
             {
-                Alert.ShowWarning($"No symbols loaded");
+                if (symbols.Count == 0)
+                {
+                    Alert.ShowWarning($"No symbols loaded");
+                }
+                else
+                {
+                    Alert.ShowInfo($"Loaded {symbols.Count} symbols");
+                }
             }
-            else
-            {
-                Alert.ShowInfo($"Loaded {symbols.Count} symbols");
-            }
+            
+            
         }
         catch (Exception ex)
         {
@@ -238,6 +287,24 @@
             _contextSymbol = instrumentSettings;
         }
     }
+
+    private void RefreshCall()
+    {
+        RefreshSymbols();
+    }
+
+    private void FilterSymbols()
+    {
+        if (string.IsNullOrEmpty(SearchText))
+        {
+            RefreshSymbols(notify: false);
+        }
+        else
+        {
+            RefreshSymbols(SearchText, false);
+        }
+    }
+
 
     #region ContextMenuCallbacks
 
