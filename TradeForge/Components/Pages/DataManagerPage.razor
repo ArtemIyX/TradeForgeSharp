@@ -32,7 +32,9 @@
     {
         case "symbols":
             <SymbolTable @ref="@SymbolTableRef"
+                         OnRefresh="@OnSymbolTableRefreshed"
                          SelectedSymbol="@selectedSymbol"
+                         OnSymbolRename="@(s => SymbolRenameRequest(s))"
                          OnSymbolSelected="@(s => selectedSymbol = s)"
                          OnSymbolCreated="@(s => SymbolCreateRequest(s))"
                          OnSymbolDelete="@(s => SymbolDeleteRequest(s))"
@@ -45,7 +47,7 @@
             <OHLCTable SelectedSymbol="@selectedSymbol"/>
             break;
         case "chart":
-            <SymbolChart Symbol="@selectedSymbol?.Ticker" Data="@OHLCRows"/>
+            <SymbolChart Symbol="@selectedSymbol?.Ticker"/>
             break;
     }
 </div>
@@ -55,7 +57,7 @@
                    YesText="Yes"
                    NoText="No"
                    Title="Symbol deletion"
-                   Message=@DeleteSymbolMessageStr/>
+                   Message="@DeleteSymbolMessageStr"/>
 
 <ChildModal Title="Import CSV" @ref="@ImportCSVModal">
     <BodyContent>
@@ -68,3 +70,9 @@
     </FooterContent>
 </ChildModal>
 
+<GenericPromptModal @ref="@RenameSymbolModal" 
+                    OnSuccess="RenameSymbolAccept"
+                    Title="Rename symbol"
+                    Label="Enter new symbol name:"
+                    ButtonText="Rename"
+                    Placeholder="AAPL"/>

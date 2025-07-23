@@ -19,13 +19,15 @@ public partial class DataManagerPage : ComponentBase, IDisposable
     public SymbolTable SymbolTableRef { get; set; }
     public ChildModal ImportCSVModal { get; set; }
 
+    public GenericPromptModal RenameSymbolModal { get; set; }
+
     private void SetTab(string tab)
     {
         ActiveTab = tab;
         switch (ActiveTab)
         {
             case "symbols":
-                
+
                 break;
         }
     }
@@ -41,35 +43,10 @@ public partial class DataManagerPage : ComponentBase, IDisposable
     [Inject] public IOhlcCsvImporter ImporterService { get; set; }
 
 
-
     private bool _isImporting = false;
-
-    private List<OHLC> OHLCRows = Enumerable.Range(0, 100)
-        .Select(i =>
-        {
-            var date = DateTime.UtcNow.Date.AddDays(-19 + i);
-            var open = 100 + i * 0.5 + Math.Sin(i) * 2;
-            var close = open + (Math.Cos(i) * 1.5);
-            var high = Math.Max(open, close) + Math.Abs(Math.Sin(i * 2)) * 1.2;
-            var low = Math.Min(open, close) - Math.Abs(Math.Cos(i * 2)) * 1.1;
-            var volume = 1_000_000 + i * 50_000 + (int)(Math.Sin(i) * 100_000);
-
-            return new OHLC
-            {
-                Timestamp = date,
-                Open = Math.Round(open, 4),
-                High = Math.Round(high, 4),
-                Low = Math.Round(low, 4),
-                Close = Math.Round(close, 4),
-                Volume = volume
-            };
-        })
-        .ToList();
-
     
     protected override async Task OnInitializedAsync()
     {
-
     }
 
     protected void SymbolCreateRequest(string symbol)
@@ -78,8 +55,8 @@ public partial class DataManagerPage : ComponentBase, IDisposable
         {
             SymbolManager.CreateSymbol(symbol);
             Alert.ShowInfo($"Creating '{symbol}' symbol...");
-            
-            SymbolTableRef.RefreshSymbols();
+
+            RefreshSymbolTable();
         }
         catch (Exception ex)
         {
@@ -117,7 +94,7 @@ public partial class DataManagerPage : ComponentBase, IDisposable
             Alert.ShowInfo($"Symbol '{sym}' has been deleted");
             deleteSymbolChose = null;
 
-            SymbolTableRef.RefreshSymbols();
+            RefreshSymbolTable();
         }
         catch (Exception ex)
         {
@@ -141,6 +118,7 @@ public partial class DataManagerPage : ComponentBase, IDisposable
             _importCancellation?.Cancel();
             Alert.ShowWarning("Import cancelled");
         }
+
         ImportCSVModal?.Close();
     }
 
@@ -158,7 +136,7 @@ public partial class DataManagerPage : ComponentBase, IDisposable
         {
             ImportCSVModal.Close();
             Alert.ShowError("Failed to found symbol in storage");
-            SymbolTableRef.RefreshSymbols();
+            RefreshSymbolTable();
             return;
         }
 
@@ -175,7 +153,7 @@ public partial class DataManagerPage : ComponentBase, IDisposable
             {
                 throw new Exception("Please specify a file path");
             }
-            
+
             var progress = new Progress<int>(OnImportProgressReport);
             var request = new CsvImportRequest()
             {
@@ -187,11 +165,8 @@ public partial class DataManagerPage : ComponentBase, IDisposable
                     ImporterService.ImportAsync(request, _importCancellation.Token).Result,
                 _importCancellation.Token);
 
-            await Task.Run(() =>
-            {
-                SymbolManager.ImportData(symbolInStorage.Ticker, ohlc.ToList());
-            });
-            
+            await Task.Run(() => { SymbolManager.ImportData(symbolInStorage.Ticker, ohlc.ToList()); });
+
             ImportCSVFooter.SetLoading(false);
             ImportCSVModal.Close();
 
@@ -230,5 +205,40 @@ public partial class DataManagerPage : ComponentBase, IDisposable
     public void Dispose()
     {
         _importCancellation?.Dispose();
+    }
+
+    private InstrumentSettings? _renameSymbolRequest = null;
+
+    private async Task SymbolRenameRequest(InstrumentSettings symbol)
+    {
+        _renameSymbolRequest = symbol;
+        RenameSymbolModal.Show();
+    }
+
+    private void RenameSymbolAccept(string newSymbolName)
+    {
+        try
+        {
+            SymbolManager.RenameSymbol(_renameSymbolRequest.Ticker, newSymbolName);
+            RefreshSymbolTable();
+            Alert.ShowInfo($"Renamed '{_renameSymbolRequest.Ticker}' to '{newSymbolName}'");
+        }
+        catch (Exception ex)
+        {
+            Alert.ShowError($"Failed to rename symbol: {ex.Message}");
+        }
+    }
+
+    private void RefreshSymbolTable()
+    {
+        SymbolTableRef.RefreshSymbols();
+        selectedSymbol = null;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void OnSymbolTableRefreshed()
+    {
+        selectedSymbol = null;
+        InvokeAsync(StateHasChanged);
     }
 }

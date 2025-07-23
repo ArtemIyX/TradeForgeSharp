@@ -1,9 +1,46 @@
 ﻿@using TradeForge.Components.Shared
 @using TradeForge.Core.Models
+@using TradeForge.Services
+@using TradeForge.SymbolManager.Services.Interfaces
 
-<CandleChart Symbol="@Symbol" Data="@Data"/>
+<CandleChart Symbol="@Symbol" Data="@OHLCData"/>
 
 @code {
-    [Parameter] public string Symbol { get; set; } = "DEMO";
-    [Parameter] public IEnumerable<OHLC> Data { get; set; } = Array.Empty<OHLC>();
+    [Parameter] public string Symbol { get; set; } = string.Empty;
+
+    [Inject] public ISymbolManager SymbolManager { get; set; }
+    [Inject] public IAlertService AlertService { get; set; }
+
+    public IList<OHLC> OHLCData { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(Symbol))
+            {
+                throw new Exception("Invalid symbol name, select another");
+            }
+
+            if (!SymbolManager.DoesSymbolExist(Symbol))
+            {
+                throw new Exception($"Failed to found '{Symbol}.hd' file");
+            }
+
+            InstrumentDataContainer? symbolData = SymbolManager.GetSymbolData(Symbol);
+            if (symbolData is null)
+            {
+                throw new Exception($"Failed to get '{Symbol}' symbol data ");
+            }
+
+            OHLCData = symbolData.OHLC;
+        }
+        catch (Exception ex)
+        {
+            AlertService.ShowError($"Error: {ex.Message}");
+        }
+
+        return Task.CompletedTask;
+    }
+
 }

@@ -98,7 +98,7 @@ public class SymbolManagerService : ISymbolManager
 
         return sc;
     }
-
+    
     public InstrumentSettings EditSymbol(string symbol, InstrumentSettings coverage)
     {
         if (string.IsNullOrWhiteSpace(symbol))
@@ -119,6 +119,45 @@ public class SymbolManagerService : ISymbolManager
 
         File.WriteAllBytes(fileName, TradeForgeSerializer<InstrumentSettings>.Serialize(coverage));
         return coverage;
+    }
+
+    public void RenameSymbol(string oldSymbol, string newSymbol)
+    {
+        string oldPath = Path.Combine(DataSymbolsFolder, $"{oldSymbol}.sym");
+        if (!DoesSymbolExist(oldSymbol))
+        {
+            throw new FileNotFoundException($"Symbol file '{oldSymbol}.sym' not found.", oldSymbol);
+        }
+
+        string newPath = Path.Combine(DataSymbolsFolder, $"{newSymbol}.sym");
+
+        // Make sure the new name doesn’t already exist
+        if (File.Exists(newPath))
+            throw new IOException($"Symbol file '{newSymbol}.sym' already exists.");
+
+        var symbol = GetSymbol(oldSymbol);
+        if (symbol is null)
+        {
+            throw new Exception($"Symbol file '{oldSymbol}.sym' not found.");
+        }
+
+        // Replace ticker name
+        symbol.Ticker = newSymbol;
+        File.WriteAllBytes(oldPath, TradeForgeSerializer<InstrumentSettings>.Serialize(symbol));
+        File.Move(oldPath, newPath);
+
+        if (DoesSymbolHasData(oldSymbol))
+        {
+            string dataFile = $"{oldSymbol}.hd";
+            string dataFilePath = Path.Combine(DataSymbolsFolder, dataFile);
+
+            string newDataFilePath = Path.Combine(DataSymbolsFolder, $"{newSymbol}.hd");
+
+            if (File.Exists(newDataFilePath))
+                throw new IOException($"Symbol data file '{newSymbol}.hd' already exists.");
+
+            File.Move(dataFilePath, newDataFilePath);
+        }
     }
 
     public void DeleteSymbol(string symbol)

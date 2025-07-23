@@ -193,11 +193,14 @@
     [Parameter] public EventCallback<InstrumentSettings> OnSymbolSelected { get; set; }
     [Parameter] public EventCallback<string> OnSymbolCreated { get; set; }
 
+    [Parameter] public EventCallback<InstrumentSettings> OnSymbolRename { get; set; }
     [Parameter] public EventCallback<InstrumentSettings> OnSymbolEdit { get; set; }
     [Parameter] public EventCallback<InstrumentSettings> OnSymbolDelete { get; set; }
     [Parameter] public EventCallback<InstrumentSettings> OnSymbolClear { get; set; }
     [Parameter] public EventCallback<InstrumentSettings> OnSymbolImport { get; set; }
     [Parameter] public EventCallback<InstrumentSettings> OnSymbolDownload { get; set; }
+    
+    [Parameter] public EventCallback OnRefresh { get; set; }
 
     private string? newSymbolName;
 
@@ -212,6 +215,7 @@
     {
         _contextMenuItems = new List<ContextMenuItem>
         {
+            new ContextMenuItem("Rename", RenameSymbol),
             new ContextMenuItem("Edit", EditSymbol),
             new ContextMenuItem("Delete", DeleteSymbol),
             new ContextMenuItem("Clear Data", ClearSymbol),
@@ -219,6 +223,7 @@
             new ContextMenuItem("Download", DownloadSymbol)
         };
     }
+
 
     protected override Task OnInitializedAsync()
     {
@@ -234,7 +239,7 @@
 
             if (!string.IsNullOrEmpty(searchRequest))
             {
-                symbolsFromDisk = symbolsFromDisk.Where(s => 
+                symbolsFromDisk = symbolsFromDisk.Where(s =>
                     s.Ticker?.Contains(searchRequest, StringComparison.OrdinalIgnoreCase) == true);
             }
 
@@ -253,8 +258,8 @@
                     Alert.ShowInfo($"Loaded {symbols.Count} symbols");
                 }
             }
-            
-            
+
+            OnRefresh.InvokeAsync();
         }
         catch (Exception ex)
         {
@@ -308,6 +313,8 @@
 
     #region ContextMenuCallbacks
 
+    private async Task RenameSymbol() => await OnSymbolRename.InvokeAsync(_contextSymbol);
+    
     private async Task EditSymbol() => await OnSymbolEdit.InvokeAsync(_contextSymbol);
 
     private async Task DownloadSymbol() => await OnSymbolDownload.InvokeAsync(_contextSymbol);

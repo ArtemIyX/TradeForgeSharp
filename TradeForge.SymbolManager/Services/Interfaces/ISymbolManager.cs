@@ -8,6 +8,7 @@ public interface ISymbolManager
     public InstrumentSettings? GetSymbol(string symbol);
     public InstrumentSettings CreateSymbol(string symbol);
     public InstrumentSettings EditSymbol(string symbol, InstrumentSettings coverage);
+    public void RenameSymbol(string oldSymbol, string newSymbol);
     public void DeleteSymbol(string symbol);
     public bool DoesSymbolExist(string symbol);
     public bool DoesSymbolHasData(string symbol);
