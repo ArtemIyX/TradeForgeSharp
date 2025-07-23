@@ -34,11 +34,13 @@
             <SymbolTable @ref="@SymbolTableRef"
                          OnRefresh="@OnSymbolTableRefreshed"
                          SelectedSymbol="@selectedSymbol"
-                         OnSymbolRename="@(s => SymbolRenameRequest(s))"
+                         OnSymbolClear="@ClearSymbolRequest"
+                         OnSymbolEdit="@SymbolEditRequest"
+                         OnSymbolRename="@SymbolRenameRequest"
                          OnSymbolSelected="@(s => selectedSymbol = s)"
-                         OnSymbolCreated="@(s => SymbolCreateRequest(s))"
-                         OnSymbolDelete="@(s => SymbolDeleteRequest(s))"
-                         OnSymbolImport="@(s => SymbolImportRequest(s))"/>
+                         OnSymbolCreated="@SymbolCreateRequest"
+                         OnSymbolDelete="@SymbolDeleteRequest"
+                         OnSymbolImport="@SymbolImportRequest"/>
             break;
         case "settings":
             <SymbolSettings InputSettings="@selectedSymbol"/>
@@ -56,8 +58,15 @@
                    OnSuccess="DeleteSymbolSuccess"
                    YesText="Yes"
                    NoText="No"
-                   Title="Symbol deletion"
+                   Title="Delete symbol?"
                    Message="@DeleteSymbolMessageStr"/>
+
+<ConfirmationModal @ref="@ClearSymbolModal"
+                   OnSuccess="ClearSymbolSuccess"
+                   YesText="Yes"
+                   NoText="No"
+                   Title="Symbol data clear"
+                   Message="@ClearSymbolMessageStr"/>
 
 <ChildModal Title="Import CSV" @ref="@ImportCSVModal">
     <BodyContent>

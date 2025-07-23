@@ -18,8 +18,8 @@ public partial class DataManagerPage : ComponentBase, IDisposable
     public ImportCSVDialog? ImportCSVDialog { get; set; }
     public SymbolTable SymbolTableRef { get; set; }
     public ChildModal ImportCSVModal { get; set; }
-
     public GenericPromptModal RenameSymbolModal { get; set; }
+    public ConfirmationModal ClearSymbolModal { get; set; }
 
     private void SetTab(string tab)
     {
@@ -35,12 +35,13 @@ public partial class DataManagerPage : ComponentBase, IDisposable
     private InstrumentSettings? selectedSymbol = null;
     private InstrumentSettings? deleteSymbolChose = null;
     private string DeleteSymbolMessageStr => $"Are you sure you want delete symbol '{deleteSymbolChose?.Ticker}'?";
-
+    private string ClearSymbolMessageStr => $"Are you sure you want clear symbol '{deleteSymbolChose?.Ticker}' data?";
     [Inject] public ISymbolManager SymbolManager { get; set; }
 
     [Inject] public IAlertService Alert { get; set; }
 
     [Inject] public IOhlcCsvImporter ImporterService { get; set; }
+
 
 
     private bool _isImporting = false;
@@ -239,6 +240,48 @@ public partial class DataManagerPage : ComponentBase, IDisposable
     private void OnSymbolTableRefreshed()
     {
         selectedSymbol = null;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void ClearSymbolRequest(InstrumentSettings symbol)
+    {
+        deleteSymbolChose = symbol;
+        ClearSymbolModal.Show();
+    }
+    
+    private void ClearSymbolSuccess()
+    {
+        try
+        {
+            if (deleteSymbolChose is null)
+            {
+                throw new NullReferenceException("Delete chose is null");
+            }
+
+            if (!SymbolManager.DoesSymbolHasData(deleteSymbolChose.Ticker))
+            {
+                throw new NullReferenceException($"{deleteSymbolChose.Ticker} has no data");
+            }
+
+            string sym = deleteSymbolChose.Ticker;
+            SymbolManager.ClearData(sym);
+            
+            RefreshSymbolTable();
+
+            deleteSymbolChose = null;
+            selectedSymbol = SymbolManager.GetSymbol(sym);
+            Alert.ShowInfo($"Symbol '{sym}' has been cleared");
+        }
+        catch (Exception ex)
+        {
+            Alert.ShowError($"Failed to clear symbol data: {ex.Message}");
+        }
+    }
+
+    private void SymbolEditRequest(InstrumentSettings symbol)
+    {
+        selectedSymbol = symbol;
+        ActiveTab = "settings";
         InvokeAsync(StateHasChanged);
     }
 }

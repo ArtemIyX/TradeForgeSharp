@@ -11,7 +11,7 @@
     [Inject] public ISymbolManager SymbolManager { get; set; }
     [Inject] public IAlertService AlertService { get; set; }
 
-    public IList<OHLC> OHLCData { get; set; }
+    public IList<OHLC> OHLCData { get; set; } = new List<OHLC>();
 
     protected override Task OnInitializedAsync()
     {
