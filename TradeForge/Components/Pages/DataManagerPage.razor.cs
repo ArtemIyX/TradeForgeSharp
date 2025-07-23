@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using TradeForge.Components.DataManager;
 using TradeForge.Components.DataManager.Import;
 using TradeForge.Components.Shared.Modals;
 using TradeForge.Core.Models;
@@ -15,10 +16,19 @@ public partial class DataManagerPage : ComponentBase, IDisposable
     public ConfirmationModal DeleteSymbolModal { get; set; }
     public ImportCSVFooter? ImportCSVFooter { get; set; }
     public ImportCSVDialog? ImportCSVDialog { get; set; }
-
+    public SymbolTable SymbolTableRef { get; set; }
     public ChildModal ImportCSVModal { get; set; }
 
-    private void SetTab(string tab) => ActiveTab = tab;
+    private void SetTab(string tab)
+    {
+        ActiveTab = tab;
+        switch (ActiveTab)
+        {
+            case "symbols":
+                
+                break;
+        }
+    }
 
     private InstrumentSettings? selectedSymbol = null;
     private InstrumentSettings? deleteSymbolChose = null;
@@ -29,6 +39,7 @@ public partial class DataManagerPage : ComponentBase, IDisposable
     [Inject] public IAlertService Alert { get; set; }
 
     [Inject] public IOhlcCsvImporter ImporterService { get; set; }
+
 
 
     private bool _isImporting = false;
@@ -55,34 +66,10 @@ public partial class DataManagerPage : ComponentBase, IDisposable
         })
         .ToList();
 
-    // demo array – replace with your real source
-    private List<InstrumentSettings> symbols = [];
-
-
+    
     protected override async Task OnInitializedAsync()
     {
-        RefreshSymbols();
-    }
 
-    protected void RefreshSymbols()
-    {
-        try
-        {
-            symbols = SymbolManager.GetAllSymbols().ToList();
-            StateHasChanged();
-            if (symbols.Count == 0)
-            {
-                Alert.ShowWarning($"No symbols loaded");
-            }
-            else
-            {
-                Alert.ShowInfo($"Loaded {symbols.Count} symbols");
-            }
-        }
-        catch (Exception ex)
-        {
-            Alert.ShowError($"Failed to get symbols: {ex.Message}");
-        }
     }
 
     protected void SymbolCreateRequest(string symbol)
@@ -91,7 +78,8 @@ public partial class DataManagerPage : ComponentBase, IDisposable
         {
             SymbolManager.CreateSymbol(symbol);
             Alert.ShowInfo($"Creating '{symbol}' symbol...");
-            RefreshSymbols();
+            
+            SymbolTableRef.RefreshSymbols();
         }
         catch (Exception ex)
         {
@@ -129,7 +117,7 @@ public partial class DataManagerPage : ComponentBase, IDisposable
             Alert.ShowInfo($"Symbol '{sym}' has been deleted");
             deleteSymbolChose = null;
 
-            RefreshSymbols();
+            SymbolTableRef.RefreshSymbols();
         }
         catch (Exception ex)
         {
@@ -170,7 +158,7 @@ public partial class DataManagerPage : ComponentBase, IDisposable
         {
             ImportCSVModal.Close();
             Alert.ShowError("Failed to found symbol in storage");
-            RefreshSymbols();
+            SymbolTableRef.RefreshSymbols();
             return;
         }
 

@@ -57,11 +57,11 @@
         public Action<ClassMap<OHLC>, string> Apply { get; init; } = (_, __) => { };
     }
 
-    public string FilePath { get; set; } = "";
+    public string FilePath { get; set; } = @"C:\Users\Wellsaik\Downloads\python_AAPL.csv";
 
     private readonly List<FieldMap> _fields = new()
     {
-        new() { Label = "Timestamp", Header = "Datetime", Apply = (m, h) => m.Map(x => x.Timestamp).Name(h) },
+        new() { Label = "Timestamp", Header = "Date", Apply = (m, h) => m.Map(x => x.Timestamp).Name(h) },
         new() { Label = "Open", Header = "Open", Apply = (m, h) => m.Map(x => x.Open).Name(h) },
         new() { Label = "High", Header = "High", Apply = (m, h) => m.Map(x => x.High).Name(h) },
         new() { Label = "Low", Header = "Low", Apply = (m, h) => m.Map(x => x.Low).Name(h) },

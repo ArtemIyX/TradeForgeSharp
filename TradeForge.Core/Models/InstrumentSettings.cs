@@ -28,6 +28,17 @@ public sealed class ComparisonComparer<T> : IComparer<T>
 
 public record SymbolDataSummary
 {
+    public SymbolDataSummary()
+    {
+    }
+
+    public SymbolDataSummary(SymbolDataSummary otherSummary)
+    {
+        this.MinimalTimeframe = otherSummary.MinimalTimeframe;
+        this.DateFrom = otherSummary.DateFrom;
+        this.DateTo = otherSummary.DateTo;
+    }
+
     public Timeframe MinimalTimeframe { get; init; } = Timeframe.M1;
     public DateTime DateFrom { get; init; } = DateTime.MinValue;
     public DateTime DateTo { get; init; } = DateTime.MinValue;
@@ -41,6 +52,29 @@ public record SymbolDataSummary
 [ProtoContract]
 public class InstrumentSettings
 {
+    public InstrumentSettings()
+    {
+    }
+
+    public InstrumentSettings(InstrumentSettings other)
+    {
+        if (other is null) throw new ArgumentNullException(nameof(other));
+
+        Ticker = other.Ticker;
+        Description = other.Description;
+        ContractSize = other.ContractSize;
+        Units = other.Units;
+        MinVolume = other.MinVolume;
+        MaxVolume = other.MaxVolume;
+        VolumeStep = other.VolumeStep;
+        MinTick = other.MinTick;
+        Leverage = other.Leverage;
+        TradeMode = other.TradeMode;
+        Category = other.Category;
+        
+        Summary = new SymbolDataSummary(other.Summary);
+    }
+
     [JsonPropertyName("ticker")]
     [ProtoMember(1)]
     public string Ticker { get; set; } = string.Empty;
@@ -92,7 +126,8 @@ public class InstrumentSettings
                 string.Compare(a.Ticker, b.Ticker, StringComparison.OrdinalIgnoreCase),
             nameof(Description) => (a, b) =>
                 string.Compare(a.Description, b.Description, StringComparison.OrdinalIgnoreCase),
-            nameof(Summary.MinimalTimeframe) => (a, b) => a.Summary.MinimalTimeframe.CompareTo(b.Summary.MinimalTimeframe),
+            nameof(Summary.MinimalTimeframe) => (a, b) =>
+                a.Summary.MinimalTimeframe.CompareTo(b.Summary.MinimalTimeframe),
             nameof(Summary.DateFrom) => (a, b) => a.Summary.DateFrom.CompareTo(b.Summary.DateFrom),
             nameof(Summary.DateTo) => (a, b) => a.Summary.DateTo.CompareTo(b.Summary.DateTo),
             nameof(Summary.TotalDays) => (a, b) => a.Summary.TotalDays.CompareTo(b.Summary.TotalDays),

@@ -11,7 +11,7 @@
                 <input class="input has-background-grey-darker has-text-light"
                        type="number"
                        step="any"
-                       value="@BindConverter.FormatValue(Value)"
+                       value="@BindConverter.FormatValue(Value, CultureInfo.InvariantCulture)"
                        @onchange="OnChanged" />
             </div>
         </div>
@@ -25,7 +25,7 @@
 
     private async Task OnChanged(ChangeEventArgs e)
     {
-        if (BindConverter.TryConvertTo<T>(e.Value?.ToString(), CultureInfo.InvariantCulture, out var v))
+       if (BindConverter.TryConvertTo<T>(e.Value?.ToString(), CultureInfo.InvariantCulture, out var v))
             await ValueChanged.InvokeAsync(v);
     }
 }

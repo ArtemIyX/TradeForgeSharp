@@ -31,7 +31,7 @@
     @switch (ActiveTab)
     {
         case "symbols":
-            <SymbolTable Symbols="@symbols"
+            <SymbolTable @ref="@SymbolTableRef"
                          SelectedSymbol="@selectedSymbol"
                          OnSymbolSelected="@(s => selectedSymbol = s)"
                          OnSymbolCreated="@(s => SymbolCreateRequest(s))"
@@ -39,7 +39,7 @@
                          OnSymbolImport="@(s => SymbolImportRequest(s))"/>
             break;
         case "settings":
-            <SymbolSettings/>
+            <SymbolSettings InputSettings="@selectedSymbol"/>
             break;
         case "ohlc":
             <OHLCTable SelectedSymbol="@selectedSymbol"/>
@@ -50,19 +50,19 @@
     }
 </div>
 
-<ConfirmationModal @ref="DeleteSymbolModal"
+<ConfirmationModal @ref="@DeleteSymbolModal"
                    OnSuccess="DeleteSymbolSuccess"
                    YesText="Yes"
                    NoText="No"
                    Title="Symbol deletion"
                    Message=@DeleteSymbolMessageStr/>
 
-<ChildModal Title="Import CSV" @ref="ImportCSVModal">
+<ChildModal Title="Import CSV" @ref="@ImportCSVModal">
     <BodyContent>
-        <ImportCSVDialog @ref="ImportCSVDialog"/>
+        <ImportCSVDialog @ref="@ImportCSVDialog"/>
     </BodyContent>
     <FooterContent>
-        <ImportCSVFooter @ref="ImportCSVFooter" 
+        <ImportCSVFooter @ref="@ImportCSVFooter" 
                          OnDiscard="OnImportDiscard"
                          OnImport="OnImport"/>
     </FooterContent>

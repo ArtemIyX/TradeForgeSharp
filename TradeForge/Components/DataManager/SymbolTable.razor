@@ -8,6 +8,8 @@
 @using TradeForge.Components.Shared
 @using TradeForge.Components.Shared.Modals
 @using TradeForge.Models
+@using TradeForge.Services
+@using TradeForge.SymbolManager.Services.Interfaces
 @inject IJSRuntime JS
 
 <button class="button is-primary" @onclick="ShowCreateSymbolModal">
@@ -144,6 +146,10 @@
     private GenericPromptModal _createSymbolModalRef = default!;
 
     [Inject] protected ILogger<SymbolTable> Logger { get; set; }
+    [Inject] public ISymbolManager SymbolManager { get; set; }
+
+    [Inject] public IAlertService Alert { get; set; }
+    
     private ContextMenu? _contextMenuRef;
 
     private List<ContextMenuItem> _contextMenuItems;
@@ -151,7 +157,7 @@
     private InstrumentSettings? _contextSymbol = null;
 
     [Parameter] public InstrumentSettings? SelectedSymbol { get; set; }
-    [Parameter] public List<InstrumentSettings> Symbols { get; set; } = [];
+
     [Parameter] public EventCallback<InstrumentSettings> OnSymbolSelected { get; set; }
     [Parameter] public EventCallback<string> OnSymbolCreated { get; set; }
 
@@ -165,6 +171,8 @@
 
     private string? sortBy;
     private bool sortDesc;
+    
+    private List<InstrumentSettings> symbols = [];
 
     public SymbolTable()
     {
@@ -177,12 +185,38 @@
             new ContextMenuItem("Download", DownloadSymbol)
         };
     }
+
+    protected override Task OnInitializedAsync()
+    {
+        RefreshSymbols();
+        return Task.CompletedTask;
+    }
     
+    public void RefreshSymbols()
+    {
+        try
+        {
+            symbols = SymbolManager.GetAllSymbols().ToList();
+            InvokeAsync(StateHasChanged);
+            if (symbols.Count == 0)
+            {
+                Alert.ShowWarning($"No symbols loaded");
+            }
+            else
+            {
+                Alert.ShowInfo($"Loaded {symbols.Count} symbols");
+            }
+        }
+        catch (Exception ex)
+        {
+            Alert.ShowError($"Failed to get symbols: {ex.Message}");
+        }
+    }
 
     private IEnumerable<InstrumentSettings> SortedSymbols =>
         sortBy is null
-            ? Symbols
-            : Symbols.OrderBy(x => x, new ComparisonComparer<InstrumentSettings>(InstrumentSettings.GetComparer(sortBy, sortDesc)));
+            ? symbols
+            : symbols.OrderBy(x => x, new ComparisonComparer<InstrumentSettings>(InstrumentSettings.GetComparer(sortBy, sortDesc)));
 
 
     private async Task SymbolCreateRequest(string symbol)

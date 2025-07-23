@@ -2,23 +2,25 @@
 @using TradeForge.Core.Extensions
 @using TradeForge.Core.Models
 @using TradeForge.Components.DataManager.Inputs
+@using TradeForge.Services
+@using TradeForge.SymbolManager.Services.Interfaces
 
 <div class="columns">
     <div class="column is-half-desktop is-offset-one-quarter-desktop">
         <div class="box has-background-dark">
 
-            <TextInput Label="Ticker" @bind-Value="Settings.Ticker" />
-            <TextInput Label="Description" @bind-Value="Settings.Description" />
-            <TextInput Label="Units" @bind-Value="Settings.Units" />
+            <TextInput Label="Ticker" @bind-Value="Current.Ticker"/>
+            <TextInput Label="Description" @bind-Value="Current.Description"/>
+            <TextInput Label="Units" @bind-Value="Current.Units"/>
 
-            <NumberInput Label="Contract Size" @bind-Value="Settings.ContractSize" />
-            <NumberInput Label="Min Volume" @bind-Value="Settings.MinVolume" />
-            <NumberInput Label="Max Volume" @bind-Value="Settings.MaxVolume" />
-            <NumberInput Label="Volume Step" @bind-Value="Settings.VolumeStep" />
-            <NumberInput Label="Min Tick" @bind-Value="Settings.MinTick" />
-            <NumberInput Label="Leverage" @bind-Value="Settings.Leverage" />
+            <NumberInput Label="Contract Size" @bind-Value="Current.ContractSize"/>
+            <NumberInput Label="Min Volume" @bind-Value="Current.MinVolume"/>
+            <NumberInput Label="Max Volume" @bind-Value="Current.MaxVolume"/>
+            <NumberInput Label="Volume Step" @bind-Value="Current.VolumeStep"/>
+            <NumberInput Label="Min Tick" @bind-Value="Current.MinTick"/>
+            <NumberInput Label="Leverage" @bind-Value="Current.Leverage"/>
 
-            <EnumInput Label="Trade Mode" @bind-Value="Settings.TradeMode" />
+            <EnumInput Label="Trade Mode" @bind-Value="Current.TradeMode"/>
 
             <div class="field is-grouped is-grouped-right mt-5">
                 <div class="control">
@@ -35,45 +37,77 @@
 
 @code
 {
-    private InstrumentSettings Settings { get; set; } = new();
-    private InstrumentSettings? _original;
+
+    [Inject] protected ISymbolManager SymbolManager { get; set; }
+
+    [Inject] protected IAlertService AlertService { get; set; }
+
+    [Parameter] public InstrumentSettings InputSettings { get; set; } = new InstrumentSettings();
+
+    private InstrumentSettings Current { get; set; } = new();
+
 
     protected override async Task OnInitializedAsync()
     {
-        _original = await LoadAsync();
-        Settings = new InstrumentSettings();
-    }
-
-    private async Task SaveAsync()
-    {
-        await SaveAsync(Settings);
-        _original = new InstrumentSettings();
-    }
-
-    private async Task ResetAsync()
-    {
-        Settings = new InstrumentSettings();
-    }
-
-    /* --- persistence stubs --- */
-    private async Task<InstrumentSettings> LoadAsync()
-    {
-        // TODO: load from service or preferences
-        return await Task.FromResult(new InstrumentSettings
+        try
         {
-            Ticker = "EURUSD",
-            Description = "EUR/USD",
-            ContractSize = 1,
-            Units = "Share(s)",
-            MinVolume = 1,
-            MaxVolume = 100_000_000,
-            VolumeStep = 0.01,
-            MinTick = 0.00001,
-            Leverage = 0.05,
-            TradeMode = TradeMode.Full
+            await ResetAsync();
+        }
+        catch (Exception ex)
+        {
+            AlertService.ShowError($"Error: {ex.Message}");
+        }
+    }
+
+    private Task SaveAsync()
+    {
+        return Task.Run(() =>
+        {
+            try
+            {
+                // Apply to parameter 
+                SymbolManager.EditSymbol(InputSettings.Ticker, Current);
+
+                InputSettings = new InstrumentSettings(Current);
+
+                AlertService.ShowInfo($"Saved '{Current.Ticker} to disk'");
+            }
+            catch (Exception ex)
+            {
+                AlertService.ShowError($"Error: {ex.Message}");
+            }
         });
     }
 
-    private async Task SaveAsync(InstrumentSettings settings) =>
-        await Task.CompletedTask; // TODO: persist
+    private Task ResetAsync()
+    {
+        return Task.Run(async () =>
+        {
+            try
+            {
+                Current = await LoadAsync();
+                AlertService.ShowInfo($"Loaded '{Current.Ticker}' from disk");
+            }
+            catch (Exception ex)
+            {
+                AlertService.ShowError($"Error: {ex.Message}");
+            }
+        });
+    }
+
+    /* --- persistence stubs --- */
+    private Task<InstrumentSettings> LoadAsync()
+    {
+        return Task.Run(() =>
+        {
+            InstrumentSettings? symbol = SymbolManager.GetSymbol(InputSettings.Ticker);
+            if (symbol is null)
+            {
+                throw new Exception($"Failed to get symbol '{InputSettings.Ticker}'");
+            }
+
+            return symbol;
+        });
+    }
+
 }
