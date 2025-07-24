@@ -11,6 +11,7 @@
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0-preview.6.25358.103" />
       <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.0-preview.6.25358.103" />
       <PackageReference Include="protobuf-net" Version="3.3.0-g6785ecbb35" />
+      <PackageReference Include="Quotes.YahooFinance" Version="0.0.7" />
     </ItemGroup>
 
     <ItemGroup>

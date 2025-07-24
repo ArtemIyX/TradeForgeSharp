@@ -4,6 +4,7 @@
 @using TradeForge.Components.DataManager
 @using TradeForge.Components.Shared.Modals
 @using TradeForge.Components.DataManager.Import
+@using TradeForge.Components.DataManager.Download
 
 <!-- Bulma tabs -->
 <div class="tabs is-boxed">
@@ -40,7 +41,8 @@
                          OnSymbolSelected="@(s => selectedSymbol = s)"
                          OnSymbolCreated="@SymbolCreateRequest"
                          OnSymbolDelete="@SymbolDeleteRequest"
-                         OnSymbolImport="@SymbolImportRequest"/>
+                         OnSymbolImport="@SymbolImportRequest"
+                         OnSymbolDownload="@SymbolDownloadRequest"/>
             break;
         case "settings":
             <SymbolSettings InputSettings="@selectedSymbol"/>
@@ -85,3 +87,12 @@
                     Label="Enter new symbol name:"
                     ButtonText="Rename"
                     Placeholder="AAPL"/>
+                    
+<ChildModal Title="Download symbol" @ref="@DownloadSymbolModal">
+    <BodyContent>
+        <DownloadSymbolDialog @ref="@DownloadSymbolDialog"/>
+    </BodyContent>
+    <FooterContent>
+        <DownloadSymbolFooter/>
+    </FooterContent>
+</ChildModal>

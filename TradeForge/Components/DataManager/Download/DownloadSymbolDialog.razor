@@ -1,0 +1,80 @@
+﻿@using System.ComponentModel
+@using TradeForge.Core.Enums
+@using TradeForge.Models
+
+<table class="table is-boxed is-narrow is-fullwidth mb-2">
+    <tbody>
+    <tr>
+        <td class="has-text-weight-semibold is-vcentered is-narrow"
+            style="white-space:nowrap;">
+            Symbol Name
+        </td>
+        <td style="padding: 0.25rem 0;">
+            <input class="input is-small"
+                   type="text"
+                   placeholder="e.g. EURUSD"
+                   @bind="SymbolName"/>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="has-text-weight-semibold is-vcentered is-narrow">
+            From Date
+        </td>
+        <td style="padding: 0.25rem 0;">
+            <input class="input is-small"
+                   type="date"
+                   @bind="FromDate"/>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="has-text-weight-semibold is-vcentered is-narrow">
+            To Date
+        </td>
+        <td style="padding: 0.25rem 0;">
+            <input class="input is-small"
+                   type="date"
+                   @bind="ToDate"/>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="has-text-weight-semibold is-vcentered is-narrow">
+            Timeframe
+        </td>
+        <td style="padding: 0.25rem 0;">
+            <div class="select is-small is-fullwidth">
+                <select @bind="SelectedTimeframe">
+                    @foreach (var tf in Enum.GetValues<Timeframe>())
+                    {
+                        <option value="@tf">@GetDescription(tf)</option>
+                    }
+                </select>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+
+@code {
+    public string SymbolName { get; set; } = string.Empty;
+    public DateTime FromDate { get; set; } = DateTime.Today.AddDays(-30);
+    public DateTime ToDate { get; set; } = DateTime.Today;
+    public Timeframe SelectedTimeframe { get; set; } = Timeframe.D;
+
+    /// <summary>
+    /// Builds a request object with current UI values.
+    /// </summary>
+    public SymbolDownloadRequest BuildRequest() =>
+        new(SymbolName, FromDate, ToDate, SelectedTimeframe);
+
+    private static string GetDescription(Enum value)
+    {
+        var fi = value.GetType().GetField(value.ToString());
+        var attr = (DescriptionAttribute?)Attribute.GetCustomAttribute(fi!, typeof(DescriptionAttribute));
+        return attr?.Description ?? value.ToString();
+    }
+
+}

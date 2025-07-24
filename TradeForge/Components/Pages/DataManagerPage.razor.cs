@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Quotes.YahooFinance;
 using TradeForge.Components.DataManager;
+using TradeForge.Components.DataManager.Download;
 using TradeForge.Components.DataManager.Import;
 using TradeForge.Components.Shared.Modals;
 using TradeForge.Core.Models;
@@ -20,6 +22,8 @@ public partial class DataManagerPage : ComponentBase, IDisposable
     public ChildModal ImportCSVModal { get; set; }
     public GenericPromptModal RenameSymbolModal { get; set; }
     public ConfirmationModal ClearSymbolModal { get; set; }
+    public ChildModal DownloadSymbolModal { get; set; }
+    public DownloadSymbolDialog? DownloadSymbolDialog { get; set; }
 
     private void SetTab(string tab)
     {
@@ -33,9 +37,9 @@ public partial class DataManagerPage : ComponentBase, IDisposable
     }
 
     private InstrumentSettings? selectedSymbol = null;
-    private InstrumentSettings? deleteSymbolChose = null;
-    private string DeleteSymbolMessageStr => $"Are you sure you want delete symbol '{deleteSymbolChose?.Ticker}'?";
-    private string ClearSymbolMessageStr => $"Are you sure you want clear symbol '{deleteSymbolChose?.Ticker}' data?";
+    private InstrumentSettings? symbolChose = null;
+    private string DeleteSymbolMessageStr => $"Are you sure you want delete symbol '{symbolChose?.Ticker}'?";
+    private string ClearSymbolMessageStr => $"Are you sure you want clear symbol '{symbolChose?.Ticker}' data?";
     [Inject] public ISymbolManager SymbolManager { get; set; }
 
     [Inject] public IAlertService Alert { get; set; }
@@ -43,9 +47,8 @@ public partial class DataManagerPage : ComponentBase, IDisposable
     [Inject] public IOhlcCsvImporter ImporterService { get; set; }
 
 
-
     private bool _isImporting = false;
-    
+
     protected override async Task OnInitializedAsync()
     {
     }
@@ -70,7 +73,7 @@ public partial class DataManagerPage : ComponentBase, IDisposable
     {
         try
         {
-            deleteSymbolChose = arg;
+            symbolChose = arg;
             DeleteSymbolModal.Show();
         }
         catch (Exception ex)
@@ -83,17 +86,17 @@ public partial class DataManagerPage : ComponentBase, IDisposable
     {
         try
         {
-            if (deleteSymbolChose is null)
+            if (symbolChose is null)
             {
                 throw new NullReferenceException("Delete chose is null");
             }
 
-            string sym = deleteSymbolChose.Ticker;
+            string sym = symbolChose.Ticker;
 
             SymbolManager.DeleteSymbol(sym);
 
             Alert.ShowInfo($"Symbol '{sym}' has been deleted");
-            deleteSymbolChose = null;
+            symbolChose = null;
 
             RefreshSymbolTable();
         }
@@ -245,30 +248,30 @@ public partial class DataManagerPage : ComponentBase, IDisposable
 
     private void ClearSymbolRequest(InstrumentSettings symbol)
     {
-        deleteSymbolChose = symbol;
+        symbolChose = symbol;
         ClearSymbolModal.Show();
     }
-    
+
     private void ClearSymbolSuccess()
     {
         try
         {
-            if (deleteSymbolChose is null)
+            if (symbolChose is null)
             {
                 throw new NullReferenceException("Delete chose is null");
             }
 
-            if (!SymbolManager.DoesSymbolHasData(deleteSymbolChose.Ticker))
+            if (!SymbolManager.DoesSymbolHasData(symbolChose.Ticker))
             {
-                throw new NullReferenceException($"{deleteSymbolChose.Ticker} has no data");
+                throw new NullReferenceException($"{symbolChose.Ticker} has no data");
             }
 
-            string sym = deleteSymbolChose.Ticker;
+            string sym = symbolChose.Ticker;
             SymbolManager.ClearData(sym);
-            
+
             RefreshSymbolTable();
 
-            deleteSymbolChose = null;
+            symbolChose = null;
             selectedSymbol = SymbolManager.GetSymbol(sym);
             Alert.ShowInfo($"Symbol '{sym}' has been cleared");
         }
@@ -283,5 +286,11 @@ public partial class DataManagerPage : ComponentBase, IDisposable
         selectedSymbol = symbol;
         ActiveTab = "settings";
         InvokeAsync(StateHasChanged);
+    }
+
+    private void SymbolDownloadRequest(InstrumentSettings symbol)
+    {
+        symbolChose = symbol;
+        DownloadSymbolModal.Show();
     }
 }

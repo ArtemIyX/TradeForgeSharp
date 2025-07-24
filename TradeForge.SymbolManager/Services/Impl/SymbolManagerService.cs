@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Quotes.YahooFinance;
 using TradeForge.Core.Generic;
 using TradeForge.Core.Models;
 using TradeForge.SymbolManager.Services.Interfaces;
@@ -22,6 +23,8 @@ public class SymbolManagerService : ISymbolManager
 
     public ICollection<InstrumentSettings> GetAllSymbols()
     {
+       
+
         if (!Directory.Exists(DataSymbolsFolder))
             return Array.Empty<InstrumentSettings>();
 
