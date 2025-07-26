@@ -93,6 +93,9 @@
         <DownloadSymbolDialog @ref="@DownloadSymbolDialog"/>
     </BodyContent>
     <FooterContent>
-        <DownloadSymbolFooter/>
+        <DownloadSymbolFooter 
+            @ref="@DownloadSymbolFooter"
+            OnDownload="@OnSymbolDownloadAccept"
+            OnDiscard="@OnSymbolDownloadDiscard"/>
     </FooterContent>
 </ChildModal>

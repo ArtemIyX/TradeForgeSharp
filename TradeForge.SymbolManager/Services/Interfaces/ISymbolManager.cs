@@ -1,4 +1,5 @@
-﻿using TradeForge.Core.Models;
+﻿using TradeForge.Core.Enums;
+using TradeForge.Core.Models;
 
 namespace TradeForge.SymbolManager.Services.Interfaces;
 
@@ -12,8 +13,9 @@ public interface ISymbolManager
     public void DeleteSymbol(string symbol);
     public bool DoesSymbolExist(string symbol);
     public bool DoesSymbolHasData(string symbol);
-    public int GetSymbolRowCount(string symbol);
     public InstrumentDataContainer? GetSymbolData(string symbol);
+    public Task<List<OHLC>> DownloadDailySymbolData(string symbol,
+        DateTime startDate, DateTime endDate);
     public void ImportData(string symbol, List<OHLC> ohlc);
     public void ClearData(string symbol);
 }

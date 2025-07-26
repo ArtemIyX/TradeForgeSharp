@@ -5,6 +5,7 @@ using TradeForge.Components.DataManager.Download;
 using TradeForge.Components.DataManager.Import;
 using TradeForge.Components.Shared.Modals;
 using TradeForge.Core.Models;
+using TradeForge.Models;
 using TradeForge.Services;
 using TradeForge.SymbolManager.Models;
 using TradeForge.SymbolManager.Services.Interfaces;
@@ -24,6 +25,7 @@ public partial class DataManagerPage : ComponentBase, IDisposable
     public ConfirmationModal ClearSymbolModal { get; set; }
     public ChildModal DownloadSymbolModal { get; set; }
     public DownloadSymbolDialog? DownloadSymbolDialog { get; set; }
+    public DownloadSymbolFooter? DownloadSymbolFooter { get; set; }
 
     private void SetTab(string tab)
     {
@@ -292,5 +294,55 @@ public partial class DataManagerPage : ComponentBase, IDisposable
     {
         symbolChose = symbol;
         DownloadSymbolModal.Show();
+    }
+
+    private void OnSymbolDownloadDiscard()
+    {
+        DownloadSymbolModal?.Close();
+        symbolChose = null;
+    }
+
+    private async Task OnSymbolDownloadAccept()
+    {
+        if (DownloadSymbolFooter.IsDownloading)
+        {
+            return;
+        }
+        
+        InstrumentSettings? symbolInStorage =
+            symbolChose ?? SymbolManager.GetSymbol(symbolChose?.Ticker ?? "");
+        if (symbolInStorage is null)
+        {
+            DownloadSymbolModal.Close();
+            Alert.ShowError($"Failed to found symbol in storage");
+            RefreshSymbolTable();
+            return;
+        }
+
+        try
+        {
+            DownloadSymbolFooter.ErrorMessage = null;
+            DownloadSymbolFooter.IsDownloading = true;
+            SymbolDownloadRequest request = DownloadSymbolDialog.BuildRequest();
+            
+            List<OHLC> downloadedOHLC = await SymbolManager.DownloadDailySymbolData(request.Symbol, request.From, request.To);
+            if (downloadedOHLC.Count <= 0)
+            {
+                throw new Exception(
+                    $"No '{request.Symbol}' data for {request.From.ToShortDateString()} - {request.To.ToShortDateString()}");
+            }
+            
+            await Task.Run(() => { SymbolManager.ImportData(symbolInStorage.Ticker, downloadedOHLC); });
+            DownloadSymbolFooter.IsDownloading = false;
+            DownloadSymbolModal.Close();
+            Alert.ShowInfo($"Downloaded {downloadedOHLC.Count} rows for '{symbolChose?.Ticker} ({request.Symbol})'");
+            symbolChose = null;
+            RefreshSymbolTable();
+        }
+        catch (Exception ex)
+        {
+            DownloadSymbolFooter.IsDownloading = false;
+            DownloadSymbolFooter.ErrorMessage = ex.Message;
+        }
     }
 }

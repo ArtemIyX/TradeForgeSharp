@@ -39,7 +39,7 @@
         </td>
     </tr>
 
-    <tr>
+    @*<tr>
         <td class="has-text-weight-semibold is-vcentered is-narrow">
             Timeframe
         </td>
@@ -53,7 +53,7 @@
                 </select>
             </div>
         </td>
-    </tr>
+    </tr>*@
     </tbody>
 </table>
 
@@ -62,13 +62,13 @@
     public string SymbolName { get; set; } = string.Empty;
     public DateTime FromDate { get; set; } = DateTime.Today.AddDays(-30);
     public DateTime ToDate { get; set; } = DateTime.Today;
-    public Timeframe SelectedTimeframe { get; set; } = Timeframe.D;
+    //public Timeframe SelectedTimeframe { get; set; } = Timeframe.D;
 
     /// <summary>
     /// Builds a request object with current UI values.
     /// </summary>
     public SymbolDownloadRequest BuildRequest() =>
-        new(SymbolName, FromDate, ToDate, SelectedTimeframe);
+        new(SymbolName, FromDate, ToDate);
 
     private static string GetDescription(Enum value)
     {

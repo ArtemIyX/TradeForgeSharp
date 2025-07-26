@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.FSharp.Collections;
 using Quotes.YahooFinance;
+using TradeForge.Core.Enums;
 using TradeForge.Core.Generic;
 using TradeForge.Core.Models;
 using TradeForge.SymbolManager.Services.Interfaces;
@@ -9,7 +11,6 @@ namespace TradeForge.SymbolManager.Services.Impl;
 public class SymbolManagerService : ISymbolManager
 {
     private readonly ILogger<SymbolManagerService> _logger;
-
 
     //TODO: Folder mannager
     private static readonly string DataSymbolsFolder = Path.Combine(
@@ -23,8 +24,6 @@ public class SymbolManagerService : ISymbolManager
 
     public ICollection<InstrumentSettings> GetAllSymbols()
     {
-       
-
         if (!Directory.Exists(DataSymbolsFolder))
             return Array.Empty<InstrumentSettings>();
 
@@ -101,7 +100,7 @@ public class SymbolManagerService : ISymbolManager
 
         return sc;
     }
-    
+
     public InstrumentSettings EditSymbol(string symbol, InstrumentSettings coverage)
     {
         if (string.IsNullOrWhiteSpace(symbol))
@@ -192,11 +191,6 @@ public class SymbolManagerService : ISymbolManager
         return File.Exists(fullPath);
     }
 
-    public int GetSymbolRowCount(string symbol)
-    {
-        throw new NotImplementedException();
-    }
-
     public InstrumentDataContainer? GetSymbolData(string symbol)
     {
         if (string.IsNullOrWhiteSpace(symbol))
@@ -210,6 +204,29 @@ public class SymbolManagerService : ISymbolManager
 
         byte[] bytes = File.ReadAllBytes(fullPath);
         return TradeForgeSerializer<InstrumentDataContainer>.Deserialize(bytes);
+    }
+
+    public Task<List<OHLC>> DownloadDailySymbolData(string symbol, DateTime startDate, DateTime endDate)
+    {
+        return Task.Run<List<OHLC>>(() =>
+        {
+            FSharpList<Quote>? res = YahooFinance.History(symbol, startDate, endDate, Interval.Daily, true);
+            if (res == null)
+            {
+                throw new Exception($"Failed to get daily quotes for '{symbol}'");
+            }
+
+            List<OHLC> list = res.Select(x => new OHLC()
+            {
+                Timestamp = x.Date,
+                Open = x.Open,
+                High = x.High,
+                Low = x.Low,
+                Close = x.Close,
+                Volume = (double)x.Volume
+            }).ToList();
+            return list;
+        });
     }
 
     public void ImportData(string symbol, List<OHLC> ohlc)
