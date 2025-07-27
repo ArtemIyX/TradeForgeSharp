@@ -52,10 +52,16 @@ public sealed class TaskRunner<TResult> : IDisposable
             token.ThrowIfCancellationRequested();
             _callback(result);
         }
-        catch (OperationCanceledException) { }
+        catch (OperationCanceledException)
+        {
+        }
         catch
         {
             throw;
+        }
+        finally
+        {
+            _runningTask = null;
         }
     }
 

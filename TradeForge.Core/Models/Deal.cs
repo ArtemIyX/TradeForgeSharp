@@ -4,7 +4,7 @@ using TradeForge.Core.Generic;
 
 namespace TradeForge.Core.Models;
 
-public class Deal
+public class Deal : ICloneable
 {
     [JsonPropertyName("id")]
     public string Id { get; set; } = default!;
@@ -37,4 +37,21 @@ public class Deal
     [JsonPropertyName("status")]
     [JsonConverter(typeof(EnumMemberJsonConverter<DealStatus>))]
     public DealStatus Status { get; set; }
+
+    public object Clone()
+    {
+        return new Deal
+        {
+            Id         = this.Id,
+            Ticker     = this.Ticker,
+            Volume     = this.Volume,
+            Side       = this.Side,
+            OpenPrice  = this.OpenPrice,
+            OpenTime   = this.OpenTime,
+            Profit     = this.Profit,
+            ClosePrice = this.ClosePrice,
+            CloseTime  = this.CloseTime,
+            Status     = this.Status
+        };
+    }
 }
