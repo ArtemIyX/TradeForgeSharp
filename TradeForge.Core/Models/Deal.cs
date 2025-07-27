@@ -4,6 +4,7 @@ using TradeForge.Core.Generic;
 
 namespace TradeForge.Core.Models;
 
+[Serializable]
 public class Deal : ICloneable
 {
     [JsonPropertyName("id")]

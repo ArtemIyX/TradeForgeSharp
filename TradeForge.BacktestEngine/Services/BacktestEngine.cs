@@ -6,7 +6,7 @@ using TradeForge.Core.Models;
 
 namespace TradeForge.BacktestEngine.Services;
 
-public class BacktestEngine : IDisposable
+public class BacktestEngine : IDisposable, IAsyncDisposable
 {
     public Account? BacktestAccount { get; protected set; } = null;
     public BacktestInitParams? InitParams { get; protected set; } = null;
@@ -14,9 +14,38 @@ public class BacktestEngine : IDisposable
     protected bool IsRunning { get; set; } = false;
     public event Action<BacktestError>? Faulted;
     public event Action? Canceled;
-
+    public event Action<BacktestResult>? Finished;
+    
     private Guid? _backtestId = null;
+    
+    private readonly TaskCompletionSource<BacktestResult?> _tcsCompletion =
+        new(TaskCreationOptions.RunContinuationsAsynchronously);
 
+
+
+    /// <summary>
+    /// Returns a task that completes when the backtest has finished, been cancelled,
+    /// or the supplied <paramref name="token"/> requests cancellation.
+    /// Throws <see cref="OperationCanceledException"/> if <paramref name="token"/>
+    /// fired before the backtest completed.
+    /// </summary>
+    public async Task<BacktestResult?> AwaitCompletionAsync(CancellationToken token = default)
+    {
+        // Fast-path: already finished
+        if (_tcsCompletion.Task.IsCompleted)
+            return await _tcsCompletion.Task;
+
+        // Create a Task that completes when either the TCS or the token fires
+        var tcsToken = new TaskCompletionSource<bool>();
+        await using (token.Register(() => tcsToken.TrySetResult(true)))
+        {
+            var completed = await Task.WhenAny(_tcsCompletion.Task, tcsToken.Task);
+            if (completed == tcsToken.Task)
+                throw new OperationCanceledException(token);
+
+            return await _tcsCompletion.Task; // will not throw here
+        }
+    }
     public Guid BacktestId
     {
         get
@@ -38,14 +67,10 @@ public class BacktestEngine : IDisposable
 
             InitParams = initParams;
             if (initParams.Data.Count <= 0)
-            {
                 throw new ArgumentException("Data is empty");
-            }
 
             if (initParams.Instrument is null)
-            {
                 throw new ArgumentException("Instrument is empty");
-            }
 
             BacktestAccount = new Account()
             {
@@ -63,12 +88,13 @@ public class BacktestEngine : IDisposable
         catch (Exception ex)
         {
             OnFaulted(ex);
+            _tcsCompletion.TrySetResult(null);   // never started
         }
     }
 
     public void Cancel()
     {
-        if (IsRunning)
+        if (!IsRunning)
         {
             return;
         }
@@ -90,10 +116,7 @@ public class BacktestEngine : IDisposable
         }
     }
 
-    protected void TaskRunnerCallback(BacktestResult result)
-    {
-        IsRunning = false;
-    }
+
 
     protected async Task<BacktestResult> TaskRunnerWork()
     {
@@ -128,15 +151,32 @@ public class BacktestEngine : IDisposable
 
     public void Dispose()
     {
-        TaskRunner?.Cancel();
+        DisposeAsync().AsTask().GetAwaiter().GetResult();
+    }
+    
+    public async ValueTask DisposeAsync()
+    {
+        if (IsRunning)
+        {
+            Cancel();                       // request graceful stop
+            await AwaitCompletionAsync();    // wait until it really stopped
+        }
+
         TaskRunner?.Dispose();
         TaskRunner = null;
-        IsRunning = false;
     }
-
+    protected void TaskRunnerCallback(BacktestResult result)
+    {
+        IsRunning = false;
+        _tcsCompletion.TrySetResult(result);   // success
+        OnFinished(result);
+    }
 
     protected virtual void OnFaulted(Exception ex)
     {
+        IsRunning = false;
+        _tcsCompletion.TrySetResult(null);     // failure
+        
         // BacktestAccount should be valid
         if (BacktestAccount is null)
         {
@@ -162,9 +202,17 @@ public class BacktestEngine : IDisposable
             }
         });
     }
-
     protected virtual void OnCanceled()
     {
+        _tcsCompletion.TrySetResult(null);
         Canceled?.Invoke();
     }
+
+
+    protected virtual void OnFinished(BacktestResult obj)
+    {
+        Finished?.Invoke(obj);
+    }
+
+
 }

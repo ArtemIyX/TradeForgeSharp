@@ -38,7 +38,7 @@ public sealed class TaskRunner<TResult> : IDisposable
     public Task Start()
     {
         if (_runningTask != null)
-            throw new InvalidOperationException("TaskRunner<TResult> уже запущен.");
+            throw new InvalidOperationException("TaskRunner<TResult> is already running");
 
         _runningTask = RunAsync(_cts.Token);
         return _runningTask;
