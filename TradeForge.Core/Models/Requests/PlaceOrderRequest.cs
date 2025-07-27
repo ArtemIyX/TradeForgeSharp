@@ -5,7 +5,7 @@ using TradeForge.Core.Generic;
 
 namespace TradeForge.Core.Models.Requests;
 
-public class PlaceOrderRequest : UrlEncodedBody
+public class PlaceOrderRequest : AccountIdRequest
 {
     public string Ticker { get; init; } = default!;
     public OrderSide Side { get; init; }
@@ -16,7 +16,7 @@ public class PlaceOrderRequest : UrlEncodedBody
     public double? TakeProfit { get; init; }
     public OrderType Type { get; init; }
     
-    public override string ToFormUrlEncoded()
+    public override string FormUrlEncoded()
     {
         var sb = new StringBuilder(256);
         Append(sb, "ticker", Ticker);

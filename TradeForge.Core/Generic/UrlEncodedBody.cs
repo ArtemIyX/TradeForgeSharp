@@ -5,7 +5,9 @@ namespace TradeForge.Core.Generic;
 
 public abstract class UrlEncodedBody
 {
-    public abstract string ToFormUrlEncoded();
+    public abstract string FormUrlEncoded();
+
+    public abstract string PathQuery(string basePath, string? existingQuery = null);
 
     public virtual void Append(StringBuilder sb, string key, string? value)
     {
