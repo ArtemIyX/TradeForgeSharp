@@ -3,7 +3,7 @@ using System.Web;
 
 namespace TradeForge.Core.Generic;
 
-public abstract class IUrlencodedBody
+public abstract class UrlEncodedBody
 {
     public abstract string ToFormUrlEncoded();
 
