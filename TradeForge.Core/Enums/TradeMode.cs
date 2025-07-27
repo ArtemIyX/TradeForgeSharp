@@ -1,24 +1,23 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Runtime.Serialization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using ProtoBuf;
+using TradeForge.Core.Generic;
 
 namespace TradeForge.Core.Enums;
 
 [ProtoContract]
+[JsonConverter(typeof(EnumMemberJsonConverter<TradeMode>))]
 public enum TradeMode
 {
-    [JsonPropertyName("full")]
-    Full,
+    [EnumMember(Value = "full")] Full,
 
-    [JsonPropertyName("buy_only")]
-    BuyOnly,
+    [EnumMember(Value = "buy_only")] BuyOnly,
 
-    [JsonPropertyName("sell_only")]
-    SellOnly,
+    [EnumMember(Value = "sell_only")] SellOnly,
 
-    [JsonPropertyName("close_only")]
-    CloseOnly,
+    [EnumMember(Value = "close_only")] CloseOnly,
 
-    [JsonPropertyName("disabled")]
-    Disabled
+    [EnumMember(Value = "disabled")] Disabled
 }
 
