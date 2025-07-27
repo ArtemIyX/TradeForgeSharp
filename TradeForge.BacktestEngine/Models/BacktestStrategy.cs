@@ -8,13 +8,18 @@ public abstract class BacktestStrategy
     public abstract Task OnBar(Services.BacktestEngine engine, Account account, 
         int index, DateTime[] dates,
         double[] open, double[] high, double[] low, double[] close);
+    protected abstract IEnumerable<StrategyParameter> DefineParameters();
     
-    public List<StrategyParameter> Parameters { get; } = new();
+    protected List<StrategyParameter>? CachedParams { get; set; } = null;
+
+    // Public getter (cached) 
+    public IReadOnlyList<StrategyParameter> Parameters =>
+        (CachedParams ??= DefineParameters().ToList()).AsReadOnly();
     
-    protected void AddParameter<T>(string name, string displayName, T defaultValue,
+    /*protected void AddParameter<T>(string name, string displayName, T defaultValue,
         T? min = default, T? max = default)
     {
-        Parameters.Add(new StrategyParameter
+        CachedParams?.Add(new StrategyParameter
         {
             Name = name,
             DisplayName = displayName,
@@ -24,7 +29,7 @@ public abstract class BacktestStrategy
             Max = max,
             EnumType = typeof(T).IsEnum ? typeof(T) : null
         });
-    }
+    }*/
 
     private static ParamType GetParamType(Type type)
     {
@@ -40,5 +45,5 @@ public abstract class BacktestStrategy
     }
 
     public T GetParam<T>(string name) =>
-        (T)Parameters.First(p => p.Name == name).Value!;
+        (T)CachedParams?.First(p => p.Name == name).Value!;
 }
