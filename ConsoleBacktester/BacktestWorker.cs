@@ -108,14 +108,7 @@ public sealed class BacktestWorker : BackgroundService
                 Spread = 0,
                 Strategy = strategy
             });
-
-            /*_ = Task.Run(async () =>
-            {
-                await Task.Delay(5000, token);
-                engine.Cancel();
-            }, token);*/
             
-
             // Wait until the engine signals completion
             await engine.AwaitCompletionAsync(token);
         }

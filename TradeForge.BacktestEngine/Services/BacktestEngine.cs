@@ -15,37 +15,12 @@ public class BacktestEngine : IDisposable, IAsyncDisposable
     public event Action<BacktestError>? Faulted;
     public event Action? Canceled;
     public event Action<BacktestResult>? Finished;
-    
+
     private Guid? _backtestId = null;
-    
+
     private readonly TaskCompletionSource<BacktestResult?> _tcsCompletion =
         new(TaskCreationOptions.RunContinuationsAsynchronously);
-
-
-
-    /// <summary>
-    /// Returns a task that completes when the backtest has finished, been cancelled,
-    /// or the supplied <paramref name="token"/> requests cancellation.
-    /// Throws <see cref="OperationCanceledException"/> if <paramref name="token"/>
-    /// fired before the backtest completed.
-    /// </summary>
-    public async Task<BacktestResult?> AwaitCompletionAsync(CancellationToken token = default)
-    {
-        // Fast-path: already finished
-        if (_tcsCompletion.Task.IsCompleted)
-            return await _tcsCompletion.Task;
-
-        // Create a Task that completes when either the TCS or the token fires
-        var tcsToken = new TaskCompletionSource<bool>();
-        await using (token.Register(() => tcsToken.TrySetResult(true)))
-        {
-            var completed = await Task.WhenAny(_tcsCompletion.Task, tcsToken.Task);
-            if (completed == tcsToken.Task)
-                throw new OperationCanceledException(token);
-
-            return await _tcsCompletion.Task; // will not throw here
-        }
-    }
+    
     public Guid BacktestId
     {
         get
@@ -54,6 +29,9 @@ public class BacktestEngine : IDisposable, IAsyncDisposable
             return _backtestId.Value;
         }
     }
+   
+
+    #region TaskRunner
 
     public void Run(BacktestInitParams initParams)
     {
@@ -88,7 +66,7 @@ public class BacktestEngine : IDisposable, IAsyncDisposable
         catch (Exception ex)
         {
             OnFaulted(ex);
-            _tcsCompletion.TrySetResult(null);   // never started
+            _tcsCompletion.TrySetResult(null); // never started
         }
     }
 
@@ -117,7 +95,6 @@ public class BacktestEngine : IDisposable, IAsyncDisposable
     }
 
 
-
     protected async Task<BacktestResult> TaskRunnerWork()
     {
         if (InitParams is null)
@@ -129,18 +106,18 @@ public class BacktestEngine : IDisposable, IAsyncDisposable
         {
             throw new Exception("Backtest account is null");
         }
-        
+
         List<OHLC> data = InitParams.Data;
         BacktestStrategy strat = InitParams.Strategy;
-        
+
         DateTime[] time = data.Select(x => x.Timestamp).ToArray();
         double[] open = data.Select(x => x.Open).ToArray();
         double[] high = data.Select(x => x.Open).ToArray();
         double[] low = data.Select(x => x.Low).ToArray();
         double[] close = data.Select(x => x.Close).ToArray();
-        
+
         BacktestResult backtestResult = new BacktestResult();
-        
+
         for (int i = 0; i < data.Count; i++)
         {
             await strat.OnBar(this, BacktestAccount, i, time, open, high, low, close);
@@ -149,34 +126,68 @@ public class BacktestEngine : IDisposable, IAsyncDisposable
         return backtestResult;
     }
 
+    protected void TaskRunnerCallback(BacktestResult result)
+    {
+        IsRunning = false;
+        _tcsCompletion.TrySetResult(result); // success
+        OnFinished(result);
+    }
+    
+     
+    /// <summary>
+    /// Returns a task that completes when the backtest has finished, been cancelled,
+    /// or the supplied <paramref name="token"/> requests cancellation.
+    /// Throws <see cref="OperationCanceledException"/> if <paramref name="token"/>
+    /// fired before the backtest completed.
+    /// </summary>
+    public async Task<BacktestResult?> AwaitCompletionAsync(CancellationToken token = default)
+    {
+        // Fast-path: already finished
+        if (_tcsCompletion.Task.IsCompleted)
+            return await _tcsCompletion.Task;
+
+        // Create a Task that completes when either the TCS or the token fires
+        var tcsToken = new TaskCompletionSource<bool>();
+        await using (token.Register(() => tcsToken.TrySetResult(true)))
+        {
+            var completed = await Task.WhenAny(_tcsCompletion.Task, tcsToken.Task);
+            if (completed == tcsToken.Task)
+                throw new OperationCanceledException(token);
+
+            return await _tcsCompletion.Task; // will not throw here
+        }
+    }
+
+    #endregion
+
+    #region Dispose
+
     public void Dispose()
     {
         DisposeAsync().AsTask().GetAwaiter().GetResult();
     }
-    
+
     public async ValueTask DisposeAsync()
     {
         if (IsRunning)
         {
-            Cancel();                       // request graceful stop
-            await AwaitCompletionAsync();    // wait until it really stopped
+            Cancel(); // request graceful stop
+            await AwaitCompletionAsync(); // wait until it really stopped
         }
 
         TaskRunner?.Dispose();
         TaskRunner = null;
     }
-    protected void TaskRunnerCallback(BacktestResult result)
-    {
-        IsRunning = false;
-        _tcsCompletion.TrySetResult(result);   // success
-        OnFinished(result);
-    }
+
+    #endregion
+
+    #region Invokes
 
     protected virtual void OnFaulted(Exception ex)
     {
         IsRunning = false;
-        _tcsCompletion.TrySetResult(null);     // failure
-        
+        _tcsCompletion.TrySetResult(null); // failure
+
         // BacktestAccount should be valid
         if (BacktestAccount is null)
         {
@@ -202,6 +213,7 @@ public class BacktestEngine : IDisposable, IAsyncDisposable
             }
         });
     }
+
     protected virtual void OnCanceled()
     {
         _tcsCompletion.TrySetResult(null);
@@ -214,5 +226,5 @@ public class BacktestEngine : IDisposable, IAsyncDisposable
         Finished?.Invoke(obj);
     }
 
-
+    #endregion
 }
