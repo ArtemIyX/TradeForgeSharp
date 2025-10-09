@@ -1,18 +1,23 @@
 ﻿using System.Globalization;
 using System.Text;
-using System.Web;
 
 namespace TradeForge.Core.Models.Requests;
 
-public class ModifyDealRequest : AccountDealIdRequest
+public class RModifyOrderRequest : RAccountOrderIdRequest
 {
+    public int? Volume { get; init; }
+    public double? Price { get; init; }
+    public long? Expiration { get; init; }
     public double? StopLoss { get; init; }
     public double? TakeProfit { get; init; }
 
     public override string FormUrlEncoded()
     {
-        var sb = new StringBuilder(64);
+        var sb = new StringBuilder(128);
 
+        Append(sb, "volume", Volume?.ToString(CultureInfo.InvariantCulture));
+        Append(sb, "price", Price?.ToString(CultureInfo.InvariantCulture));
+        Append(sb, "expiration", Expiration?.ToString(CultureInfo.InvariantCulture));
         Append(sb, "stop_loss", StopLoss?.ToString(CultureInfo.InvariantCulture));
         Append(sb, "take_profit", TakeProfit?.ToString(CultureInfo.InvariantCulture));
 

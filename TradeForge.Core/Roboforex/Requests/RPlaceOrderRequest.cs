@@ -5,16 +5,16 @@ using TradeForge.Core.Generic;
 
 namespace TradeForge.Core.Models.Requests;
 
-public class PlaceOrderRequest : AccountIdRequest
+public class RPlaceOrderRequest : RAccountIdRequest
 {
     public string Ticker { get; init; } = default!;
-    public OrderSide Side { get; init; }
+    public ROrderSide Side { get; init; }
     public int Volume { get; init; }
     public double? Price { get; init; }
     public long? Expiration { get; init; }
     public double? StopLoss { get; init; }
     public double? TakeProfit { get; init; }
-    public OrderType Type { get; init; }
+    public ROrderType Type { get; init; }
     
     public override string FormUrlEncoded()
     {
@@ -22,8 +22,8 @@ public class PlaceOrderRequest : AccountIdRequest
         Append(sb, "ticker", Ticker);
         Append(sb, "side", Side switch
         {
-            OrderSide.Buy => "buy",
-            OrderSide.Sell => "sell",
+            ROrderSide.Buy => "buy",
+            ROrderSide.Sell => "sell",
             _ => throw new InvalidOperationException($"Unsupported side: {Side}")
         });
         Append(sb, "volume", Volume.ToString(CultureInfo.InvariantCulture));
@@ -33,9 +33,9 @@ public class PlaceOrderRequest : AccountIdRequest
         Append(sb, "take_profit", TakeProfit?.ToString(CultureInfo.InvariantCulture));
         Append(sb, "type", Type switch
         {
-            OrderType.Market => "market",
-            OrderType.Stop => "stop",
-            OrderType.Limit => "limit",
+            ROrderType.Market => "market",
+            ROrderType.Stop => "stop",
+            ROrderType.Limit => "limit",
             _ => throw new InvalidOperationException($"Unsupported type: {Type}")
         });
 

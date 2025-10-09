@@ -1,4 +1,6 @@
-﻿namespace TradeForge.BacktestEngine.Models;
+﻿using TradeForge.Core.Models.Framework;
+
+namespace TradeForge.BacktestEngine.Models;
 
 public class BacktestError
 {

@@ -3,7 +3,7 @@ using System.Web;
 
 namespace TradeForge.Core.Models.Requests;
 
-public class AccountDealIdRequest : AccountIdRequest
+public class RAccountDealIdRequest : RAccountIdRequest
 {
     public string DealId { get; init; } = default!;
 

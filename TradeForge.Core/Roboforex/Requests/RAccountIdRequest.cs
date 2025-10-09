@@ -4,7 +4,7 @@ using TradeForge.Core.Generic;
 
 namespace TradeForge.Core.Models.Requests;
 
-public class AccountIdRequest : UrlEncodedBody
+public class RAccountIdRequest : UrlEncodedBody
 {
     public string AccountId { get; init; } = default!;
     

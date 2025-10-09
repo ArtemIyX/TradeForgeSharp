@@ -4,8 +4,8 @@ using TradeForge.Core.Generic;
 
 namespace TradeForge.Core.Enums;
 
-[JsonConverter(typeof(EnumMemberJsonConverter<OrderType>))]
-public enum OrderType
+[JsonConverter(typeof(EnumMemberJsonConverter<ROrderType>))]
+public enum ROrderType
 {
     [EnumMember(Value = "market")] Market,
     [EnumMember(Value = "stop")] Stop,

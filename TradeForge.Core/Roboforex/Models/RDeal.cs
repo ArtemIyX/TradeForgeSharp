@@ -5,7 +5,7 @@ using TradeForge.Core.Generic;
 namespace TradeForge.Core.Models;
 
 [Serializable]
-public class Deal : ICloneable
+public class RDeal : ICloneable
 {
     [JsonPropertyName("id")]
     public string Id { get; set; } = default!;
@@ -17,8 +17,8 @@ public class Deal : ICloneable
     public int Volume { get; set; }
 
     [JsonPropertyName("side")]
-    [JsonConverter(typeof(EnumMemberJsonConverter<OrderSide>))]
-    public OrderSide Side { get; set; }
+    [JsonConverter(typeof(EnumMemberJsonConverter<ROrderSide>))]
+    public ROrderSide Side { get; set; }
 
     [JsonPropertyName("open_price")]
     public double OpenPrice { get; set; }
@@ -36,12 +36,12 @@ public class Deal : ICloneable
     public long? CloseTime { get; set; }
 
     [JsonPropertyName("status")]
-    [JsonConverter(typeof(EnumMemberJsonConverter<DealStatus>))]
-    public DealStatus Status { get; set; }
+    [JsonConverter(typeof(EnumMemberJsonConverter<RDealStatus>))]
+    public RDealStatus Status { get; set; }
 
     public object Clone()
     {
-        return new Deal
+        return new RDeal
         {
             Id         = this.Id,
             Ticker     = this.Ticker,

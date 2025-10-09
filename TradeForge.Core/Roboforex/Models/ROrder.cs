@@ -4,7 +4,7 @@ using TradeForge.Core.Generic;
 
 namespace TradeForge.Core.Models;
 
-public class Order : ICloneable
+public class ROrder : ICloneable
 {
     [JsonPropertyName("id")]
     public string Id { get; set; } = default!;
@@ -16,12 +16,12 @@ public class Order : ICloneable
     public int Volume { get; set; }
 
     [JsonPropertyName("side")]
-    [JsonConverter(typeof(EnumMemberJsonConverter<OrderSide>))]
-    public OrderSide Side { get; set; }
+    [JsonConverter(typeof(EnumMemberJsonConverter<ROrderSide>))]
+    public ROrderSide Side { get; set; }
 
     [JsonPropertyName("type")]
-    [JsonConverter(typeof(EnumMemberJsonConverter<OrderType>))]
-    public OrderType Type { get; set; }
+    [JsonConverter(typeof(EnumMemberJsonConverter<ROrderType>))]
+    public ROrderType Type { get; set; }
 
     [JsonPropertyName("filled_price")]
     public double? FilledPrice { get; set; }
@@ -50,7 +50,7 @@ public class Order : ICloneable
 
     public object Clone()
     {
-        return new Order
+        return new ROrder
         {
             Id           = this.Id,
             Ticker       = this.Ticker,

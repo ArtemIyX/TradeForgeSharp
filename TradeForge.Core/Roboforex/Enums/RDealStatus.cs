@@ -4,8 +4,8 @@ using TradeForge.Core.Generic;
 
 namespace TradeForge.Core.Enums;
 
-[JsonConverter(typeof(EnumMemberJsonConverter<DealStatus>))]
-public enum DealStatus
+[JsonConverter(typeof(EnumMemberJsonConverter<RDealStatus>))]
+public enum RDealStatus
 {
     [EnumMember(Value = "open")] Open,
     [EnumMember(Value = "closing")] Closing,
