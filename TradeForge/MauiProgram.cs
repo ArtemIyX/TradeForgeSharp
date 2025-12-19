@@ -26,9 +26,10 @@ namespace TradeForge
             builder.Services.AddSingleton<IAlertService, AlertService>();
             builder.Services.AddScoped<ISymbolManager, SymbolManagerService>();
             builder.Services.AddScoped<IOhlcCsvImporter, OhlcCsvImporter>();
-            
+            builder.Services.AddScoped<IOhlcCsvExporter, OhlcCsvExporter>();
+
             var app = builder.Build();
-            
+
             return app;
         }
     }
