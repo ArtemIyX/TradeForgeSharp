@@ -6,52 +6,75 @@
         indeterminate
       />
     </div>
+    <div v-else>
 
-    <v-table density="comfortable" striped="odd" v-else>
-      <thead>
-      <tr>
-        <th
-          v-for="(col, index) in columns"
-          :key="col.id"
-          :style="{ cursor: index === 0 ? 'default' : 'pointer', userSelect: 'none' }"
-          @click="index !== 0 && sortBy(col.key)"
-        >
-          <span>{{ col.title }}</span>
-          <v-icon v-if="index !== 0"
-                  size="14"
-                  class="ml-1"
-                  :icon="
+      <v-row class="mb-3" dense v-if="items.length">
+        <v-col cols="12" sm="4">
+          <v-combobox
+            v-model="filterCategory"
+            label="Category"
+            :items="categoryItems"
+            clearable
+            hide-details
+          />
+        </v-col>
+        <v-col cols="12" sm="4">
+          <v-combobox
+            v-model="filterType"
+            label="Type"
+            :items="typeItems"
+            clearable
+            hide-details
+          />
+        </v-col>
+      </v-row>
+
+      <v-table density="comfortable" striped="odd">
+        <thead>
+        <tr>
+          <th
+            v-for="(col, index) in columns"
+            :key="col.id"
+            :style="{ cursor: index === 0 ? 'default' : 'pointer', userSelect: 'none' }"
+            @click="index !== 0 && sortBy(col.key)"
+          >
+            <span>{{ col.title }}</span>
+            <v-icon v-if="index !== 0"
+                    size="14"
+                    class="ml-1"
+                    :icon="
               sortKey === col.key
                 ? sortDesc
                   ? 'mdi-menu-down'
                   : 'mdi-menu-up'
                 : 'mdi-unfold-more-horizontal'
             "/>
-        </th>
-      </tr>
-      </thead>
+          </th>
+        </tr>
+        </thead>
 
-      <tbody>
-      <tr v-for="(item, idx) in sortedItems" :key="item.id"
-          :class="item.days === 0 ? 'bg-error' : ''">
-        <td>{{ idx + 1 }}</td>
-        <td>{{ item.ticker }}</td>
-        <td>{{ item.category }}</td>
-        <td>{{ item.name }}</td>
-        <td>{{ item.type }}</td>
-        <td>{{ item.description }}</td>
-        <td>{{ item.dateFrom }}</td>
-        <td>{{ item.dateTo }}</td>
-        <td>
-          {{ item.days }}
-        </td>
-      </tr>
+        <tbody>
+        <tr v-for="(item, idx) in sortedItems" :key="item.id"
+            :class="item.days === 0 ? 'bg-error' : ''">
+          <td>{{ idx + 1 }}</td>
+          <td>{{ item.ticker }}</td>
+          <td>{{ item.category }}</td>
+          <td>{{ item.name }}</td>
+          <td>{{ item.type }}</td>
+          <td>{{ item.description }}</td>
+          <td>{{ item.dateFrom }}</td>
+          <td>{{ item.dateTo }}</td>
+          <td>
+            {{ item.days }}
+          </td>
+        </tr>
 
-      <tr v-if="!items.length">
-        <td colspan="9" class="text-center">No data</td>
-      </tr>
-      </tbody>
-    </v-table>
+        <tr v-if="!items.length">
+          <td colspan="9" class="text-center">No data</td>
+        </tr>
+        </tbody>
+      </v-table>
+    </div>
   </div>
 
 </template>
@@ -76,7 +99,9 @@ export default {
         {title: 'Date From', key: 'dateFrom'},
         {title: 'Date To', key: 'dateTo'},
         {title: 'Days', key: 'days'}
-      ]
+      ],
+      filterCategory: null,
+      filterType: null
     }
   },
 
@@ -86,33 +111,32 @@ export default {
   },
 
   computed: {
+    categoryItems() {
+      return [...new Set(this.items.map(i => i.category))]
+    },
+    typeItems() {
+      return [...new Set(this.items.map(i => i.type))]
+    },
     sortedItems() {
-      if (!this.sortKey) return this.items
+      let list = this.items
 
-      const copy = [...this.items]
-      const key = this.sortKey
-      const desc = this.sortDesc
+      if (this.filterCategory) {
+        list = list.filter(i => i.category === this.filterCategory)
+      }
+      if (this.filterType) {
+        list = list.filter(i => i.type === this.filterType)
+      }
 
-      copy.sort((a, b) => {
-        let va = a[key]
-        let vb = b[key]
+      if (!this.sortKey) return list
 
-        // numeric
-        if (key === 'days') {
-          va = Number(va)
-          vb = Number(vb)
-        }
-        // date
-        if (key === 'dateFrom' || key === 'dateTo') {
-          va = new Date(va)
-          vb = new Date(vb)
-        }
-
-        if (va < vb) return desc ? 1 : -1
-        if (va > vb) return desc ? -1 : 1
-        return 0
+      return [...list].sort((a, b) => {
+        const valA = a[this.sortKey]
+        const valB = b[this.sortKey]
+        let result = 0
+        if (valA > valB) result = 1
+        else if (valA < valB) result = -1
+        return this.sortDesc ? -result : result
       })
-      return copy
     }
   },
 
