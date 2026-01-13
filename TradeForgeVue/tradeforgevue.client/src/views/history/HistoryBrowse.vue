@@ -12,7 +12,7 @@
       <tr>
         <th
           v-for="(col, index) in columns"
-          :key="col.key"
+          :key="col.id"
           :style="{ cursor: index === 0 ? 'default' : 'pointer', userSelect: 'none' }"
           @click="index !== 0 && sortBy(col.key)"
         >
@@ -32,7 +32,8 @@
       </thead>
 
       <tbody>
-      <tr v-for="(item, idx) in sortedItems" :key="item.id">
+      <tr v-for="(item, idx) in sortedItems" :key="item.id"
+          :class="item.days === 0 ? 'bg-error' : ''">
         <td>{{ idx + 1 }}</td>
         <td>{{ item.ticker }}</td>
         <td>{{ item.category }}</td>
@@ -41,7 +42,9 @@
         <td>{{ item.description }}</td>
         <td>{{ item.dateFrom }}</td>
         <td>{{ item.dateTo }}</td>
-        <td>{{ item.days }}</td>
+        <td>
+          {{ item.days }}
+        </td>
       </tr>
 
       <tr v-if="!items.length">
@@ -123,38 +126,17 @@ export default {
       }
     },
 
-    fetchData() {
+    async fetchData() {
       this.loading = true
-
-      // simulate API request
-      setTimeout(() => {
-        this.items = [
-          {
-            id: 1,
-            ticker: 'EURUSD',
-            category: 'Forex',
-            name: 'Euro vs Dollar',
-            type: 'CFD',
-            description: 'Major forex pair',
-            dateFrom: '2024-01-01',
-            dateTo: '2024-01-31',
-            days: 30
-          },
-          {
-            id: 2,
-            ticker: 'BTCUSD',
-            category: 'Crypto',
-            name: 'Bitcoin',
-            type: 'Spot',
-            description: 'Crypto asset',
-            dateFrom: '2024-02-01',
-            dateTo: '2024-02-20',
-            days: 19
-          }
-        ]
-
+      try {
+        const res = await fetch('/dummy/tickers.json')
+        this.items = await res.json()
+      } catch (e) {
+        console.error('Failed to load local JSON:', e)
+        this.items = []
+      } finally {
         this.loading = false
-      }, 200)
+      }
     }
   }
 }
