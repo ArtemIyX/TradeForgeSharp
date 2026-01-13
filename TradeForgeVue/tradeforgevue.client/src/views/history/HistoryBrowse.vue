@@ -8,23 +8,21 @@
     </div>
     <div v-else>
 
-      <v-row class="mb-3" dense v-if="items.length">
+      <v-row dense v-if="items.length">
         <v-col cols="12" sm="4">
-          <v-combobox
+          <v-select
             v-model="filterCategory"
-            label="Category"
             :items="categoryItems"
-            clearable
-            hide-details
+            label="Category"
+            variant="solo"
           />
         </v-col>
         <v-col cols="12" sm="4">
-          <v-combobox
+          <v-select
             v-model="filterType"
-            label="Type"
             :items="typeItems"
-            clearable
-            hide-details
+            label="Type"
+            variant="solo"
           />
         </v-col>
       </v-row>
@@ -80,10 +78,13 @@
 </template>
 
 <script>
-export default {
-  name: "HistoryBrowseTable",
 
-  data() {
+export default {
+
+  name: "HistoryBrowseTable",
+  components: {},
+
+  data: () => {
     return {
       loading: false,
       items: [],
@@ -106,7 +107,6 @@ export default {
   },
 
   mounted() {
-    console.log('Component mounted.')
     this.fetchData();
   },
 
