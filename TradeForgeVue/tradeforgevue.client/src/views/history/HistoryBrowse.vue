@@ -94,7 +94,54 @@
         </template>
 
       </ContextMenu>
-      <!--      </v-menu>-->
+      <v-dialog
+        v-model="deletingDialog"
+        :persistent="true"
+        max-width="500"
+      >
+        <v-card>
+          <v-card-title class="text-h5">
+            Are you sure you want to delete <span class="text-weight-bold text-warning"> {{ deleteData.ticker }}</span>?
+          </v-card-title>
+
+          <v-card-text>
+            <span>
+              You will <span class="text-weight-bold text-uppercase text-error">delete</span> symbol <span class="text-weight-bold text-accent"> '{{ deleteData.ticker }}'</span> ({{ deleteData.type }},
+              {{ deleteData.id }} id)
+            </span>
+
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+
+            <v-btn
+              color="grey"
+              text
+              @click="deletingDialog = false"
+              :disabled="isDeleting"
+            >
+              No
+            </v-btn>
+
+            <v-btn
+              color="error"
+              text
+              @click="handleDelete"
+              :disabled="isDeleting"
+              :loading="isDeleting"
+            >
+              <v-progress-circular
+                v-if="isDeleting"
+                indeterminate
+                size="20"
+                width="2"
+              ></v-progress-circular>
+              <span v-else>Yes</span>
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </div>
   </div>
 
@@ -112,9 +159,10 @@ const sortDesc = ref(false)
 const filterCategory = ref(null)
 const filterType = ref(null)
 
-const menu = ref(false)
-const menuX = ref(0)
-const menuY = ref(0)
+const deletingDialog = ref(false)
+const isDeleting = ref(false)
+
+const deleteData = ref({});
 
 const columns = [
   {title: '#', key: 'index'},
@@ -182,18 +230,46 @@ onMounted(() => {
 
 const contextMenu = ref(null)
 
-function openMenu(event, item) {
+const openMenu = (event, item) => {
   contextMenu.value.open(event, item)
 }
 
-function editItem(item, close) {
+const editItem = (item, close) => {
   console.log('Edit', item.id);
   close();
 }
 
-function deleteItem(item, close) {
+const deleteItem = (item, close) => {
   console.log('Delete', item.id)
   close();
+  openDeleteDialog(item)
+}
+
+const openDeleteDialog = (item) => {
+  deleteData.value = item
+  deletingDialog.value = true
+}
+
+const handleDelete = () => {
+  isDeleting.value = true
+
+  // Simulate server action with timeout
+  setTimeout(() => {
+    console.log('Item deleted:', deleteData.value)
+
+    // Perform your actual delete logic here
+    // For example: store.dispatch('deleteItem', deleteData.value)
+
+    isDeleting.value = false
+    deletingDialog.value = false
+
+    // Optional: Reset delete data
+    deleteData.value = {
+      ticker: '',
+      type: '',
+      id: null
+    }
+  }, 300) // 2 second timeout - adjust as needed
 }
 
 </script>
