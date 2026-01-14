@@ -2,11 +2,16 @@
 
   <v-container>
     <h1>Create new history item</h1>
-    <SymbolEditor :value="symbol"/>
+    <SymbolEditor :model="symbol"
+                  ref="editor"
+    />
 
+<!--    <h2>Parent: {{ editor?.isValid() }}</h2>-->
     <v-row>
       <v-col class="d-flex justify-end">
-        <v-btn color="primary" type="submit" :disabled="!valid">Save</v-btn>
+        <v-btn color="primary" type="submit" @click="submit"
+               :disabled="!editor?.isValid()">Save
+        </v-btn>
         <v-btn class="ml-2" @click="$router.back()">Cancel</v-btn>
       </v-col>
     </v-row>
@@ -14,48 +19,35 @@
   </v-container>
 </template>
 
-<script>
+<script setup>
+import {ref, reactive, computed, onMounted} from 'vue'
+import SymbolEditor from '@/components/SymbolEditor.vue'
 
 
-import SymbolEditor from "@/components/SymbolEditor.vue";
+const symbol = reactive({
+  ticker: 'gg',
+  type: 'CFD',
+  category: 'Stock',
+  description: '',
 
-export default {
-  name: "CreateSymbol",
-  components: {SymbolEditor},
-  data: () => ({
-    valid: false,
-    symbol: {
-      ticker: '',
-      type: 'CFD',
-      category: 'Stock',
-      description: '',
+  contractSize: 1,
+  units: 'Share(s)',
+  volumeStep: 0.01,
+  defaultLeverage: 0.05,
+  minVolume: 0.01,
+  maxVolume: 100_000_000,
+  minTick: 0.00001
+});
 
-      contractSize: 1,
-      units: 'Share(s)',
-      volumeStep: 0.01,
-      defaultLeverage: 0.05,
-      minVolume: 0.01,
-      maxVolume: 100000000,
-      minTick: 0.00001
-    },
+const editor = ref(null)
+
+/* ---- methods ---- */
+async function submit() {
 
 
-  }),
+  console.log('Our object:', symbol)
+  console.log(editor.value);
 
-  methods: {
-
-    async submit() {
-      if (!this.$refs.form.validate()) return
-
-      // TODO: POST to your API or store however you like
-      console.log('New symbol payload:', this.symbol)
-
-      // example: post to json-server
-      // await this.$http.post('/symbols', this.symbol)
-
-
-    }
-  }
 }
 </script>
 
