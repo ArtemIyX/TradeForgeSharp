@@ -62,6 +62,9 @@
             v-for="(col, index) in columns"
             :key="col.id"
             :style="{ cursor: index === 0 ? 'default' : 'pointer', userSelect: 'none' }"
+            :class="{
+              'd-none d-md-table-cell': ['#', 'description', 'dateFrom', 'dateTo'].includes(col.key)
+            }"
             @click="index !== 0 && sortBy(col.key)"
           >
             <span>{{ col.title }}</span>
@@ -88,9 +91,9 @@
           <td>{{ item.category }}</td>
           <td>{{ item.name }}</td>
           <td>{{ item.type }}</td>
-          <td>{{ item.description }}</td>
-          <td>{{ item.dateFrom }}</td>
-          <td>{{ item.dateTo }}</td>
+          <td class="d-none d-md-table-cell">{{ item.description }}</td>
+          <td class="d-none d-md-table-cell">{{ item.dateFrom }}</td>
+          <td class="d-none d-md-table-cell">{{ item.dateTo }}</td>
           <td :class="item.days === 0 ? 'text-warning' : ''">
             {{ item.days }}
           </td>
@@ -102,11 +105,7 @@
         </tbody>
       </v-table>
 
-      <!--      <v-menu
-              v-model="menu"
-              :target="[menuX, menuY]"
-              location="bottom start"
-              scroll-strategy="close">-->
+
       <ContextMenu ref="contextMenu">
         <template #default="{ data, close }">
           <v-list density="compact">
