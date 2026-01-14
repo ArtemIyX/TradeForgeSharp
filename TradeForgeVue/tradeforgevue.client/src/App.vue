@@ -3,8 +3,14 @@
     <v-navigation-drawer permanent>
       <v-list-item title="Trade Forge" subtitle="v1.0.0.0"/>
       <v-divider/>
-      <v-list-item v-for="item in menuItems" :key="item.path" :to="item.path" link
-                   :title="item.title"/>
+      <v-list-item
+        v-for="item in menuItems"
+        :key="item.path"
+        :to="item.path"
+        link
+        :title="item.title"
+        :prepend-icon="item.icon"
+      />
     </v-navigation-drawer>
     <v-main>
       <router-view/>
@@ -27,9 +33,9 @@ import {useErrorSnackbar} from '@/composables/useErrorSnackbar';
 
 
 const menuItems = [
-  {title: 'Dashboard', path: '/'},
-  {title: 'History Manager', path: '/history/browse'},
-  {title: 'Backtester', path: '/backtester'}
+  { path: '/', title: 'Dashboard', icon: 'mdi-view-dashboard' },
+  { path: '/history/browse', title: 'History', icon: 'mdi-history' },
+  { path: '/backtester', title: 'Backtest', icon: 'mdi-chart-line' }
 ]
 
 const {messages} = useSnackbar()

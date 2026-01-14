@@ -5,7 +5,7 @@
         <v-card class="pa-8 text-center" elevation="0">
           <!-- Animated 404 Number -->
           <div class="error-number mb-4">
-            <span class="glitch" data-text="404">404</span>
+            <span class="glitch text-primary" data-text="404">404</span>
           </div>
 
           <!-- Icon -->
@@ -61,7 +61,7 @@
           </p>
 
           <div class="mt-4">
-            <v-chip
+<!--            <v-chip
               class="ma-1"
               variant="outlined"
               @click="$router.push('/')"
@@ -69,7 +69,7 @@
             >
               <v-icon start>mdi-view-dashboard</v-icon>
               Dashboard
-            </v-chip>
+            </v-chip>-->
 
             <v-chip
               class="ma-1"
@@ -98,7 +98,7 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
+import {useRouter} from 'vue-router'
 
 const router = useRouter()
 
@@ -120,7 +120,7 @@ const goBack = () => {
   font-size: 120px;
   font-weight: 900;
   line-height: 1;
-  color: rgb(var(--v-theme-primary));
+
   opacity: 0.2;
 }
 
