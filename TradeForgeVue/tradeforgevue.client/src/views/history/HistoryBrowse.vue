@@ -94,56 +94,14 @@
         </template>
 
       </ContextMenu>
-      <v-dialog
+
+      <HistoryDeleteDialog
         v-model="deletingDialog"
-        :persistent="true"
-        max-width="500"
-      >
-        <v-card>
-          <v-card-title class="text-h5">
-            Are you sure you want to delete <span
-            class="text-weight-bold text-warning">{{ deleteData.ticker }}</span>?
-          </v-card-title>
+        :item-data="deleteData"
+        @confirm="handleDelete"
+        @cancel="handleCancel">
 
-          <v-card-text>
-    <span>
-      This will <span class="text-weight-bold text-uppercase text-error">permanently delete</span> the symbol <span
-      class="text-weight-bold text-accent">'{{ deleteData.ticker }}'</span> ({{ deleteData.type }}, ID: {{
-        deleteData.id
-      }})
-    </span>
-          </v-card-text>
-
-          <v-card-actions>
-            <v-spacer></v-spacer>
-
-            <v-btn
-              color="grey"
-              text
-              @click="deletingDialog = false"
-              :disabled="isDeleting"
-            >
-              No
-            </v-btn>
-
-            <v-btn
-              color="error"
-              text
-              @click="handleDelete"
-              :disabled="isDeleting"
-              :loading="isDeleting"
-            >
-              <v-progress-circular
-                v-if="isDeleting"
-                indeterminate
-                size="20"
-                width="2"
-              ></v-progress-circular>
-              <span v-else>Yes</span>
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+      </HistoryDeleteDialog>
     </div>
   </div>
 
@@ -153,6 +111,8 @@
 import {ref, computed, onMounted} from 'vue'
 
 import ContextMenu from "@/components/ContextMenu.vue";
+import HistoryDeleteDialog
+  from "@/components/history/dialogs/historyDeleteDialog/historyDeleteDialog.vue";
 
 const loading = ref(false)
 const items = ref([])
@@ -272,6 +232,16 @@ const handleDelete = () => {
       id: null
     }
   }, 300) // 2 second timeout - adjust as needed
+}
+
+const handleCancel = () => {
+  console.log('Delete cancelled')
+
+  deleteData.value = {
+    ticker: '',
+    type: '',
+    id: null
+  }
 }
 
 </script>
