@@ -7,10 +7,9 @@
       />
     </div>
     <div v-else>
-
       <v-row dense v-if="items.length">
         <v-col cols="12" sm="4">
-          <v-select
+          <v-combobox
             v-model="filterCategory"
             :items="categoryItems"
             label="Category"
@@ -18,7 +17,7 @@
           />
         </v-col>
         <v-col cols="12" sm="4">
-          <v-select
+          <v-combobox
             v-model="filterType"
             :items="typeItems"
             label="Type"
@@ -77,93 +76,79 @@
 
 </template>
 
-<script>
+<script setup>
+import {ref, computed, onMounted} from 'vue'
 
-export default {
+const loading = ref(false)
+const items = ref([])
+const sortKey = ref('')
+const sortDesc = ref(false)
+const filterCategory = ref(null)
+const filterType = ref(null)
 
-  name: "HistoryBrowseTable",
-  components: {},
+const columns = [
+  {title: '#', key: 'index'},
+  {title: 'Ticker', key: 'ticker'},
+  {title: 'Category', key: 'category'},
+  {title: 'Name', key: 'name'},
+  {title: 'Type', key: 'type'},
+  {title: 'Description', key: 'description'},
+  {title: 'Date From', key: 'dateFrom'},
+  {title: 'Date To', key: 'dateTo'},
+  {title: 'Days', key: 'days'}
+]
 
-  data: () => {
-    return {
-      loading: false,
-      items: [],
-      sortKey: '',   // current column key
-      sortDesc: false, // false = ASC, true = DESC
-      columns: [
-        {title: '#', key: 'index'},
-        {title: 'Ticker', key: 'ticker'},
-        {title: 'Category', key: 'category'},
-        {title: 'Name', key: 'name'},
-        {title: 'Type', key: 'type'},
-        {title: 'Description', key: 'description'},
-        {title: 'Date From', key: 'dateFrom'},
-        {title: 'Date To', key: 'dateTo'},
-        {title: 'Days', key: 'days'}
-      ],
-      filterCategory: null,
-      filterType: null
-    }
-  },
+const categoryItems = computed(() => [...new Set(items.value.map(i => i.category))])
+const typeItems = computed(() => [...new Set(items.value.map(i => i.type))])
 
-  mounted() {
-    this.fetchData();
-  },
+const sortedItems = computed(() => {
+  let list = [...items.value]
 
-  computed: {
-    categoryItems() {
-      return [...new Set(this.items.map(i => i.category))]
-    },
-    typeItems() {
-      return [...new Set(this.items.map(i => i.type))]
-    },
-    sortedItems() {
-      let list = this.items
+  if (filterCategory.value) {
+    list = list.filter(i => i.category === filterCategory.value)
+  }
+  if (filterType.value) {
+    list = list.filter(i => i.type === filterType.value)
+  }
 
-      if (this.filterCategory) {
-        list = list.filter(i => i.category === this.filterCategory)
-      }
-      if (this.filterType) {
-        list = list.filter(i => i.type === this.filterType)
-      }
+  if (!sortKey.value) return list
 
-      if (!this.sortKey) return list
+  return list.sort((a, b) => {
+    const valA = a[sortKey.value]
+    const valB = b[sortKey.value]
+    let result = 0
+    if (valA > valB) result = 1
+    else if (valA < valB) result = -1
+    return sortDesc.value ? -result : result
+  })
+})
 
-      return [...list].sort((a, b) => {
-        const valA = a[this.sortKey]
-        const valB = b[this.sortKey]
-        let result = 0
-        if (valA > valB) result = 1
-        else if (valA < valB) result = -1
-        return this.sortDesc ? -result : result
-      })
-    }
-  },
-
-  methods: {
-    sortBy(key) {
-      if (this.sortKey === key) {
-        this.sortDesc = !this.sortDesc
-      } else {
-        this.sortKey = key
-        this.sortDesc = false
-      }
-    },
-
-    async fetchData() {
-      this.loading = true
-      try {
-        const res = await fetch('/dummy/tickers.json')
-        this.items = await res.json()
-      } catch (e) {
-        console.error('Failed to load local JSON:', e)
-        this.items = []
-      } finally {
-        this.loading = false
-      }
-    }
+const sortBy = (key) => {
+  if (sortKey.value === key) {
+    sortDesc.value = !sortDesc.value
+  } else {
+    sortKey.value = key
+    sortDesc.value = false
   }
 }
+
+const fetchData = async () => {
+  loading.value = true
+  try {
+    const res = await fetch('/dummy/tickers.json')
+    items.value = await res.json()
+  } catch (e) {
+    console.error('Failed to load local JSON:', e)
+    items.value = []
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  fetchData()
+
+})
 </script>
 <style scoped>
 
