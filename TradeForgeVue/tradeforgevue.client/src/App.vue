@@ -9,16 +9,24 @@
     <v-main>
       <router-view/>
     </v-main>
-
+    <v-snackbar-queue
+      location="top"
+      v-model="messages"
+      :timeout="5000"
+    />
   </v-app>
 </template>
 
 <script setup>
+import { useSnackbar } from '@/composables/useSnackbar'
+
 const menuItems = [
   {title: 'Dashboard', path: '/'},
   {title: 'History Manager', path: '/history/browse'},
   {title: 'Backtester', path: '/backtester'}
 ]
+
+const { messages } = useSnackbar()
 </script>
 
 <style scoped>

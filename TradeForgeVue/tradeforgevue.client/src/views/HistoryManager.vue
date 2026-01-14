@@ -11,9 +11,9 @@
   <router-view class="ml-2"/>
 </template>
 
-<script>
+<script setup>
 
-export default {}
+
 </script>
 <style lang="">
 

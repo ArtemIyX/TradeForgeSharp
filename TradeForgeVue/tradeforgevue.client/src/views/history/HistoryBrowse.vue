@@ -113,6 +113,9 @@ import {ref, computed, onMounted} from 'vue'
 import ContextMenu from "@/components/ContextMenu.vue";
 import HistoryDeleteDialog
   from "@/components/history/dialogs/historyDeleteDialog/historyDeleteDialog.vue";
+import {useSnackbar} from "@/composables/useSnackbar.js";
+
+const { showSuccess, showError, showInfo, showWarning } = useSnackbar()
 
 const loading = ref(false)
 const items = ref([])
@@ -225,6 +228,8 @@ const handleDelete = () => {
     isDeleting.value = false
     deletingDialog.value = false
 
+    showWarning('You have deleted ' + deleteData.value.ticker);
+
     // Optional: Reset delete data
     deleteData.value = {
       ticker: '',
@@ -236,7 +241,7 @@ const handleDelete = () => {
 
 const handleCancel = () => {
   console.log('Delete cancelled')
-
+  showInfo('You have cancelled deleting ' + deleteData.value.ticker);
   deleteData.value = {
     ticker: '',
     type: '',
