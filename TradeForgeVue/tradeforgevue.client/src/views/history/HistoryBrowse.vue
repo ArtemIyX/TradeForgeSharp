@@ -53,7 +53,7 @@
         <tbody>
         <tr v-for="(item, idx) in sortedItems" :key="item.id"
             :class="item.days === 0 ? 'bg-error' : ''"
-            @contextmenu.prevent="openContextMenu($event, item)">
+            @contextmenu.prevent="openMenu($event, item)">
           <td>{{ idx + 1 }}</td>
           <td>{{ item.ticker }}</td>
           <td>{{ item.category }}</td>
@@ -73,24 +73,28 @@
         </tbody>
       </v-table>
 
-      <v-menu
-        v-model="menu"
-        :target="[menuX, menuY]"
-        location="bottom start"
-        scroll-strategy="close"
-      >
-        <v-list density="compact">
-          <v-list-item @click="editItem">
-            <v-list-item-title>Edit</v-list-item-title>
-          </v-list-item>
+      <!--      <v-menu
+              v-model="menu"
+              :target="[menuX, menuY]"
+              location="bottom start"
+              scroll-strategy="close">-->
+      <ContextMenu ref="contextMenu">
+        <template #default="{ data, close }">
+          <v-list density="compact">
+            <v-list-item @click="editItem(data, close)">
+              <v-list-item-title>Edit</v-list-item-title>
+            </v-list-item>
 
-          <v-list-item @click="deleteItem">
-            <v-list-item-title class="text-error">
-              Delete
-            </v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
+            <v-list-item @click="deleteItem(data, close)">
+              <v-list-item-title class="text-error">
+                Delete
+              </v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </template>
+
+      </ContextMenu>
+      <!--      </v-menu>-->
     </div>
   </div>
 
@@ -98,6 +102,8 @@
 
 <script setup>
 import {ref, computed, onMounted} from 'vue'
+
+import ContextMenu from "@/components/ContextMenu.vue";
 
 const loading = ref(false)
 const items = ref([])
@@ -109,9 +115,6 @@ const filterType = ref(null)
 const menu = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
-
-const selectedId = ref(null)
-const selectedItem = ref(null)
 
 const columns = [
   {title: '#', key: 'index'},
@@ -177,23 +180,20 @@ onMounted(() => {
 
 })
 
-function openContextMenu(e, item) {
-  selectedId.value = item.id
-  selectedItem.value = item
+const contextMenu = ref(null)
 
-  menuX.value = e.clientX
-  menuY.value = e.clientY
-  menu.value = true
+function openMenu(event, item) {
+  contextMenu.value.open(event, item)
 }
 
-function editItem() {
-  console.log('Edit', selectedId.value)
-  menu.value = false
+function editItem(item, close) {
+  console.log('Edit', item.id);
+  close();
 }
 
-function deleteItem() {
-  console.log('Delete', selectedId.value)
-  menu.value = false
+function deleteItem(item, close) {
+  console.log('Delete', item.id)
+  close();
 }
 
 </script>
