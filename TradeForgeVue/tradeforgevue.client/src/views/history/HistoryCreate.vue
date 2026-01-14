@@ -1,21 +1,49 @@
 ﻿<template>
+  <div class="pa-0">
+    <!-- Top Bar with Title and Back Button -->
+    <v-card flat class="mb-4">
+      <v-card-text class="pa-4">
+        <v-row align="center" dense>
+          <!-- Title Text -->
+          <v-col cols="12" sm="8" md="9">
+            <h2 class="text-h5 text-md-h4 font-weight-medium">
+              Create new history item
+            </h2>
+          </v-col>
 
-  <v-container>
-    <h1>Create new history item</h1>
-    <SymbolEditor :model="symbol"
-                  ref="editor"
-    />
+          <!-- Back Button -->
+          <v-col cols="12" sm="4" md="3">
+            <v-btn
+              to="/history/browse"
+              size="large"
+              block
+              prepend-icon="mdi-arrow-left"
+              variant="tonal"
+            >
+              Back
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-card-text>
+    </v-card>
 
-    <v-row>
-      <v-col class="d-flex justify-end">
-        <v-btn color="primary" type="submit" @click="submit"
-               :disabled="!editor?.isValid()">Save
+    <v-card>
+      <v-card-text>
+        <SymbolEditor :model="symbol" ref="editor" />
+      </v-card-text>
+      <v-card-actions class="pa-4">
+        <v-spacer></v-spacer>
+        <v-btn
+
+          @click="submit"
+          :disabled="!editor?.isValid()"
+        >
+          Save
         </v-btn>
-        <v-btn class="ml-2" @click="$router.back()">Cancel</v-btn>
-      </v-col>
-    </v-row>
-
-  </v-container>
+        <v-btn @click="$router.back()">Cancel</v-btn>
+      </v-card-actions>
+    </v-card>
+  </div>
 </template>
 
 <script setup>

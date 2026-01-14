@@ -1,5 +1,5 @@
 ﻿<template>
-  <div class="mt-2 mr-2">
+  <div class="pa-0">
     <!-- Loading bar -->
     <div class="d-flex justify-center my-4" v-if="loading">
       <v-progress-circular
@@ -7,24 +7,53 @@
       />
     </div>
     <div v-else>
-      <v-row dense v-if="items.length">
-        <v-col cols="12" sm="4">
-          <v-combobox
-            v-model="filterCategory"
-            :items="categoryItems"
-            label="Category"
-            variant="solo"
-          />
-        </v-col>
-        <v-col cols="12" sm="4">
-          <v-combobox
-            v-model="filterType"
-            :items="typeItems"
-            label="Type"
-            variant="solo"
-          />
-        </v-col>
-      </v-row>
+      <!-- Top Bar with Filters -->
+      <v-card flat class="mb-4">
+        <v-card-text class="pa-4">
+          <v-row align="center" dense>
+            <!-- Category Filter -->
+            <v-col cols="12" sm="4" md="3">
+              <v-combobox
+                v-model="filterCategory"
+                :items="categoryItems"
+                label="Category"
+                variant="solo"
+                density="comfortable"
+                hide-details
+              />
+            </v-col>
+
+            <!-- Type Filter -->
+            <v-col cols="12" sm="4" md="3">
+              <v-combobox
+                v-model="filterType"
+                :items="typeItems"
+                label="Type"
+                variant="solo"
+                density="comfortable"
+                hide-details
+              />
+            </v-col>
+
+            <!-- Spacer for larger screens -->
+            <v-col cols="0" md="3" class="d-none d-md-block"/>
+
+            <!-- Create Button -->
+            <v-col cols="12" sm="4" md="3">
+              <v-btn
+                to="/history/create"
+                color="primary"
+                size="large"
+                block
+                prepend-icon="mdi-plus"
+              >
+                Create
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-card-text>
+      </v-card>
+
 
       <v-table density="comfortable" striped="odd">
         <thead>

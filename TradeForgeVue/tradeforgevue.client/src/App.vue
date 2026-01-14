@@ -1,6 +1,10 @@
 <template>
   <v-app>
-    <v-navigation-drawer permanent>
+    <v-app-bar v-if="!$vuetify.display.lgAndUp">
+      <v-app-bar-nav-icon @click="drawer = !drawer"/>
+      <v-app-bar-title>Trade Forge</v-app-bar-title>
+    </v-app-bar>
+    <v-navigation-drawer v-model="drawer" :permanent="$vuetify.display.lgAndUp">
       <v-list-item title="Trade Forge" subtitle="v1.0.0.0"/>
       <v-divider/>
       <v-list-item
@@ -13,6 +17,7 @@
       />
     </v-navigation-drawer>
     <v-main>
+
       <router-view/>
     </v-main>
     <v-snackbar-queue
@@ -28,14 +33,17 @@
 </template>
 
 <script setup>
+import {ref} from 'vue';
+
 import {useSnackbar} from '@/composables/useSnackbar'
 import {useErrorSnackbar} from '@/composables/useErrorSnackbar';
 
+const drawer = ref(true)
 
 const menuItems = [
-  { path: '/', title: 'Dashboard', icon: 'mdi-view-dashboard' },
-  { path: '/history/browse', title: 'History', icon: 'mdi-history' },
-  { path: '/backtester', title: 'Backtest', icon: 'mdi-chart-line' }
+  {path: '/', title: 'Dashboard', icon: 'mdi-view-dashboard'},
+  {path: '/history/browse', title: 'History', icon: 'mdi-history'},
+  {path: '/backtester', title: 'Backtest', icon: 'mdi-chart-line'}
 ]
 
 const {messages} = useSnackbar()
