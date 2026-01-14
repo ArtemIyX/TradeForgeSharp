@@ -4,9 +4,10 @@
     <h1>Create new history item</h1>
     <SymbolEditor :model="symbol"
                   ref="editor"
+
+
     />
 
-<!--    <h2>Parent: {{ editor?.isValid() }}</h2>-->
     <v-row>
       <v-col class="d-flex justify-end">
         <v-btn color="primary" type="submit" @click="submit"
