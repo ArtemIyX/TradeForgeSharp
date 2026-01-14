@@ -101,15 +101,17 @@
       >
         <v-card>
           <v-card-title class="text-h5">
-            Are you sure you want to delete <span class="text-weight-bold text-warning"> {{ deleteData.ticker }}</span>?
+            Are you sure you want to delete <span
+            class="text-weight-bold text-warning">{{ deleteData.ticker }}</span>?
           </v-card-title>
 
           <v-card-text>
-            <span>
-              You will <span class="text-weight-bold text-uppercase text-error">delete</span> symbol <span class="text-weight-bold text-accent"> '{{ deleteData.ticker }}'</span> ({{ deleteData.type }},
-              {{ deleteData.id }} id)
-            </span>
-
+    <span>
+      This will <span class="text-weight-bold text-uppercase text-error">permanently delete</span> the symbol <span
+      class="text-weight-bold text-accent">'{{ deleteData.ticker }}'</span> ({{ deleteData.type }}, ID: {{
+        deleteData.id
+      }})
+    </span>
           </v-card-text>
 
           <v-card-actions>
