@@ -52,7 +52,8 @@
 
         <tbody>
         <tr v-for="(item, idx) in sortedItems" :key="item.id"
-            :class="item.days === 0 ? 'bg-error' : ''">
+            :class="item.days === 0 ? 'bg-error' : ''"
+            @contextmenu.prevent="openContextMenu($event, item)">
           <td>{{ idx + 1 }}</td>
           <td>{{ item.ticker }}</td>
           <td>{{ item.category }}</td>
@@ -71,6 +72,25 @@
         </tr>
         </tbody>
       </v-table>
+
+      <v-menu
+        v-model="menu"
+        :target="[menuX, menuY]"
+        location="bottom start"
+        scroll-strategy="close"
+      >
+        <v-list density="compact">
+          <v-list-item @click="editItem">
+            <v-list-item-title>Edit</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item @click="deleteItem">
+            <v-list-item-title class="text-error">
+              Delete
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </div>
   </div>
 
@@ -85,6 +105,13 @@ const sortKey = ref('')
 const sortDesc = ref(false)
 const filterCategory = ref(null)
 const filterType = ref(null)
+
+const menu = ref(false)
+const menuX = ref(0)
+const menuY = ref(0)
+
+const selectedId = ref(null)
+const selectedItem = ref(null)
 
 const columns = [
   {title: '#', key: 'index'},
@@ -149,6 +176,26 @@ onMounted(() => {
   fetchData()
 
 })
+
+function openContextMenu(e, item) {
+  selectedId.value = item.id
+  selectedItem.value = item
+
+  menuX.value = e.clientX
+  menuY.value = e.clientY
+  menu.value = true
+}
+
+function editItem() {
+  console.log('Edit', selectedId.value)
+  menu.value = false
+}
+
+function deleteItem() {
+  console.log('Delete', selectedId.value)
+  menu.value = false
+}
+
 </script>
 <style scoped>
 
