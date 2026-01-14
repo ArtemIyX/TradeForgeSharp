@@ -14,11 +14,17 @@
       v-model="messages"
       :timeout="5000"
     />
+    <v-snackbar-queue
+      v-model="errors"
+      :timeout="5000"
+    />
   </v-app>
 </template>
 
 <script setup>
-import { useSnackbar } from '@/composables/useSnackbar'
+import {useSnackbar} from '@/composables/useSnackbar'
+import {useErrorSnackbar} from '@/composables/useErrorSnackbar';
+
 
 const menuItems = [
   {title: 'Dashboard', path: '/'},
@@ -26,7 +32,9 @@ const menuItems = [
   {title: 'Backtester', path: '/backtester'}
 ]
 
-const { messages } = useSnackbar()
+const {messages} = useSnackbar()
+const {errors} = useErrorSnackbar();
+
 </script>
 
 <style scoped>

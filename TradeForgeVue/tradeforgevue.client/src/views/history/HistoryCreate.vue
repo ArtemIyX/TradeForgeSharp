@@ -4,8 +4,6 @@
     <h1>Create new history item</h1>
     <SymbolEditor :model="symbol"
                   ref="editor"
-
-
     />
 
     <v-row>

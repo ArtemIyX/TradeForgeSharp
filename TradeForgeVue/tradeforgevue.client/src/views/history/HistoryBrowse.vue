@@ -52,8 +52,8 @@
 
         <tbody>
         <tr v-for="(item, idx) in sortedItems" :key="item.id"
-            :class="item.days === 0 ? 'bg-error' : ''"
-            @contextmenu.prevent="openMenu($event, item)">
+            @contextmenu.prevent="openMenu($event, item)"
+        >
           <td>{{ idx + 1 }}</td>
           <td>{{ item.ticker }}</td>
           <td>{{ item.category }}</td>
@@ -62,7 +62,7 @@
           <td>{{ item.description }}</td>
           <td>{{ item.dateFrom }}</td>
           <td>{{ item.dateTo }}</td>
-          <td>
+          <td :class="item.days === 0 ? 'text-warning' : ''">
             {{ item.days }}
           </td>
         </tr>
@@ -115,7 +115,7 @@ import HistoryDeleteDialog
   from "@/components/history/dialogs/historyDeleteDialog/historyDeleteDialog.vue";
 import {useSnackbar} from "@/composables/useSnackbar.js";
 
-const { showSuccess, showError, showInfo, showWarning } = useSnackbar()
+const {showSuccess, showError, showInfo, showWarning} = useSnackbar()
 
 const loading = ref(false)
 const items = ref([])
@@ -216,6 +216,7 @@ const openDeleteDialog = (item) => {
 }
 
 const handleDelete = () => {
+
   isDeleting.value = true
 
   // Simulate server action with timeout
