@@ -9,6 +9,7 @@ import * as vuetifyComponents from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import '@mdi/font/css/materialdesignicons.css'
 
+import NotFound from "@/views/NotFound.vue";
 import Dashboard from "@/views/Dashboard.vue";
 import Backtester from "@/views/Backtester.vue";
 import HistoryManager from "@/views/HistoryManager.vue";
@@ -71,6 +72,11 @@ const router = createRouter({
     {
       path: '/backtester',
       component: Backtester
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      component: NotFound
     }
   ]
 })
