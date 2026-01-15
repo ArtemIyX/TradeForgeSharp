@@ -13,7 +13,7 @@ import NotFound from "@/views/NotFound.vue";
 import Dashboard from "@/views/Dashboard.vue";
 import Backtester from "@/views/Backtester.vue";
 import HistoryManager from "@/views/HistoryManager.vue";
-import HistoryBrowse from "@/views/history/HistoryBrowse.vue";
+import HistoryBrowse from "@/views/history/Browse/HistoryBrowse.vue";
 import HistoryCreate from "@/views/history/HistoryCreate.vue";
 import HistoryDetails from "@/views/history/HistoryDetails.vue";
 
