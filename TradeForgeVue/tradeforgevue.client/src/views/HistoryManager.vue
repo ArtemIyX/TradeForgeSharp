@@ -31,7 +31,6 @@
 <script setup>
 import { ref, computed } from 'vue'
 
-const itemCount = ref(32);
 const lastUpdated = ref(new Date().getTime())
 
 const formattedLastUpdated = computed(() => {

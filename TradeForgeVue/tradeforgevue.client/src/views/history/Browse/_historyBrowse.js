@@ -2,11 +2,12 @@
 
 import ContextMenu from "@/components/ContextMenu.vue";
 import HistoryDeleteDialog
-  from "@/components/history/dialogs/historyDeleteDialog/historyDeleteDialog.vue";
+  from "@/components/history/dialogs/historyDeleteDialog.vue";
 import {useSnackbar} from "@/composables/useSnackbar.js";
+import HistoryClearDialog from "@/components/history/dialogs/historyClearDialog.vue";
 
 export default {
-  components: {ContextMenu, HistoryDeleteDialog},
+  components: {HistoryClearDialog, ContextMenu, HistoryDeleteDialog},
   setup() {
     const {showSuccess, showError, showInfo, showWarning} = useSnackbar()
 
@@ -19,8 +20,11 @@ export default {
 
     const deletingDialog = ref(false)
     const isDeleting = ref(false)
-
     const deleteData = ref({});
+
+    const clearingDialog = ref(false)
+    const isClearing = ref(false)
+    const clearData = ref({});
 
     const columns = [
       {title: '#', key: 'index'},
@@ -82,7 +86,7 @@ export default {
     }
 
     onMounted(() => {
-      fetchData()
+      const fetchPromise = fetchData()
 
     })
 
@@ -109,31 +113,34 @@ export default {
     }
 
     const handleDelete = () => {
+      return new Promise((resolve) => {
+        isDeleting.value = true
 
-      isDeleting.value = true
+        // Simulate server action with timeout
+        setTimeout(() => {
+          console.log('Item deleted:', deleteData.value)
 
-      // Simulate server action with timeout
-      setTimeout(() => {
-        console.log('Item deleted:', deleteData.value)
+          // Perform your actual delete logic here
+          // For example: store.dispatch('deleteItem', deleteData.value)
 
-        // Perform your actual delete logic here
-        // For example: store.dispatch('deleteItem', deleteData.value)
+          isDeleting.value = false
+          deletingDialog.value = false
 
-        isDeleting.value = false
-        deletingDialog.value = false
+          showWarning('You have deleted ' + deleteData.value.ticker);
 
-        showWarning('You have deleted ' + deleteData.value.ticker);
+          // Optional: Reset delete data
+          deleteData.value = {
+            ticker: '',
+            type: '',
+            id: null
+          }
 
-        // Optional: Reset delete data
-        deleteData.value = {
-          ticker: '',
-          type: '',
-          id: null
-        }
-      }, 300) // 2 second timeout - adjust as needed
+          resolve() // Resolve the promise when done
+        }, 750)
+      })
     }
 
-    const handleCancel = () => {
+    const handleDeleteCancel = () => {
       console.log('Delete cancelled')
       showInfo('You have cancelled deleting ' + deleteData.value.ticker);
       deleteData.value = {
@@ -146,7 +153,44 @@ export default {
     const clearItemHistory = (data, close) => {
       console.log('Clear History:', data)
       close();
+      openClearDialog(data);
     };
+
+    const openClearDialog = (item) => {
+      clearData.value = item
+      clearingDialog.value = true
+    }
+
+    const handleClear = () => {
+      return new Promise((resolve) => {
+        isDeleting.value = true
+
+        setTimeout(() => {
+          
+          isClearing.value = false
+          clearingDialog.value = false
+
+          showWarning('You have cleared ' + clearData.value.ticker);
+
+          // Optional: Reset delete data
+          clearData.value = {
+            ticker: '',
+            type: '',
+            id: null
+          }
+
+          resolve() // Resolve the promise when done
+        }, 750)
+      })
+    }
+
+    const handleClearCancel = () => {
+      clearData.value = {
+        ticker: '',
+        type: '',
+        id: null
+      }
+    }
 
     return {
       loading,
@@ -170,8 +214,13 @@ export default {
       deleteItem,
       openDeleteDialog,
       handleDelete,
-      handleCancel,
-      clearItemHistory
+      handleDeleteCancel,
+      clearItemHistory,
+      clearingDialog,
+      isClearing,
+      clearData,
+      handleClear,
+      handleClearCancel
     }
   }
 }

@@ -132,10 +132,16 @@
       <HistoryDeleteDialog
         v-model="deletingDialog"
         :item-data="deleteData"
-        @confirm="handleDelete"
-        @cancel="handleCancel">
-
+        :on-confirm="handleDelete"
+        @cancel="handleDeleteCancel">
       </HistoryDeleteDialog>
+
+      <HistoryClearDialog
+        v-model="clearingDialog"
+        :item-data="clearData"
+        :on-confirm="handleClear"
+        @cancel="handleClearCancel">
+      </HistoryClearDialog>
     </div>
   </div>
 

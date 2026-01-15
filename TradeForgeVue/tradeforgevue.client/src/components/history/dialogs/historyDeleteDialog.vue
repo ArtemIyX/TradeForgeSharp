@@ -53,7 +53,7 @@
 </template>
 
 <script setup>
-import {ref, computed, defineProps, defineEmits,} from 'vue'
+import {ref, computed, defineProps, defineEmits} from 'vue'
 
 const props = defineProps({
   modelValue: {
@@ -67,7 +67,8 @@ const props = defineProps({
       type: '',
       id: null
     })
-  }
+  },
+  onConfirm: Function
 })
 
 const emit = defineEmits(['update:modelValue', 'confirm', 'cancel'])
@@ -94,7 +95,10 @@ const handleConfirm = async () => {
   isDeleting.value = true
 
   try {
-    await emit('confirm', props.itemData)
+    // Call the parent's function directly (if passed as prop)
+    if (props.onConfirm) {
+      await props.onConfirm(props.itemData)
+    }
   } finally {
     isDeleting.value = false
     isOpen.value = false
