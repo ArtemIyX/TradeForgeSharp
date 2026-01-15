@@ -113,6 +113,12 @@
               <v-list-item-title>Edit</v-list-item-title>
             </v-list-item>
 
+            <v-list-item @click="viewData(data, close)">
+              <v-list-item-title>
+                View Data
+              </v-list-item-title>
+            </v-list-item>
+
             <v-list-item :disabled="data.days === 0" @click="clearItemHistory(data, close)">
               <v-list-item-title :class="data.days === 0 ? 'text-error' : '' ">
                 Clear History

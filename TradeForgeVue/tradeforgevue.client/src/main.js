@@ -16,6 +16,7 @@ import HistoryManager from "@/views/HistoryManager.vue";
 import HistoryBrowse from "@/views/history/Browse/HistoryBrowse.vue";
 import HistoryCreate from "@/views/history/HistoryCreate.vue";
 import HistoryDetails from "@/views/history/HistoryDetails.vue";
+import HistoryOHLC from "@/views/history/HistoryOHLC.vue";
 
 import {useErrorSnackbar} from "@/composables/useErrorSnackbar.js";
 
@@ -50,20 +51,33 @@ const router = createRouter({
   routes: [
     {
       path: '/',
+      name: 'dashboard',
       component: Dashboard,
     },
     {
       path: '/history',
+      name: 'history',
       component: HistoryManager,
       children: [
         {
-          path: 'browse', component: HistoryBrowse
+          path: 'browse',
+          name: 'history-browse',
+          component: HistoryBrowse
         },
         {
-          path: 'create', component: HistoryCreate
+          path: 'create',
+          name: 'history-create',
+          component: HistoryCreate
+        },
+        {
+          path: 'data/:id',
+          name: 'history-data',
+          component: HistoryOHLC,
+          props: true
         },
         {
           path: 'details/:id',
+          name: 'history-details',
           component: HistoryDetails,
           props: true
         },
@@ -71,11 +85,12 @@ const router = createRouter({
     },
     {
       path: '/backtester',
+      name: 'backtester',
       component: Backtester
     },
     {
       path: '/:pathMatch(.*)*',
-      name: 'NotFound',
+      name: 'not-found',
       component: NotFound
     }
   ]

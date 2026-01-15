@@ -5,11 +5,14 @@ import HistoryDeleteDialog
   from "@/components/history/dialogs/historyDeleteDialog.vue";
 import {useSnackbar} from "@/composables/useSnackbar.js";
 import HistoryClearDialog from "@/components/history/dialogs/historyClearDialog.vue";
+import { useRouter } from 'vue-router';
 
 export default {
   components: {HistoryClearDialog, ContextMenu, HistoryDeleteDialog},
   setup() {
     const {showSuccess, showError, showInfo, showWarning} = useSnackbar()
+
+    const router = useRouter();
 
     const loading = ref(false)
     const items = ref([])
@@ -76,6 +79,9 @@ export default {
       loading.value = true
       try {
         const res = await fetch('/dummy/tickers.json')
+
+        await new Promise(resolve => setTimeout(resolve, 1000))
+
         items.value = await res.json()
       } catch (e) {
         console.error('Failed to load local JSON:', e)
@@ -87,7 +93,6 @@ export default {
 
     onMounted(() => {
       const fetchPromise = fetchData()
-
     })
 
     const contextMenu = ref(null)
@@ -166,7 +171,7 @@ export default {
         isDeleting.value = true
 
         setTimeout(() => {
-          
+
           isClearing.value = false
           clearingDialog.value = false
 
@@ -190,6 +195,14 @@ export default {
         type: '',
         id: null
       }
+    }
+
+    const viewData = (data, close) => {
+      close();
+      router.push({
+        name: 'history-data', // You need to add name to your route
+        params: { id: data.id }
+      });
     }
 
     return {
@@ -220,7 +233,8 @@ export default {
       isClearing,
       clearData,
       handleClear,
-      handleClearCancel
+      handleClearCancel,
+      viewData
     }
   }
 }
