@@ -9,6 +9,9 @@ import * as vuetifyComponents from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import '@mdi/font/css/materialdesignicons.css'
 
+import ECharts from 'vue-echarts'
+import 'echarts'
+
 import NotFound from "@/views/NotFound.vue";
 import Dashboard from "@/views/Dashboard.vue";
 import Backtester from "@/views/Backtester.vue";
@@ -17,6 +20,7 @@ import HistoryBrowse from "@/views/history/Browse/HistoryBrowse.vue";
 import HistoryCreate from "@/views/history/HistoryCreate.vue";
 import HistoryDetails from "@/views/history/HistoryDetails.vue";
 import HistoryOHLC from "@/views/history/HistoryOHLC.vue";
+
 
 import {useErrorSnackbar} from "@/composables/useErrorSnackbar.js";
 
@@ -97,6 +101,8 @@ const router = createRouter({
 })
 
 const app = createApp(App)
+
+app.component('v-chart', ECharts)
 
 app.config.errorHandler = (err, instance, info) => {
   console.error('Global error:', err)
