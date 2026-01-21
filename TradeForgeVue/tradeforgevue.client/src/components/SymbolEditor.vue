@@ -120,9 +120,6 @@
 import {required, positive} from '@/utils/rules'
 
 import {
-  defineProps,
-  defineExpose,
-  defineEmits,
   computed,
   ref,
   onMounted,
