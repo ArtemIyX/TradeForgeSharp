@@ -2,6 +2,7 @@
   <v-card class="pa-4 d-flex flex-column" style="height: 100%;">
     <!-- Ticker Information -->
     <v-card-title class="text-h5 pb-2 flex-shrink-0">
+      <back-button/>
       <span class="text-accent">{{ ticker.ticker }}</span>
       <span class="text-subtitle-2 text-medium-emphasis">{{ ticker.name }}</span>
     </v-card-title>
@@ -60,6 +61,7 @@ import OHLCTable from "@/components/history/OHLCTable.vue";
 
 import {ref, onMounted, computed} from "vue";
 import {useRoute} from 'vue-router';
+import BackButton from "@/components/BackButton.vue";
 
 const route = useRoute();
 

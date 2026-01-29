@@ -4,8 +4,6 @@
   <v-footer app class="compact-footer">
     <v-container fluid>
       <v-row align="center" justify="space-between" no-gutters>
-
-
         <!-- Open location button -->
         <v-col cols="12" sm="auto" class="text-center">
           <v-btn
