@@ -14,8 +14,9 @@
       <v-spacer></v-spacer>
       <v-btn
 
-        @click="submit"
+        @click="save"
         :disabled="!editor?.isValid()"
+        :loading="isSaving"
       >
         Save
       </v-btn>
@@ -30,14 +31,17 @@
 import {ref, reactive, computed, onMounted} from 'vue'
 import SymbolEditor from '@/components/SymbolEditor.vue'
 import BackButton from "@/components/BackButton.vue";
+import {useRouter} from 'vue-router';
+import {useSnackbar} from "@/composables/useSnackbar.js";
+const router = useRouter();
 
+const snackbar = useSnackbar();
 
 const symbol = reactive({
   ticker: 'gg',
   type: 'CFD',
   category: 'Stock',
   description: '',
-
   contractSize: 1,
   units: 'Share(s)',
   volumeStep: 0.01,
@@ -47,14 +51,24 @@ const symbol = reactive({
   minTick: 0.00001
 });
 
-const editor = ref(null)
+const editor = ref(null);
+const isSaving = ref(false);
 
-/* ---- methods ---- */
-async function submit() {
+const save = async () => {
+  isSaving.value = true;
+  try {
+    await new Promise(resolve => setTimeout(resolve, 500))
+    router.push({
+      name: 'history-browse'
+    });
 
+  }
+  catch (e) {
 
-  console.log('Our object:', symbol)
-  console.log(editor.value);
+  }
+  finally {
+    isSaving.value = false;
+  }
 
 }
 </script>

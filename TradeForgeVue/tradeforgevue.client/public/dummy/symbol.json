@@ -1,0 +1,14 @@
+﻿{
+  "id": 1,
+  "ticker": "NAS_100",
+  "type": "CFD",
+  "category": "Stock",
+  "description": "",
+  "contractSize": 1,
+  "units": "Share(s)",
+  "volumeStep": 0.01,
+  "defaultLeverage": 0.05,
+  "minVolume": 0.01,
+  "maxVolume": 100000000,
+  "minTick": 0.00001
+}

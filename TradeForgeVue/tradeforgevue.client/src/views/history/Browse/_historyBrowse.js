@@ -80,7 +80,7 @@ export default {
       try {
         const res = await fetch('/dummy/tickers.json')
 
-        await new Promise(resolve => setTimeout(resolve, 1000))
+        await new Promise(resolve => setTimeout(resolve, 200))
 
         items.value = await res.json()
       } catch (e) {
@@ -102,8 +102,11 @@ export default {
     }
 
     const editItem = (item, close) => {
-      console.log('Edit', item.id);
       close();
+      router.push({
+        name: 'history-details', // You need to add name to your route
+        params: { id: item.id }
+      });
     }
 
     const deleteItem = (item, close) => {
