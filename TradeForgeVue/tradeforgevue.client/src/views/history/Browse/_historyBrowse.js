@@ -203,7 +203,15 @@ export default {
     const viewData = (data, close) => {
       close();
       router.push({
-        name: 'history-data', // You need to add name to your route
+        name: 'history-data',
+        params: { id: data.id }
+      });
+    }
+
+    const importHistory = (data, close) =>{
+      close();
+      router.push({
+        name: 'history-import',
         params: { id: data.id }
       });
     }
@@ -237,7 +245,8 @@ export default {
       clearData,
       handleClear,
       handleClearCancel,
-      viewData
+      viewData,
+      importHistory
     }
   }
 }

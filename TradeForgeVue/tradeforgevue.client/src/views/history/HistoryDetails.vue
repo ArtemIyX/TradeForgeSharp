@@ -44,7 +44,7 @@ import {useSnackbar} from "@/composables/useSnackbar.js";
 
 const snackbar = useSnackbar();
 const route = useRoute();
-const editor = ref({});
+const editor = ref(null);
 const isSaving = ref(false);
 
 const symbol = ref({

@@ -23,6 +23,7 @@ import HistoryOHLC from "@/views/history/HistoryOHLC.vue";
 
 
 import {useErrorSnackbar} from "@/composables/useErrorSnackbar.js";
+import HistoryImport from "@/views/history/HistoryImport.vue";
 
 const {showGlobalError} = useErrorSnackbar()
 
@@ -85,6 +86,12 @@ const router = createRouter({
           component: HistoryDetails,
           props: true
         },
+        {
+          path: 'import/:id',
+          name: 'history-import',
+          component: HistoryImport,
+          props: true
+        }
       ]
     },
     {

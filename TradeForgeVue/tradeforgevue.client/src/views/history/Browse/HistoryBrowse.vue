@@ -152,6 +152,12 @@
           </v-list-item-title>
         </v-list-item>
 
+        <v-list-item  @click="importHistory(data, close)">
+          <v-list-item-title>
+            Import history
+          </v-list-item-title>
+        </v-list-item>
+
         <v-list-item :disabled="data.days === 0" @click="clearItemHistory(data, close)">
           <v-list-item-title :class="data.days === 0 ? 'text-error' : '' ">
             Clear History
