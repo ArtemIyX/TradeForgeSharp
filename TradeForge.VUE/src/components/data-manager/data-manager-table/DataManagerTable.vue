@@ -71,6 +71,7 @@
       <table class="custom-table">
         <thead class="table-head">
         <tr>
+          <th class="favorite-column"></th>
           <th
             v-for="header in headers"
             :key="header.key"
@@ -98,6 +99,15 @@
           </td>
         </tr>
         <tr v-else v-for="ticker in filteredAndSortedTickers" :key="ticker.id" class="data-row">
+          <td class="favorite-cell">
+            <v-icon
+              :icon="isFavorite(ticker.id) ? 'mdi-star' : 'mdi-star-outline'"
+              :color="isFavorite(ticker.id) ? 'yellow-darken-2' : ''"
+              size="small"
+              @click.stop="toggleFavorite(ticker.id)"
+              class="favorite-icon"
+            />
+          </td>
           <td>{{ ticker.symbol }}</td>
           <td>{{ ticker.instrument }}</td>
           <td>{{ ticker.category }}</td>
@@ -139,8 +149,25 @@ const sortBy = ref<string | null>(null);
 const sortDirection = ref<'asc' | 'desc'>('asc');
 const nameFilter = ref('');
 const categoryFilter = ref<string | null>(null);
-const timeFrameFilter = ref<string[]>([]);
+const timeFrameFilter = ref<TimeFrame[]>([]);
 const filtersExpanded = ref(false);
+
+// Dummy favorites array - replace with real data later
+const favorites = ref<string[]>(['1', '3', '5']); // Example IDs
+
+const isFavorite = (tickerId: string) => {
+  return favorites.value.includes(tickerId);
+};
+
+const toggleFavorite = (tickerId: string) => {
+  const index = favorites.value.indexOf(tickerId);
+  if (index > -1) {
+    favorites.value.splice(index, 1);
+  } else {
+    favorites.value.push(tickerId);
+  }
+  // TODO: Save to backend or localStorage
+};
 
 const hasActiveFilters = computed(() => {
   return !!(nameFilter.value ||
@@ -197,33 +224,46 @@ const filteredTickers = computed(() => {
 });
 
 const filteredAndSortedTickers = computed(() => {
-  if (!sortBy.value) return filteredTickers.value;
+  let result = filteredTickers.value;
 
-  return [...filteredTickers.value].sort((a, b) => {
-    const key = sortBy.value as keyof Ticker;
-    let aVal = a[key];
-    let bVal = b[key];
+  // Apply sorting if specified
+  if (sortBy.value) {
+    result = [...result].sort((a, b) => {
+      const key = sortBy.value as keyof Ticker;
+      let aVal = a[key];
+      let bVal = b[key];
 
-    // Handle dates
-    if (key === 'dateFrom' || key === 'dateTo') {
-      aVal = new Date(aVal as Date).getTime();
-      bVal = new Date(bVal as Date).getTime();
-    }
+      // Handle dates
+      if (key === 'dateFrom' || key === 'dateTo') {
+        aVal = new Date(aVal as Date).getTime();
+        bVal = new Date(bVal as Date).getTime();
+      }
 
-    // Handle numbers
-    if (typeof aVal === 'number' && typeof bVal === 'number') {
-      return sortDirection.value === 'asc' ? aVal - bVal : bVal - aVal;
-    }
+      // Handle numbers
+      if (typeof aVal === 'number' && typeof bVal === 'number') {
+        return sortDirection.value === 'asc' ? aVal - bVal : bVal - aVal;
+      }
 
-    // Handle strings
-    const aStr = String(aVal).toLowerCase();
-    const bStr = String(bVal).toLowerCase();
+      // Handle strings
+      const aStr = String(aVal).toLowerCase();
+      const bStr = String(bVal).toLowerCase();
 
-    if (sortDirection.value === 'asc') {
-      return aStr.localeCompare(bStr);
-    } else {
-      return bStr.localeCompare(aStr);
-    }
+      if (sortDirection.value === 'asc') {
+        return aStr.localeCompare(bStr);
+      } else {
+        return bStr.localeCompare(aStr);
+      }
+    });
+  }
+
+  // Sort favorites to top
+  return [...result].sort((a, b) => {
+    const aIsFav = isFavorite(a.id);
+    const bIsFav = isFavorite(b.id);
+
+    if (aIsFav && !bIsFav) return -1;
+    if (!aIsFav && bIsFav) return 1;
+    return 0;
   });
 });
 
