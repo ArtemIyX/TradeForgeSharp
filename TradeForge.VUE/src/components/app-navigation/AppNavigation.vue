@@ -33,8 +33,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { useDisplay } from 'vuetify';
+import {ref, computed} from 'vue';
+import {useDisplay} from 'vuetify';
 
 interface NavigationItem {
   title: string;
@@ -42,7 +42,7 @@ interface NavigationItem {
   path: string;
 }
 
-const { mobile } = useDisplay();
+const {mobile} = useDisplay();
 const isMobile = computed(() => mobile.value);
 
 const appVersion = ref('26.1.1');
@@ -61,44 +61,6 @@ const navigationItems = ref<NavigationItem[]>([
 ]);
 </script>
 
-<style scoped>
-.app-navigation {
-  border-right: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
-}
+<style scoped src="./AppNavigation.css">
 
-.app-header {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1.5rem 1rem;
-}
-
-.app-logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.app-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.125rem;
-}
-
-.app-name {
-  font-size: 1.25rem;
-  font-weight: 600;
-  line-height: 1.2;
-  margin: 0;
-}
-
-.app-version {
-  font-size: 0.75rem;
-  opacity: 0.6;
-  font-weight: 500;
-}
-
-.nav-active {
-  background-color: rgba(var(--v-theme-primary), 0.12);
-}
 </style>
