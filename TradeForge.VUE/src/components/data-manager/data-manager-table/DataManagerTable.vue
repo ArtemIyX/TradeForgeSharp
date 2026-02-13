@@ -1,7 +1,28 @@
 ﻿<style scoped src="./DataManagerTable.css"/>
 
 <template>
+  <v-menu
+    v-model="contextMenu"
+    :style="{ left: contextMenuX + 'px', top: contextMenuY + 'px' }"
+    absolute
+    offset-y
+  >
+    <v-list density="compact">
+      <v-list-item
+        v-for="item in contextMenuItems"
+        :key="item.key"
+        @click="executeAction(item)"
+      >
+        <template v-slot:prepend v-if="item.icon">
+          <v-icon :icon="item.icon" size="small"/>
+        </template>
+        <v-list-item-title>{{ item.label }}</v-list-item-title>
+      </v-list-item>
+    </v-list>
+  </v-menu>
+  
   <div class="table-container">
+
     <div class="filters-header">
       <v-btn
         @click="filtersExpanded = !filtersExpanded"
@@ -10,7 +31,7 @@
         prepend-icon="mdi-filter-variant"
       >
         Filters
-        <v-icon :icon="filtersExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'" end />
+        <v-icon :icon="filtersExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'" end/>
       </v-btn>
 
       <v-chip
@@ -98,7 +119,8 @@
             No data available
           </td>
         </tr>
-        <tr v-else v-for="ticker in filteredAndSortedTickers" :key="ticker.id" class="data-row">
+        <tr v-else v-for="ticker in filteredAndSortedTickers" :key="ticker.id" class="data-row"
+            @contextmenu="showContextMenu($event, ticker)">
           <td class="favorite-cell">
             <v-icon
               :icon="isFavorite(ticker.id) ? 'mdi-star' : 'mdi-star-outline'"
@@ -124,9 +146,10 @@
 
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import type { Ticker } from '@/types/Ticker.ts';
-import { TimeFrame } from '@/types/Ticker.ts';
+import {ref, computed} from 'vue';
+import type {Ticker} from '@/types/Ticker.ts';
+import {TimeFrame} from '@/types/Ticker.ts';
+import type {DataManagerContextMenuItem} from '@/types/DataManagerContextMenuItem.ts';
 
 interface Props {
   tickers: Ticker[];
@@ -136,14 +159,33 @@ interface Props {
 const props = defineProps<Props>();
 
 const headers = [
-  { title: 'Symbol', key: 'symbol', sortable: true },
-  { title: 'Instrument', key: 'instrument', sortable: true },
-  { title: 'Category', key: 'category', sortable: true },
-  { title: 'Timeframe', key: 'timeFrame', sortable: true },
-  { title: 'Date From', key: 'dateFrom', sortable: true },
-  { title: 'Date To', key: 'dateTo', sortable: true },
-  { title: 'Records', key: 'totalRecords', sortable: true },
+  {title: 'Symbol', key: 'symbol', sortable: true},
+  {title: 'Instrument', key: 'instrument', sortable: true},
+  {title: 'Category', key: 'category', sortable: true},
+  {title: 'Timeframe', key: 'timeFrame', sortable: true},
+  {title: 'Date From', key: 'dateFrom', sortable: true},
+  {title: 'Date To', key: 'dateTo', sortable: true},
+  {title: 'Records', key: 'totalRecords', sortable: true},
 ];
+
+const contextMenuItems: DataManagerContextMenuItem[] = [
+  {
+    key: 'delete',
+    label: 'Delete',
+    icon: 'mdi-delete',
+    action: (ticker) => console.log('Delete', ticker)
+  },
+  {
+    key: 'edit',
+    label: 'Edit',
+    icon: 'mdi-pencil',
+    action: (ticker) => console.log('Edit', ticker)
+  }
+];
+
+const contextMenu = ref<boolean>(false);
+const contextMenuX = ref<number>(0);
+const contextMenuY = ref<number>(0);
 
 const sortBy = ref<string | null>(null);
 const sortDirection = ref<'asc' | 'desc'>('asc');
@@ -151,9 +193,24 @@ const nameFilter = ref('');
 const categoryFilter = ref<string | null>(null);
 const timeFrameFilter = ref<TimeFrame[]>([]);
 const filtersExpanded = ref(false);
-
+const selectedTicker = ref<Ticker | null>(null);
 // Dummy favorites array - replace with real data later
 const favorites = ref<string[]>(['1', '3', '5']); // Example IDs
+
+const showContextMenu = (event: MouseEvent, ticker: Ticker) => {
+  event.preventDefault();
+  selectedTicker.value = ticker;
+  contextMenuX.value = event.clientX;
+  contextMenuY.value = event.clientY;
+  contextMenu.value = true;
+};
+
+const executeAction = (item: DataManagerContextMenuItem) => {
+  if (selectedTicker.value) {
+    item.action(selectedTicker.value);
+  }
+  contextMenu.value = false;
+};
 
 const isFavorite = (tickerId: string) => {
   return favorites.value.includes(tickerId);
