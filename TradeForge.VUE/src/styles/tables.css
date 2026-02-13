@@ -1,0 +1,619 @@
+﻿/* Table System */
+
+/* Base table */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+  background-color: var(--color-surface);
+}
+
+.table th,
+.table td {
+  padding: var(--space-md);
+  text-align: left;
+  border-bottom: 0.0625rem solid var(--color-border);
+}
+
+.table th {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.05em;
+  background-color: var(--color-surface-elevated);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+}
+
+.table td {
+  color: var(--color-text-primary);
+}
+
+.table tbody tr {
+  transition: background-color var(--transition-fast);
+}
+
+.table tbody tr:hover {
+  background-color: var(--color-surface-elevated);
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Table variants */
+.table-bordered {
+  border: 0.0625rem solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.table-bordered th,
+.table-bordered td {
+  border-right: 0.0625rem solid var(--color-border);
+}
+
+.table-bordered th:last-child,
+.table-bordered td:last-child {
+  border-right: none;
+}
+
+.table-striped tbody tr:nth-child(even) {
+  background-color: var(--color-surface-elevated);
+}
+
+.table-compact th,
+.table-compact td {
+  padding: var(--space-sm) var(--space-md);
+}
+
+.table-spacious th,
+.table-spacious td {
+  padding: var(--space-lg);
+}
+
+/* Table with fixed header */
+.table-fixed-header {
+  display: block;
+  max-height: 31.25rem;
+  overflow-y: auto;
+}
+
+.table-fixed-header thead {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+}
+
+.table-fixed-header tbody {
+  display: block;
+  overflow-y: auto;
+}
+
+.table-fixed-header tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+/* Table container with scroll */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  border: 0.0625rem solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+}
+
+.table-container .table {
+  margin: 0;
+  border: none;
+}
+
+/* Cell alignment */
+.table th.text-center,
+.table td.text-center {
+  text-align: center;
+}
+
+.table th.text-right,
+.table td.text-right {
+  text-align: right;
+}
+
+/* Sortable column headers */
+.table th.sortable {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  padding-right: 1.5rem;
+}
+
+.table th.sortable:hover {
+  color: var(--color-text-primary);
+}
+
+.table th.sortable::after {
+  content: '↕';
+  position: absolute;
+  right: var(--space-md);
+  opacity: 0.3;
+  font-size: var(--font-size-xs);
+}
+
+.table th.sortable.asc::after {
+  content: '↑';
+  opacity: 1;
+  color: var(--color-primary);
+}
+
+.table th.sortable.desc::after {
+  content: '↓';
+  opacity: 1;
+  color: var(--color-primary);
+}
+
+/* Row states */
+.table tbody tr.selected {
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+.table tbody tr.disabled {
+  opacity: var(--opacity-disabled);
+  pointer-events: none;
+}
+
+.table tbody tr.clickable {
+  cursor: pointer;
+}
+
+/* Trading-specific tables */
+
+/* Order book table */
+.table-orderbook {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  table-layout: fixed;
+}
+
+.table-orderbook th,
+.table-orderbook td {
+  padding: 0.25rem var(--space-sm);
+  border: none;
+}
+
+.table-orderbook td {
+  font-variant-numeric: tabular-nums;
+}
+
+.table-orderbook tbody tr:hover {
+  background-color: transparent;
+}
+
+.table-orderbook .bid-row {
+  background: linear-gradient(
+    to left,
+    rgba(16, 185, 129, 0.15) var(--fill-percentage, 0%),
+    transparent var(--fill-percentage, 0%)
+  );
+}
+
+.table-orderbook .ask-row {
+  background: linear-gradient(
+    to left,
+    rgba(239, 68, 68, 0.15) var(--fill-percentage, 0%),
+    transparent var(--fill-percentage, 0%)
+  );
+}
+
+.table-orderbook .price-bid {
+  color: var(--color-buy);
+  font-weight: var(--font-weight-semibold);
+}
+
+.table-orderbook .price-ask {
+  color: var(--color-sell);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Positions table */
+.table-positions th,
+.table-positions td {
+  font-family: var(--font-family-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.table-positions .symbol {
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.table-positions .position-long {
+  position: relative;
+}
+
+.table-positions .position-long::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0.1875rem;
+  height: 60%;
+  background-color: var(--color-buy);
+  border-radius: var(--radius-sm);
+}
+
+.table-positions .position-short {
+  position: relative;
+}
+
+.table-positions .position-short::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0.1875rem;
+  height: 60%;
+  background-color: var(--color-sell);
+  border-radius: var(--radius-sm);
+}
+
+/* Trades history table */
+.table-trades th,
+.table-trades td {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+}
+
+.table-trades .trade-buy {
+  color: var(--color-buy);
+}
+
+.table-trades .trade-sell {
+  color: var(--color-sell);
+}
+
+.table-trades .timestamp {
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-xs);
+}
+
+/* Portfolio table */
+.table-portfolio .asset-name {
+  font-weight: var(--font-weight-semibold);
+}
+
+.table-portfolio .asset-symbol {
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  font-family: var(--font-family-mono);
+}
+
+.table-portfolio .value,
+.table-portfolio .price,
+.table-portfolio .quantity {
+  font-family: var(--font-family-mono);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.table-portfolio .pnl-positive {
+  color: var(--color-success);
+  font-weight: var(--font-weight-semibold);
+}
+
+.table-portfolio .pnl-negative {
+  color: var(--color-danger);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Orders table */
+.table-orders .order-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem var(--space-sm);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.table-orders .status-pending {
+  background-color: rgba(245, 158, 11, 0.2);
+  color: var(--color-warning);
+}
+
+.table-orders .status-filled {
+  background-color: rgba(16, 185, 129, 0.2);
+  color: var(--color-success);
+}
+
+.table-orders .status-cancelled {
+  background-color: rgba(107, 114, 128, 0.2);
+  color: var(--color-text-tertiary);
+}
+
+.table-orders .status-rejected {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: var(--color-danger);
+}
+
+.table-orders .order-buy {
+  color: var(--color-buy);
+  font-weight: var(--font-weight-semibold);
+}
+
+.table-orders .order-sell {
+  color: var(--color-sell);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Watchlist table */
+.table-watchlist .symbol {
+  font-family: var(--font-family-mono);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.table-watchlist .price {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.table-watchlist .change {
+  font-family: var(--font-family-mono);
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.table-watchlist .change-positive {
+  color: var(--color-success);
+}
+
+.table-watchlist .change-negative {
+  color: var(--color-danger);
+}
+
+.table-watchlist .sparkline {
+  height: 2rem;
+  min-width: 5rem;
+}
+
+/* Performance metrics table */
+.table-metrics th {
+  text-align: left;
+  background-color: var(--color-surface);
+  font-weight: var(--font-weight-medium);
+}
+
+.table-metrics td {
+  font-family: var(--font-family-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.table-metrics .metric-label {
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+.table-metrics .metric-value {
+  text-align: right;
+  font-weight: var(--font-weight-semibold);
+}
+
+.table-metrics .metric-good {
+  color: var(--color-success);
+}
+
+.table-metrics .metric-bad {
+  color: var(--color-danger);
+}
+
+/* Market data table */
+.table-market .volume-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.table-market .volume-fill {
+  height: 0.375rem;
+  background-color: var(--color-primary);
+  border-radius: var(--radius-sm);
+  min-width: 0.125rem;
+}
+
+.table-market .market-cap,
+.table-market .volume,
+.table-market .supply {
+  font-family: var(--font-family-mono);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* Cell content helpers */
+.table .cell-mono {
+  font-family: var(--font-family-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.table .cell-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem var(--space-sm);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  background-color: var(--color-surface-elevated);
+}
+
+.table .cell-action {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+/* Empty state */
+.table-empty {
+  padding: var(--space-2xl);
+  text-align: center;
+  color: var(--color-text-tertiary);
+}
+
+.table-empty-icon {
+  font-size: var(--font-size-4xl);
+  margin-bottom: var(--space-md);
+  opacity: 0.3;
+}
+
+.table-empty-message {
+  font-size: var(--font-size-base);
+  margin-bottom: var(--space-sm);
+}
+
+.table-empty-hint {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+}
+
+/* Loading state */
+.table-loading {
+  position: relative;
+  pointer-events: none;
+}
+
+.table-loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(10, 14, 20, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-dropdown);
+}
+
+/* Pagination */
+.table-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md);
+  border-top: 0.0625rem solid var(--color-border);
+  background-color: var(--color-surface-elevated);
+}
+
+.table-pagination-info {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.table-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+/* Expandable rows */
+.table tbody tr.expandable {
+  cursor: pointer;
+}
+
+.table tbody tr.expandable td:first-child {
+  position: relative;
+  padding-left: 2rem;
+}
+
+.table tbody tr.expandable td:first-child::before {
+  content: '›';
+  position: absolute;
+  left: var(--space-md);
+  font-size: var(--font-size-lg);
+  color: var(--color-text-tertiary);
+  transition: transform var(--transition-fast);
+}
+
+.table tbody tr.expandable.expanded td:first-child::before {
+  transform: rotate(90deg);
+}
+
+.table tbody tr.expanded-content {
+  background-color: var(--color-surface-elevated);
+}
+
+.table tbody tr.expanded-content td {
+  padding: var(--space-lg);
+  border-bottom: 0.0625rem solid var(--color-border);
+}
+
+/* Highlight flash animation */
+@keyframes highlight-flash {
+  0% {
+    background-color: rgba(59, 130, 246, 0.3);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.table tbody tr.flash-update {
+  animation: highlight-flash 0.6s ease-out;
+}
+
+/* Responsive table */
+@media (max-width: 48rem) {
+  .table-responsive {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table-responsive .table {
+    min-width: 37.5rem;
+  }
+}
+
+/* Column widths */
+.table .col-narrow {
+  width: 5rem;
+}
+
+.table .col-medium {
+  width: 10rem;
+}
+
+.table .col-wide {
+  width: 15rem;
+}
+
+.table .col-auto {
+  width: auto;
+}
+
+/* Freeze first column */
+.table-freeze-first th:first-child,
+.table-freeze-first td:first-child {
+  position: sticky;
+  left: 0;
+  background-color: var(--color-surface);
+  z-index: var(--z-base);
+}
+
+.table-freeze-first th:first-child {
+  z-index: calc(var(--z-sticky) + 1);
+  background-color: var(--color-surface-elevated);
+}

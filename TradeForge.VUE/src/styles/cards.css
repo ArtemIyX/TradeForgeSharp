@@ -1,0 +1,543 @@
+﻿/* Card System */
+
+/* Base card */
+.card {
+  background-color: var(--color-surface);
+  border: 0.0625rem solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+/* Card elevated */
+.card-elevated {
+  background-color: var(--color-surface-elevated);
+  box-shadow: var(--shadow-md);
+}
+
+/* Card hover effect */
+.card-hover {
+  transition: all var(--transition-base);
+  cursor: pointer;
+}
+
+.card-hover:hover {
+  border-color: var(--color-border-hover);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-0.125rem);
+}
+
+/* Card sections */
+.card-header {
+  padding: var(--space-lg);
+  border-bottom: 0.0625rem solid var(--color-border);
+  background-color: var(--color-surface-elevated);
+}
+
+.card-body {
+  padding: var(--space-lg);
+}
+
+.card-footer {
+  padding: var(--space-lg);
+  border-top: 0.0625rem solid var(--color-border);
+  background-color: var(--color-surface-elevated);
+}
+
+/* Card header with title */
+.card-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.card-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-top: var(--space-xs);
+}
+
+.card-description {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed);
+}
+
+/* Card with header actions */
+.card-header-with-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+/* Card sizes */
+.card-compact {
+  padding: var(--space-md);
+}
+
+.card-compact .card-header {
+  padding: var(--space-md);
+}
+
+.card-compact .card-body {
+  padding: var(--space-md);
+}
+
+.card-compact .card-footer {
+  padding: var(--space-md);
+}
+
+/* Card without padding */
+.card-no-padding {
+  padding: 0;
+}
+
+.card-no-padding .card-body {
+  padding: 0;
+}
+
+/* Card variants */
+.card-primary {
+  border-color: var(--color-primary);
+  background-color: rgba(59, 130, 246, 0.05);
+}
+
+.card-success {
+  border-color: var(--color-success);
+  background-color: rgba(16, 185, 129, 0.05);
+}
+
+.card-danger {
+  border-color: var(--color-danger);
+  background-color: rgba(239, 68, 68, 0.05);
+}
+
+.card-warning {
+  border-color: var(--color-warning);
+  background-color: rgba(245, 158, 11, 0.05);
+}
+
+/* Flat card (no border) */
+.card-flat {
+  border: none;
+  background-color: var(--color-surface);
+}
+
+/* Glass card effect */
+.card-glass {
+  background-color: rgba(20, 25, 32, 0.6);
+  backdrop-filter: blur(0.625rem);
+  border: 0.0625rem solid rgba(255, 255, 255, 0.1);
+}
+
+/* Panel (simple container) */
+.panel {
+  padding: var(--space-lg);
+  background-color: var(--color-surface);
+  border-radius: var(--radius-md);
+}
+
+.panel-elevated {
+  background-color: var(--color-surface-elevated);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Trading-specific cards */
+.card-trade {
+  background-color: var(--color-surface);
+  border: 0.0625rem solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.card-trade-header {
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 0.0625rem solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--color-surface-elevated);
+}
+
+.card-trade-body {
+  padding: var(--space-lg);
+}
+
+/* Position card */
+.card-position {
+  position: relative;
+  padding: var(--space-md);
+  background-color: var(--color-surface-elevated);
+  border-left: 0.25rem solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.card-position:hover {
+  background-color: var(--color-surface-hover);
+  border-left-color: var(--color-primary);
+}
+
+.card-position.long {
+  border-left-color: var(--color-buy);
+}
+
+.card-position.short {
+  border-left-color: var(--color-sell);
+}
+
+/* Stats card */
+.card-stat {
+  padding: var(--space-lg);
+  background-color: var(--color-surface);
+  border: 0.0625rem solid var(--color-border);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.card-stat-label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-sm);
+}
+
+.card-stat-value {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  font-family: var(--font-family-mono);
+  color: var(--color-text-primary);
+  line-height: 1;
+}
+
+.card-stat-change {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-family-mono);
+  margin-top: var(--space-sm);
+}
+
+.card-stat-change.positive {
+  color: var(--color-success);
+}
+
+.card-stat-change.negative {
+  color: var(--color-danger);
+}
+
+/* Price card */
+.card-price {
+  padding: var(--space-md);
+  background-color: var(--color-surface);
+  border: 0.0625rem solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.card-price-symbol {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-family-mono);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-xs);
+}
+
+.card-price-value {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  font-family: var(--font-family-mono);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-xs);
+}
+
+.card-price-change {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-family-mono);
+}
+
+/* Order card */
+.card-order {
+  padding: var(--space-md);
+  background-color: var(--color-surface-elevated);
+  border-radius: var(--radius-md);
+  border-left: 0.25rem solid var(--color-border);
+}
+
+.card-order.buy {
+  border-left-color: var(--color-buy);
+}
+
+.card-order.sell {
+  border-left-color: var(--color-sell);
+}
+
+.card-order-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-sm);
+}
+
+.card-order-type {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.125rem var(--space-sm);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+}
+
+.card-order-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.card-order-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-sm);
+}
+
+.card-order-label {
+  color: var(--color-text-secondary);
+}
+
+.card-order-value {
+  font-family: var(--font-family-mono);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+/* Alert card */
+.card-alert {
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  border-left: 0.25rem solid;
+  display: flex;
+  gap: var(--space-md);
+}
+
+.card-alert-icon {
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.card-alert-content {
+  flex: 1;
+}
+
+.card-alert-title {
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-xs);
+}
+
+.card-alert-message {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.card-alert-info {
+  background-color: rgba(6, 182, 212, 0.1);
+  border-left-color: var(--color-info);
+}
+
+.card-alert-info .card-alert-title {
+  color: var(--color-info);
+}
+
+.card-alert-success {
+  background-color: rgba(16, 185, 129, 0.1);
+  border-left-color: var(--color-success);
+}
+
+.card-alert-success .card-alert-title {
+  color: var(--color-success);
+}
+
+.card-alert-warning {
+  background-color: rgba(245, 158, 11, 0.1);
+  border-left-color: var(--color-warning);
+}
+
+.card-alert-warning .card-alert-title {
+  color: var(--color-warning);
+}
+
+.card-alert-danger {
+  background-color: rgba(239, 68, 68, 0.1);
+  border-left-color: var(--color-danger);
+}
+
+.card-alert-danger .card-alert-title {
+  color: var(--color-danger);
+}
+
+/* Dashboard widget card */
+.card-widget {
+  padding: var(--space-lg);
+  background-color: var(--color-surface);
+  border: 0.0625rem solid var(--color-border);
+  border-radius: var(--radius-lg);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-widget-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-md);
+}
+
+.card-widget-title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.card-widget-body {
+  flex: 1;
+  overflow: auto;
+}
+
+/* Scrollable card */
+.card-scrollable {
+  max-height: 25rem;
+  overflow-y: auto;
+}
+
+/* Card with loading state */
+.card-loading {
+  position: relative;
+  pointer-events: none;
+}
+
+.card-loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(10, 14, 20, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Card grid layouts */
+.card-grid {
+  display: grid;
+  gap: var(--space-md);
+}
+
+.card-grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.card-grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.card-grid-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+/* Responsive card grid */
+@media (max-width: 75rem) {
+  .card-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 48rem) {
+  .card-grid-2,
+  .card-grid-3,
+  .card-grid-4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Chart card (for embedding charts) */
+.card-chart {
+  background-color: var(--color-surface);
+  border: 0.0625rem solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.card-chart-header {
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 0.0625rem solid var(--color-border);
+  background-color: var(--color-surface-elevated);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-chart-body {
+  padding: var(--space-lg);
+  min-height: 20rem;
+}
+
+/* Metric comparison card */
+.card-metric {
+  padding: var(--space-md);
+  background-color: var(--color-surface);
+  border: 0.0625rem solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.card-metric-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-md);
+}
+
+.card-metric-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+.card-metric-body {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+}
+
+.card-metric-value {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  font-family: var(--font-family-mono);
+  color: var(--color-text-primary);
+}
+
+.card-metric-unit {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+}
+
+.card-metric-trend {
+  margin-top: var(--space-xs);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}

@@ -1,0 +1,428 @@
+﻿/* Scrollbar System */
+
+/* Default scrollbar (already in base.css, but more variations here) */
+
+/* Thin scrollbar */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 0.375rem;
+  height: 0.375rem;
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+/* Hidden scrollbar (but still scrollable) */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+/* Custom scrollbar variants */
+
+/* Primary scrollbar */
+.scrollbar-primary::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+.scrollbar-primary::-webkit-scrollbar-track {
+  background-color: var(--color-surface);
+}
+
+.scrollbar-primary::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary);
+  border-radius: var(--radius-full);
+}
+
+.scrollbar-primary::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.scrollbar-primary {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-primary) var(--color-surface);
+}
+
+/* Success scrollbar */
+.scrollbar-success::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+.scrollbar-success::-webkit-scrollbar-track {
+  background-color: var(--color-surface);
+}
+
+.scrollbar-success::-webkit-scrollbar-thumb {
+  background-color: var(--color-success);
+  border-radius: var(--radius-full);
+}
+
+.scrollbar-success::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-success-hover);
+}
+
+.scrollbar-success {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-success) var(--color-surface);
+}
+
+/* Danger scrollbar */
+.scrollbar-danger::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+.scrollbar-danger::-webkit-scrollbar-track {
+  background-color: var(--color-surface);
+}
+
+.scrollbar-danger::-webkit-scrollbar-thumb {
+  background-color: var(--color-danger);
+  border-radius: var(--radius-full);
+}
+
+.scrollbar-danger::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-danger-hover);
+}
+
+.scrollbar-danger {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-danger) var(--color-surface);
+}
+
+/* Dark scrollbar (for lighter backgrounds) */
+.scrollbar-dark::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+.scrollbar-dark::-webkit-scrollbar-track {
+  background-color: var(--color-surface-elevated);
+}
+
+.scrollbar-dark::-webkit-scrollbar-thumb {
+  background-color: var(--color-text-tertiary);
+  border-radius: var(--radius-full);
+}
+
+.scrollbar-dark::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-text-secondary);
+}
+
+.scrollbar-dark {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-text-tertiary) var(--color-surface-elevated);
+}
+
+/* Overlay scrollbar (appears on hover) */
+.scrollbar-overlay {
+  overflow: auto;
+}
+
+.scrollbar-overlay::-webkit-scrollbar {
+  width: 0.625rem;
+  height: 0.625rem;
+}
+
+.scrollbar-overlay::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.scrollbar-overlay::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: var(--radius-full);
+  transition: background-color var(--transition-fast);
+}
+
+.scrollbar-overlay:hover::-webkit-scrollbar-thumb {
+  background-color: var(--color-border-hover);
+}
+
+.scrollbar-overlay::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-text-tertiary);
+}
+
+/* Rounded scrollbar with border */
+.scrollbar-rounded::-webkit-scrollbar {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+.scrollbar-rounded::-webkit-scrollbar-track {
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  margin: var(--space-xs);
+}
+
+.scrollbar-rounded::-webkit-scrollbar-thumb {
+  background-color: var(--color-border-hover);
+  border-radius: var(--radius-lg);
+  border: 0.125rem solid var(--color-surface);
+}
+
+.scrollbar-rounded::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-text-tertiary);
+}
+
+/* Trading-specific scrollbars */
+
+/* Order book scrollbar (buy side - green) */
+.scrollbar-orderbook-buy::-webkit-scrollbar {
+  width: 0.25rem;
+  height: 0.25rem;
+}
+
+.scrollbar-orderbook-buy::-webkit-scrollbar-track {
+  background-color: rgba(16, 185, 129, 0.1);
+}
+
+.scrollbar-orderbook-buy::-webkit-scrollbar-thumb {
+  background-color: var(--color-buy);
+  border-radius: var(--radius-full);
+}
+
+.scrollbar-orderbook-buy::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-success-hover);
+}
+
+.scrollbar-orderbook-buy {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-buy) rgba(16, 185, 129, 0.1);
+}
+
+/* Order book scrollbar (sell side - red) */
+.scrollbar-orderbook-sell::-webkit-scrollbar {
+  width: 0.25rem;
+  height: 0.25rem;
+}
+
+.scrollbar-orderbook-sell::-webkit-scrollbar-track {
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+.scrollbar-orderbook-sell::-webkit-scrollbar-thumb {
+  background-color: var(--color-sell);
+  border-radius: var(--radius-full);
+}
+
+.scrollbar-orderbook-sell::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-danger-hover);
+}
+
+.scrollbar-orderbook-sell {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-sell) rgba(239, 68, 68, 0.1);
+}
+
+/* Chart scrollbar (minimal) */
+.scrollbar-chart::-webkit-scrollbar {
+  width: 0.375rem;
+  height: 0.375rem;
+}
+
+.scrollbar-chart::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.scrollbar-chart::-webkit-scrollbar-thumb {
+  background-color: var(--chart-grid);
+  border-radius: var(--radius-full);
+}
+
+.scrollbar-chart::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-border-hover);
+}
+
+.scrollbar-chart {
+  scrollbar-width: thin;
+  scrollbar-color: var(--chart-grid) transparent;
+}
+
+/* Sidebar scrollbar */
+.scrollbar-sidebar::-webkit-scrollbar {
+  width: 0.375rem;
+}
+
+.scrollbar-sidebar::-webkit-scrollbar-track {
+  background-color: var(--color-surface);
+}
+
+.scrollbar-sidebar::-webkit-scrollbar-thumb {
+  background-color: var(--color-surface-elevated);
+  border-radius: var(--radius-full);
+}
+
+.scrollbar-sidebar::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-surface-hover);
+}
+
+.scrollbar-sidebar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-surface-elevated) var(--color-surface);
+}
+
+/* Wide scrollbar (for drag-scrolling) */
+.scrollbar-wide::-webkit-scrollbar {
+  width: 1rem;
+  height: 1rem;
+}
+
+.scrollbar-wide::-webkit-scrollbar-track {
+  background-color: var(--color-surface);
+  border-radius: var(--radius-md);
+}
+
+.scrollbar-wide::-webkit-scrollbar-thumb {
+  background-color: var(--color-border-hover);
+  border-radius: var(--radius-md);
+  border: 0.1875rem solid var(--color-surface);
+}
+
+.scrollbar-wide::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-text-tertiary);
+}
+
+/* Scrollbar with arrow buttons (webkit only) */
+.scrollbar-arrows::-webkit-scrollbar {
+  width: 1rem;
+  height: 1rem;
+}
+
+.scrollbar-arrows::-webkit-scrollbar-button {
+  display: block;
+  height: 1rem;
+  background-color: var(--color-surface-elevated);
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.scrollbar-arrows::-webkit-scrollbar-button:vertical:decrement {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239ca3af' d='M6 4l-4 4h8z'/%3E%3C/svg%3E");
+}
+
+.scrollbar-arrows::-webkit-scrollbar-button:vertical:increment {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239ca3af' d='M6 8l4-4H2z'/%3E%3C/svg%3E");
+}
+
+.scrollbar-arrows::-webkit-scrollbar-button:horizontal:decrement {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239ca3af' d='M4 6l4-4v8z'/%3E%3C/svg%3E");
+}
+
+.scrollbar-arrows::-webkit-scrollbar-button:horizontal:increment {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239ca3af' d='M8 6l-4 4V2z'/%3E%3C/svg%3E");
+}
+
+.scrollbar-arrows::-webkit-scrollbar-track {
+  background-color: var(--color-surface);
+}
+
+.scrollbar-arrows::-webkit-scrollbar-thumb {
+  background-color: var(--color-border-hover);
+  border-radius: var(--radius-sm);
+}
+
+.scrollbar-arrows::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-text-tertiary);
+}
+
+/* Auto-hide scrollbar (shows on hover/scroll) */
+.scrollbar-autohide {
+  overflow: auto;
+}
+
+.scrollbar-autohide::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+.scrollbar-autohide::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.scrollbar-autohide::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: var(--radius-full);
+  transition: background-color var(--transition-base);
+}
+
+.scrollbar-autohide:hover::-webkit-scrollbar-thumb,
+.scrollbar-autohide:focus-within::-webkit-scrollbar-thumb {
+  background-color: var(--color-border-hover);
+}
+
+.scrollbar-autohide::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-text-tertiary);
+}
+
+/* Smooth scrolling */
+.scroll-smooth {
+  scroll-behavior: smooth;
+}
+
+/* Snap scrolling */
+.scroll-snap-x {
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.scroll-snap-y {
+  scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.scroll-snap-start {
+  scroll-snap-align: start;
+}
+
+.scroll-snap-center {
+  scroll-snap-align: center;
+}
+
+.scroll-snap-end {
+  scroll-snap-align: end;
+}
+
+/* Custom scrollbar corners */
+::-webkit-scrollbar-corner {
+  background-color: var(--color-surface);
+}
+
+/* Resizer (for resizable elements) */
+::-webkit-resizer {
+  background-color: var(--color-surface-elevated);
+}
+
+/* Horizontal only scrollbar */
+.scrollbar-horizontal-only {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.scrollbar-horizontal-only::-webkit-scrollbar {
+  height: 0.5rem;
+}
+
+/* Vertical only scrollbar */
+.scrollbar-vertical-only {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.scrollbar-vertical-only::-webkit-scrollbar {
+  width: 0.5rem;
+}
+
+/* Scrollbar gutter (reserve space for scrollbar) */
+.scrollbar-gutter {
+  scrollbar-gutter: stable;
+}
+
+.scrollbar-gutter-both {
+  scrollbar-gutter: stable both-edges;
+}
