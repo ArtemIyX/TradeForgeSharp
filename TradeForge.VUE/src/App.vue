@@ -1,7 +1,19 @@
-<script setup lang="ts"></script>
 
 <template>
-  <router-view></router-view>
+  <v-app>
+    <AppNavigation />
+
+    <v-main>
+      <v-container fluid>
+        <router-view />
+      </v-container>
+    </v-main>
+  </v-app>
 </template>
+
+<script setup lang="ts">
+import AppNavigation from "@/components/app-navigation/AppNavigation.vue";
+</script>
+
 
 <style scoped></style>
