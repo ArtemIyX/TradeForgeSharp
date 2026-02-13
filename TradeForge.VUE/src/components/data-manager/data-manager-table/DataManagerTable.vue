@@ -54,6 +54,7 @@
   width: 100%;
   border-collapse: collapse;
   font-size: 0.875rem;
+  table-layout: fixed;
 }
 
 .table-head {
@@ -73,6 +74,8 @@
 }
 
 .sort-indicator {
+  display: inline-block;
+  width: 1rem;
   margin-left: 0.25rem;
   font-size: 0.875rem;
 }
@@ -88,12 +91,17 @@
   background-color: rgb(var(--v-theme-surface));
   border-bottom: thin solid rgba(var(--v-theme-on-surface), 0.12);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .custom-table tbody td {
   padding: 0.5rem 1rem;
   border-bottom: thin solid rgba(var(--v-theme-on-surface), 0.12);
   color: rgba(var(--v-theme-on-surface), 0.87);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .data-row {
