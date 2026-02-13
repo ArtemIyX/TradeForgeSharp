@@ -1,6 +1,7 @@
 ﻿<template>
   <v-navigation-drawer
     permanent
+    :rail="isMobile"
     :width="240"
     class="app-navigation"
   >
@@ -9,7 +10,7 @@
       <div class="app-logo">
         <v-icon size="large" color="primary">mdi-chart-line</v-icon>
       </div>
-      <div class="app-info">
+      <div v-if="!isMobile" class="app-info">
         <h2 class="app-name">TradeForge</h2>
         <span class="app-version">v{{ appVersion }}</span>
       </div>
@@ -32,13 +33,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import { useDisplay } from 'vuetify';
 
 interface NavigationItem {
   title: string;
   icon: string;
   path: string;
 }
+
+const { mobile } = useDisplay();
+const isMobile = computed(() => mobile.value);
 
 const appVersion = ref('26.1.1');
 
