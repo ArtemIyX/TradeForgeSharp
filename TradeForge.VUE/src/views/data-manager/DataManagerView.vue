@@ -1,9 +1,5 @@
-﻿
-
-<template>
+﻿<template>
   <div class="data-manager">
-
-
     <div class="content-container">
       <DataManagerToolbar
         @create="handleCreate"
@@ -14,46 +10,45 @@
         @export="handleExport"
         @clear-data="handleClearData"
       />
+      <v-divider/>
+      <DataManagerTable :tickers="tickers" :loading="tickersLoading"/>
 
-      <div class="table-placeholder">
-        Table will be here
-      </div>
+
     </div>
   </div>
 </template>
-
 <style scoped>
 .data-manager {
-  height: 100%;
+  height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .content-container {
   display: flex;
   flex-direction: column;
-  flex: 1;
-  border: 0.0625rem solid rgba(var(--v-border-color), var(--v-border-opacity));
-  border-radius: 0.25rem;
+  height: 100%;
   overflow: hidden;
+
 }
 
-.table-placeholder {
-  flex: 1;
-  background-color: rgb(var(--v-theme-surface-variant));
-  border-top: 0.0625rem solid rgba(var(--v-border-color), var(--v-border-opacity));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.25rem;
-  color: rgba(var(--v-theme-on-surface), 0.6);
-}
+
 </style>
+
 
 <script setup lang="ts">
 import DataManagerToolbar
   from "@/components/data-manager/data-manager-toolbar/DataManagerToolbar.vue";
+import DataManagerTable from "@/components/data-manager/data-manager-table/DataManagerTable.vue";
+import {onMounted, ref} from "vue";
 
+import tickersData from './tickers-dummy.json';
+
+import type {Ticker} from "@/types/Ticker";
+
+const tickersLoading = ref<boolean>(false);
+const tickers = ref<Ticker[]>([]);
 
 const handleCreate = () => console.log('Create')
 const handleEdit = () => console.log('Edit')
@@ -62,4 +57,19 @@ const handleViewData = () => console.log('View Data')
 const handleImport = () => console.log('Import')
 const handleExport = () => console.log('Export')
 const handleClearData = () => console.log('Clear Data')
+
+const fetchTickers = async () => {
+  tickersLoading.value = true;
+
+  await new Promise(resolve => setTimeout(resolve, 250));
+
+  tickers.value = tickersData as Ticker[];
+  tickersLoading.value = false;
+};
+
+onMounted(() => {
+  fetchTickers();
+})
+
 </script>
+

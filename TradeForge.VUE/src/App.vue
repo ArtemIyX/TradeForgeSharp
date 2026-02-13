@@ -3,8 +3,8 @@
   <v-app>
     <AppNavigation />
 
-    <v-main>
-      <v-container fluid>
+    <v-main >
+      <v-container fluid style="height: 100%; padding: 0;">
         <router-view />
       </v-container>
     </v-main>

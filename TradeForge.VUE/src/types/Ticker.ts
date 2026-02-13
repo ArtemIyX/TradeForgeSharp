@@ -5,6 +5,18 @@
   dateFrom: Date;
   dateTo: Date;
   totalRecords: number;
-  timeFrame: '1m' | '5m' | '15m' | '30m' | '1h' | '4h' | '1D' | '1W' | '1M';
+  timeFrame: TimeFrame;
   category: string;
+}
+
+export enum TimeFrame {
+  m1 = '1m',
+  m5 = '5m',
+  m15 = '15m',
+  m30 = '30m',
+  h1 = '1h',
+  h4 = '4h',
+  daily = '1D',
+  week = '1W',
+  month = '1M'
 }
