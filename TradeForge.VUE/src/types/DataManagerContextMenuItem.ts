@@ -1,8 +1,16 @@
-﻿import type {Ticker} from "@/types/Ticker.ts";
+﻿
 
-export interface DataManagerContextMenuItem {
+export interface ActionButton {
+  type: 'button';
   key: string;
   label: string;
   icon?: string;
-  action: (ticker: Ticker) => void;
+  action: (payload?: any) => void;
 }
+
+export interface ActionDivider {
+  type: 'divider';
+  key: string;
+}
+
+export type ActionMenuItem = ActionButton | ActionDivider;

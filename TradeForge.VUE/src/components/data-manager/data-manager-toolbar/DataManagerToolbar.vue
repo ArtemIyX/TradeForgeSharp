@@ -1,4 +1,68 @@
-﻿<script setup lang="ts">
+﻿<template>
+  <v-toolbar density="compact" color="surface">
+    <template v-for="(item, index) in toolbarItems" :key="index">
+      <v-divider
+        v-if="item.type === 'divider'"
+        vertical
+        class="mx-2"
+      />
+      <v-btn
+        v-else
+        variant="text"
+        :prepend-icon="item.icon"
+        @click="item.action()"
+      >
+        {{ item.label }}
+      </v-btn>
+    </template>
+  </v-toolbar>
+</template>
+
+<script setup lang="ts">
+import type {ActionMenuItem} from '@/types/DataManagerContextMenuItem.ts';
+
+const toolbarItems: ActionMenuItem[] = [
+  {type: 'button', key: 'create', label: 'Create', icon: 'mdi-plus', action: () => emit('create')},
+  {type: 'button', key: 'edit', label: 'Edit', icon: 'mdi-pencil', action: () => emit('edit')},
+  {
+    type: 'button',
+    key: 'delete',
+    label: 'Delete',
+    icon: 'mdi-delete',
+    action: () => emit('delete')
+  },
+  {
+    type: 'button',
+    key: 'view-data',
+    label: 'View Data',
+    icon: 'mdi-eye',
+    action: () => emit('viewData')
+  },
+  {type: 'divider', key: 'divider-1'},
+  {
+    type: 'button',
+    key: 'import',
+    label: 'Import',
+    icon: 'mdi-import',
+    action: () => emit('import')
+  },
+  {
+    type: 'button',
+    key: 'export',
+    label: 'Export',
+    icon: 'mdi-export',
+    action: () => emit('export')
+  },
+  {type: 'divider', key: 'divider-2'},
+  {
+    type: 'button',
+    key: 'clear-data',
+    label: 'Clear Data',
+    icon: 'mdi-delete-sweep',
+    action: () => emit('clearData')
+  }
+]
+
 const emit = defineEmits<{
   create: []
   edit: []
@@ -10,70 +74,6 @@ const emit = defineEmits<{
 }>()
 </script>
 
-<template>
-  <v-toolbar density="compact" color="surface">
-    <v-btn
-      variant="text"
-      prepend-icon="mdi-plus"
-      @click="emit('create')"
-    >
-      Create
-    </v-btn>
-
-    <v-btn
-      variant="text"
-      prepend-icon="mdi-pencil"
-      @click="emit('edit')"
-    >
-      Edit
-    </v-btn>
-
-    <v-btn
-      variant="text"
-      prepend-icon="mdi-delete"
-      @click="emit('delete')"
-    >
-      Delete
-    </v-btn>
-
-    <v-btn
-      variant="text"
-      prepend-icon="mdi-eye"
-      @click="emit('viewData')"
-    >
-      View Data
-    </v-btn>
-
-    <v-divider vertical class="mx-2" />
-
-    <v-btn
-      variant="text"
-      prepend-icon="mdi-import"
-      @click="emit('import')"
-    >
-      Import
-    </v-btn>
-
-    <v-btn
-      variant="text"
-      prepend-icon="mdi-export"
-      @click="emit('export')"
-    >
-      Export
-    </v-btn>
-
-    <v-divider vertical class="mx-2" />
-
-    <v-btn
-      variant="text"
-      prepend-icon="mdi-delete-sweep"
-      color="error"
-      @click="emit('clearData')"
-    >
-      Clear Data
-    </v-btn>
-  </v-toolbar>
-</template>
 
 <style scoped>
 </style>

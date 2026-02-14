@@ -1,26 +1,8 @@
 ﻿<style scoped src="./DataManagerTable.css"/>
 
 <template>
-  <v-menu
-    v-model="contextMenu"
-    :style="{ left: contextMenuX + 'px', top: contextMenuY + 'px' }"
-    absolute
-    offset-y
-  >
-    <v-list density="compact">
-      <v-list-item
-        v-for="item in contextMenuItems"
-        :key="item.key"
-        @click="executeAction(item)"
-      >
-        <template v-slot:prepend v-if="item.icon">
-          <v-icon :icon="item.icon" size="small"/>
-        </template>
-        <v-list-item-title>{{ item.label }}</v-list-item-title>
-      </v-list-item>
-    </v-list>
-  </v-menu>
-  
+  <ActionMenu ref="contextMenuRef" :items="contextMenuItems" :absolute="true"/>
+
   <div class="table-container">
 
     <div class="filters-header">
@@ -149,7 +131,8 @@
 import {ref, computed} from 'vue';
 import type {Ticker} from '@/types/Ticker.ts';
 import {TimeFrame} from '@/types/Ticker.ts';
-import type {DataManagerContextMenuItem} from '@/types/DataManagerContextMenuItem.ts';
+import type { ActionMenuItem } from '@/types/DataManagerContextMenuItem.ts';
+import ActionMenu from '@/components/data-manager/action-menu/ActionMenu.vue';
 
 interface Props {
   tickers: Ticker[];
@@ -168,24 +151,61 @@ const headers = [
   {title: 'Records', key: 'totalRecords', sortable: true},
 ];
 
-const contextMenuItems: DataManagerContextMenuItem[] = [
+const contextMenuRef = ref<InstanceType<typeof ActionMenu> | null>(null);
+const selectedTicker = ref<Ticker | null>(null);
+
+const contextMenuItems = computed<ActionMenuItem[]>(() => [
   {
-    key: 'delete',
-    label: 'Delete',
-    icon: 'mdi-delete',
-    action: (ticker) => console.log('Delete', ticker)
-  },
-  {
+    type: 'button',
     key: 'edit',
     label: 'Edit',
     icon: 'mdi-pencil',
-    action: (ticker) => console.log('Edit', ticker)
-  }
-];
-
-const contextMenu = ref<boolean>(false);
-const contextMenuX = ref<number>(0);
-const contextMenuY = ref<number>(0);
+    action: () => selectedTicker.value && console.log('edit', selectedTicker.value)
+  },
+  {
+    type: 'button',
+    key: 'delete',
+    label: 'Delete',
+    icon: 'mdi-delete',
+    action: () => selectedTicker.value && console.log('Delete', selectedTicker.value)
+  },
+  {
+    type: 'button',
+    key: 'view-data',
+    label: 'View data',
+    icon: 'mdi-eye',
+    action: () => selectedTicker.value && console.log('View data', selectedTicker.value)
+  },
+  {
+    type: 'divider',
+    key: 'divider-1'
+  },
+  {
+    type: 'button',
+    key: 'import',
+    label: 'Import',
+    icon: 'mdi-import',
+    action: () => selectedTicker.value && console.log('Import', selectedTicker.value)
+  },
+  {
+    type: 'button',
+    key: 'export',
+    label: 'Export',
+    icon: 'mdi-export',
+    action: () => selectedTicker.value && console.log('Export', selectedTicker.value)
+  },
+  {
+    type: 'divider',
+    key: 'divider-2'
+  },
+  {
+    type: 'button',
+    key: 'clear-data',
+    label: 'Clear Data',
+    icon: 'mdi-delete-sweep',
+    action: () => selectedTicker.value && console.log('Clear data', selectedTicker.value)
+  },
+]);
 
 const sortBy = ref<string | null>(null);
 const sortDirection = ref<'asc' | 'desc'>('asc');
@@ -193,23 +213,13 @@ const nameFilter = ref('');
 const categoryFilter = ref<string | null>(null);
 const timeFrameFilter = ref<TimeFrame[]>([]);
 const filtersExpanded = ref(false);
-const selectedTicker = ref<Ticker | null>(null);
 // Dummy favorites array - replace with real data later
 const favorites = ref<string[]>(['1', '3', '5']); // Example IDs
 
 const showContextMenu = (event: MouseEvent, ticker: Ticker) => {
   event.preventDefault();
   selectedTicker.value = ticker;
-  contextMenuX.value = event.clientX;
-  contextMenuY.value = event.clientY;
-  contextMenu.value = true;
-};
-
-const executeAction = (item: DataManagerContextMenuItem) => {
-  if (selectedTicker.value) {
-    item.action(selectedTicker.value);
-  }
-  contextMenu.value = false;
+  contextMenuRef.value?.show(event.clientX, event.clientY);
 };
 
 const isFavorite = (tickerId: string) => {
