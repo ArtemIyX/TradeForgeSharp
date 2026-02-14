@@ -116,8 +116,12 @@
   white-space: nowrap;
 }
 
+.selected {
+  background-color: rgba(var(--v-theme-primary), 0.12) !important;
+}
+
 .data-row {
-  transition: background-color 0.2s;
+  cursor: pointer;
 }
 
 .data-row:hover {

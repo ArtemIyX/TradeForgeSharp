@@ -101,7 +101,10 @@
             No data available
           </td>
         </tr>
-        <tr v-else v-for="ticker in filteredAndSortedTickers" :key="ticker.id" class="data-row"
+        <tr v-else v-for="ticker in filteredAndSortedTickers" :key="ticker.id"
+            class="data-row"
+            :class="{ 'selected': selectedTickerId === ticker.id }"
+            @click="selectTicker(ticker)"
             @contextmenu="showContextMenu($event, ticker)">
           <td class="favorite-cell">
             <v-icon
@@ -131,7 +134,7 @@
 import {ref, computed} from 'vue';
 import type {Ticker} from '@/types/Ticker.ts';
 import {TimeFrame} from '@/types/Ticker.ts';
-import type { ActionMenuItem } from '@/types/DataManagerContextMenuItem.ts';
+import type { ActionMenuItem } from '@/types/ActionMenuItem.ts';
 import ActionMenu from '@/components/data-manager/action-menu/ActionMenu.vue';
 
 interface Props {
@@ -153,6 +156,7 @@ const headers = [
 
 const contextMenuRef = ref<InstanceType<typeof ActionMenu> | null>(null);
 const selectedTicker = ref<Ticker | null>(null);
+const selectedTickerId = ref<string | null>(null);
 
 const contextMenuItems = computed<ActionMenuItem[]>(() => [
   {
@@ -220,6 +224,10 @@ const showContextMenu = (event: MouseEvent, ticker: Ticker) => {
   event.preventDefault();
   selectedTicker.value = ticker;
   contextMenuRef.value?.show(event.clientX, event.clientY);
+};
+
+const selectTicker = (ticker: Ticker) => {
+  selectedTickerId.value = ticker.id;
 };
 
 const isFavorite = (tickerId: string) => {

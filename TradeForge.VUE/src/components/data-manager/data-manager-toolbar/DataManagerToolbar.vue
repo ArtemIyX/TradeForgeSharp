@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import type {ActionMenuItem} from '@/types/DataManagerContextMenuItem.ts';
+import type {ActionMenuItem} from '@/types/ActionMenuItem.ts';
 
 const toolbarItems: ActionMenuItem[] = [
   {type: 'button', key: 'create', label: 'Create', icon: 'mdi-plus', action: () => emit('create')},
