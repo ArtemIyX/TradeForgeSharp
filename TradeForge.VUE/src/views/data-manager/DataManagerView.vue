@@ -56,6 +56,7 @@ import DataManagerToolbar
   from "@/components/data-manager/data-manager-toolbar/DataManagerToolbar.vue";
 import DataManagerTable from "@/components/data-manager/data-manager-table/DataManagerTable.vue";
 import {computed, onMounted, ref} from "vue";
+import {useSnackbarStore} from '@/stores/Snackbar.store';
 
 import tickersData from './tickers-dummy.json';
 
@@ -66,6 +67,9 @@ const tickersLoading = ref<boolean>(false);
 const tickers = ref<Ticker[]>([]);
 const dataManagerTableRef = ref<InstanceType<typeof DataManagerTable> | null>(null);
 const deleteTickerModalRef = ref<InstanceType<typeof DeleteTickerModal> | null>(null);
+
+
+const snackbar = useSnackbarStore();
 
 const currentTicker = computed(() => {
   const ticker: Ticker | null | undefined = dataManagerTableRef.value?.getSelectedTicker();
@@ -94,8 +98,26 @@ const handleDelete = () => {
     if (deleteTickerModalRef.value) {
       deleteTickerModalRef.value.show(currentTicker.value);
     }
+
   }
 }
+
+const handleModalDelete = async () => {
+  if (deleteTickerModalRef.value) {
+    deleteTickerModalRef.value.startLoading();
+    await new Promise(resolve => setTimeout(resolve, 750));
+    deleteTickerModalRef.value.hide();
+    console.log("deleted", currentTicker.value);
+    snackbar.show({
+      message: `You successfully deleted ticker '${currentTicker.value?.symbol}'!`,
+      color: 'warning',
+      timeout: 3000
+    });
+    if (dataManagerTableRef.value) {
+      dataManagerTableRef.value.clearSelectedTicker();
+    }
+  }
+};
 const handleViewData = () => console.log('View Data')
 const handleImport = () => console.log('Import')
 const handleExport = () => console.log('Export')
@@ -105,13 +127,6 @@ const handleClearSelection = () => {
   dataManagerTableRef?.value?.clearSelectedTicker();
 }
 
-const handleModalDelete = async () => {
-  if (deleteTickerModalRef.value) {
-    deleteTickerModalRef.value.startLoading();
-    await new Promise(resolve => setTimeout(resolve, 750));
-    deleteTickerModalRef.value.hide();
-  }
-};
 
 const fetchTickers = async () => {
   tickersLoading.value = true;
