@@ -45,7 +45,7 @@ const props = withDefaults(defineProps<LineChartProps>(), {
   yFormatter: (value: any) => String(value),
   zoom: false,
   smoothed: false,
-  showLegend: true
+  showLegend: false
 })
 
 // Default colors for multi-series
@@ -83,8 +83,7 @@ const chartOption = computed(() => {
         type: 'line',
         data: yData,
         smooth: props.smoothed,
-        symbol: 'circle',
-        symbolSize: 6,
+        symbol: 'none',
         lineStyle: {
           color: color,
           width: 2
@@ -106,8 +105,7 @@ const chartOption = computed(() => {
       type: 'line',
       data: yData,
       smooth: props.smoothed,
-      symbol: 'circle',
-      symbolSize: 6,
+      symbol: 'none',
       lineStyle: {
         color: props.lineColor,
         width: 2
@@ -175,21 +173,32 @@ const chartOption = computed(() => {
       top: props.title ? (props.showLegend && props.series && props.series.length > 1 ? '20%' : '15%') : '3%',
       containLabel: true
     },
-    dataZoom: props.zoom ? [
-      {
-        type: 'slider',
-        show: true,
-        xAxisIndex: [0],
-        start: 0,
-        end: 100
-      },
+    dataZoom: [
+      ...(props.zoom ? [
+        {
+          type: 'slider',
+          show: true,
+          xAxisIndex: [0],
+          start: 0,
+          end: 100
+        },
+        {
+          type: 'inside',
+          xAxisIndex: [0],
+          start: 0,
+          end: 100,
+          zoomOnMouseWheel: 'shift'
+        }
+      ] : []),
       {
         type: 'inside',
-        xAxisIndex: [0],
+        yAxisIndex: [0],
         start: 0,
-        end: 100
+        end: 100,
+        zoomOnMouseWheel: true,
+        moveOnMouseWheel: false
       }
-    ] : undefined,
+    ],
     xAxis: {
       type: 'category',
       data: xAxisData,
