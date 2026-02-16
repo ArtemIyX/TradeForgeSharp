@@ -146,6 +146,17 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   disabledButtons: () => ({})
 })
+
+const emit = defineEmits<{
+  edit: []
+  delete: []
+  viewData: []
+  import: []
+  export: []
+  clearData: [],
+  clearSelection: []
+}>();
+
 const headers = [
   {title: 'Symbol', key: 'symbol', sortable: true},
   {title: 'Instrument', key: 'instrument', sortable: true},
@@ -166,21 +177,21 @@ const contextMenuItems = computed<ActionMenuItem[]>(() => [
     key: 'edit',
     label: 'Edit',
     icon: 'mdi-pencil',
-    action: () => selectedTicker.value && console.log('edit', selectedTicker.value)
+    action: () => emit('edit')
   },
   {
     type: 'button',
     key: 'delete',
     label: 'Delete',
     icon: 'mdi-delete',
-    action: () => selectedTicker.value && console.log('Delete', selectedTicker.value)
+    action: () => emit('delete')
   },
   {
     type: 'button',
     key: 'view-data',
     label: 'View data',
     icon: 'mdi-eye',
-    action: () => selectedTicker.value && console.log('View data', selectedTicker.value)
+    action: () => emit('viewData')
   },
   {
     type: 'divider',
@@ -191,14 +202,14 @@ const contextMenuItems = computed<ActionMenuItem[]>(() => [
     key: 'import',
     label: 'Import',
     icon: 'mdi-import',
-    action: () => selectedTicker.value && console.log('Import', selectedTicker.value)
+    action: () => emit('import')
   },
   {
     type: 'button',
     key: 'export',
     label: 'Export',
     icon: 'mdi-export',
-    action: () => selectedTicker.value && console.log('Export', selectedTicker.value)
+    action: () => emit('export')
   },
   {
     type: 'divider',
@@ -209,7 +220,7 @@ const contextMenuItems = computed<ActionMenuItem[]>(() => [
     key: 'clear-data',
     label: 'Clear Data',
     icon: 'mdi-delete-sweep',
-    action: () => selectedTicker.value && console.log('Clear data', selectedTicker.value)
+    action: () => emit('clearData')
   },
 ]);
 

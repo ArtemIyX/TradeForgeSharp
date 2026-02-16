@@ -1,4 +1,6 @@
 ﻿<template>
+  <DeleteTickerModal ref="deleteTickerModalRef" @delete="handleModalDelete"/>
+
   <div class="data-manager">
     <div class="content-container">
 
@@ -15,8 +17,17 @@
         :disabled-buttons="disabledButtons"
       />
       <v-divider/>
-      <DataManagerTable ref="dataManagerTableRef" :tickers="tickers" :loading="tickersLoading"
-                        :disabled-buttons="disabledButtons"/>
+      <DataManagerTable ref="dataManagerTableRef"
+                        :tickers="tickers"
+                        :loading="tickersLoading"
+                        :disabled-buttons="disabledButtons"
+                        @edit="handleEdit"
+                        @delete="handleDelete"
+                        @view-data="handleViewData"
+                        @import="handleImport"
+                        @export="handleExport"
+                        @clear-data="handleClearData"
+                        @clear-selection="handleClearSelection"/>
 
     </div>
   </div>
@@ -37,7 +48,6 @@
 
 }
 
-
 </style>
 
 
@@ -50,10 +60,17 @@ import {computed, onMounted, ref} from "vue";
 import tickersData from './tickers-dummy.json';
 
 import {convertToTickers, type Ticker, type TickerResponseModel} from "@/types/Ticker";
+import DeleteTickerModal from "@/components/data-manager/delete-ticker-modal/DeleteTickerModal.vue";
 
 const tickersLoading = ref<boolean>(false);
 const tickers = ref<Ticker[]>([]);
 const dataManagerTableRef = ref<InstanceType<typeof DataManagerTable> | null>(null);
+const deleteTickerModalRef = ref<InstanceType<typeof DeleteTickerModal> | null>(null);
+
+const currentTicker = computed(() => {
+  const ticker: Ticker | null | undefined = dataManagerTableRef.value?.getSelectedTicker();
+  return ticker;
+});
 
 const disabledButtons = computed(() => {
   const ticker: Ticker | null | undefined = dataManagerTableRef.value?.getSelectedTicker();
@@ -72,7 +89,13 @@ const disabledButtons = computed(() => {
 
 const handleCreate = () => console.log('Create')
 const handleEdit = () => console.log('Edit')
-const handleDelete = () => console.log('Delete')
+const handleDelete = () => {
+  if (currentTicker.value) {
+    if (deleteTickerModalRef.value) {
+      deleteTickerModalRef.value.show(currentTicker.value);
+    }
+  }
+}
 const handleViewData = () => console.log('View Data')
 const handleImport = () => console.log('Import')
 const handleExport = () => console.log('Export')
@@ -81,6 +104,14 @@ const handleClearData = () => console.log('Clear Data')
 const handleClearSelection = () => {
   dataManagerTableRef?.value?.clearSelectedTicker();
 }
+
+const handleModalDelete = async () => {
+  if (deleteTickerModalRef.value) {
+    deleteTickerModalRef.value.startLoading();
+    await new Promise(resolve => setTimeout(resolve, 750));
+    deleteTickerModalRef.value.hide();
+  }
+};
 
 const fetchTickers = async () => {
   tickersLoading.value = true;
