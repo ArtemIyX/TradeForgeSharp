@@ -1,9 +1,9 @@
 ﻿<template>
-  <v-chart :option="chartOption" :style="{ height: height, width: '100%' }" autoresize />
+  <v-chart :option="chartOption" :style="{ height: height, width: '100%' }" autoresize/>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import {computed} from 'vue'
 
 export interface LineChartDataPoint {
   x: number | string | Date
@@ -21,6 +21,7 @@ export interface LineChartProps {
   xAxisName?: string
   yAxisName?: string
   zoom?: boolean
+  smoothed?: boolean
 }
 
 const props = withDefaults(defineProps<LineChartProps>(), {
@@ -29,7 +30,8 @@ const props = withDefaults(defineProps<LineChartProps>(), {
   height: '400px',
   xFormatter: (value: any) => String(value),
   yFormatter: (value: any) => String(value),
-  zoom: false
+  zoom: false,
+  smoothed: false
 })
 
 const chartOption = computed(() => {
@@ -100,7 +102,7 @@ const chartOption = computed(() => {
       {
         type: 'line',
         data: yData,
-        smooth: true,
+        smooth: props.smoothed,
         symbol: 'circle',
         symbolSize: 6,
         lineStyle: {
