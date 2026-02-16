@@ -10,6 +10,7 @@
         v-else
         variant="text"
         :prepend-icon="item.icon"
+        :disabled="props.disabledButtons[item.key]"
         @click="item.action()"
       >
         {{ item.label }}
@@ -20,6 +21,16 @@
 
 <script setup lang="ts">
 import type {ActionMenuItem} from '@/types/ActionMenuItem.ts';
+
+
+interface Props {
+  disabledButtons?: Record<string, boolean>
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  disabledButtons: () => ({})
+})
+
 
 const toolbarItems: ActionMenuItem[] = [
   {type: 'button', key: 'create', label: 'Create', icon: 'mdi-plus', action: () => emit('create')},
@@ -60,6 +71,13 @@ const toolbarItems: ActionMenuItem[] = [
     label: 'Clear Data',
     icon: 'mdi-delete-sweep',
     action: () => emit('clearData')
+  },
+  {
+    type: 'button',
+    key: 'clear-selection',
+    label: 'Clear Selection',
+    icon: 'mdi-close',
+    action: () => emit('clearSelection')
   }
 ]
 
@@ -70,7 +88,8 @@ const emit = defineEmits<{
   viewData: []
   import: []
   export: []
-  clearData: []
+  clearData: [],
+  clearSelection: []
 }>()
 </script>
 

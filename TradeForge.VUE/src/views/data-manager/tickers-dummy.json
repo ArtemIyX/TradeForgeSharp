@@ -30,7 +30,7 @@
   {"id":"29","symbol":"BNB","instrument":"Crypto","dateFrom":"2023-01-01T00:00:00Z","dateTo":"2024-01-01T00:00:00Z","totalRecords":525600,"timeFrame":"1m","category":"Crypto"},
   {"id":"30","symbol":"ADA","instrument":"Crypto","dateFrom":"2023-01-01T00:00:00Z","dateTo":"2024-01-01T00:00:00Z","totalRecords":525600,"timeFrame":"1m","category":"Crypto"},
   {"id":"31","symbol":"SOL","instrument":"Crypto","dateFrom":"2023-01-01T00:00:00Z","dateTo":"2024-01-01T00:00:00Z","totalRecords":105120,"timeFrame":"5m","category":"Crypto"},
-  {"id":"32","symbol":"DOT","instrument":"Crypto","dateFrom":"2023-01-01T00:00:00Z","dateTo":"2024-01-01T00:00:00Z","totalRecords":105120,"timeFrame":"5m","category":"Crypto"},
+  {"id":"32","symbol":"DOT","instrument":"Crypto","dateFrom":null,"dateTo":null,"totalRecords":0,"timeFrame": null,"category":"Crypto"},
   {"id":"33","symbol":"MATIC","instrument":"Crypto","dateFrom":"2023-01-01T00:00:00Z","dateTo":"2024-01-01T00:00:00Z","totalRecords":52560,"timeFrame":"15m","category":"Crypto"},
   {"id":"34","symbol":"LINK","instrument":"Crypto","dateFrom":"2023-01-01T00:00:00Z","dateTo":"2024-01-01T00:00:00Z","totalRecords":52560,"timeFrame":"15m","category":"Crypto"},
   {"id":"35","symbol":"UNI","instrument":"Crypto","dateFrom":"2023-01-01T00:00:00Z","dateTo":"2024-01-01T00:00:00Z","totalRecords":25200,"timeFrame":"1h","category":"Crypto"},

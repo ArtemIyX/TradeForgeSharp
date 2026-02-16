@@ -2,10 +2,10 @@
   id: string;
   symbol: string;
   instrument: string;
-  dateFrom: Date;
-  dateTo: Date;
+  dateFrom: Date | null;
+  dateTo: Date | null;
   totalRecords: number;
-  timeFrame: TimeFrame;
+  timeFrame: TimeFrame | null;
   category: string;
 }
 
@@ -13,10 +13,10 @@ export interface TickerResponseModel {
   id: string;
   symbol: string;
   instrument: string;
-  dateFrom: string;
-  dateTo: string;
+  dateFrom: string | null;
+  dateTo: string | null;
   totalRecords: number;
-  timeFrame: string;
+  timeFrame: string | null;
   category: string;
 }
 
@@ -37,10 +37,10 @@ export function convertToTicker(response: TickerResponseModel): Ticker {
     id: response.id,
     symbol: response.symbol,
     instrument: response.instrument,
-    dateFrom: new Date(response.dateFrom),
-    dateTo: new Date(response.dateTo),
+    dateFrom: response.dateFrom ? new Date(response.dateFrom) : null,
+    dateTo: response.dateTo ? new Date(response.dateTo) : null,
     totalRecords: response.totalRecords,
-    timeFrame: response.timeFrame as TimeFrame,
+    timeFrame: response.timeFrame as TimeFrame | null,
     category: response.category,
   };
 }

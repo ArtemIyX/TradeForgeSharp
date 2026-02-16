@@ -1,6 +1,7 @@
 ﻿<template>
   <div class="data-manager">
     <div class="content-container">
+
       <DataManagerToolbar
         @create="handleCreate"
         @edit="handleEdit"
@@ -9,10 +10,13 @@
         @import="handleImport"
         @export="handleExport"
         @clear-data="handleClearData"
+        @clear-selection="handleClearSelection"
+
+        :disabled-buttons="disabledButtons"
       />
       <v-divider/>
-      <DataManagerTable :tickers="tickers" :loading="tickersLoading"/>
-
+      <DataManagerTable ref="dataManagerTableRef" :tickers="tickers" :loading="tickersLoading"
+                        :disabled-buttons="disabledButtons"/>
 
     </div>
   </div>
@@ -41,7 +45,7 @@
 import DataManagerToolbar
   from "@/components/data-manager/data-manager-toolbar/DataManagerToolbar.vue";
 import DataManagerTable from "@/components/data-manager/data-manager-table/DataManagerTable.vue";
-import {onMounted, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 
 import tickersData from './tickers-dummy.json';
 
@@ -49,6 +53,22 @@ import {convertToTickers, type Ticker, type TickerResponseModel} from "@/types/T
 
 const tickersLoading = ref<boolean>(false);
 const tickers = ref<Ticker[]>([]);
+const dataManagerTableRef = ref<InstanceType<typeof DataManagerTable> | null>(null);
+
+const disabledButtons = computed(() => {
+  const ticker: Ticker | null | undefined = dataManagerTableRef.value?.getSelectedTicker();
+  const hasTicker = ticker !== null && ticker !== undefined;
+  const noRecords = hasTicker && ticker?.totalRecords === 0;
+  return {
+    'edit': !hasTicker,
+    'delete': !hasTicker,
+    'view-data': !(hasTicker && !noRecords),
+    'import': !hasTicker,
+    'export': !(hasTicker && !noRecords),
+    'clear-data': !(hasTicker && !noRecords),
+    'clear-selection': !hasTicker
+  };
+});
 
 const handleCreate = () => console.log('Create')
 const handleEdit = () => console.log('Edit')
@@ -57,6 +77,10 @@ const handleViewData = () => console.log('View Data')
 const handleImport = () => console.log('Import')
 const handleExport = () => console.log('Export')
 const handleClearData = () => console.log('Clear Data')
+
+const handleClearSelection = () => {
+  dataManagerTableRef?.value?.clearSelectedTicker();
+}
 
 const fetchTickers = async () => {
   tickersLoading.value = true;

@@ -1,7 +1,7 @@
 ﻿<style scoped src="./DataManagerTable.css"/>
 
 <template>
-  <ActionMenu ref="contextMenuRef" :items="contextMenuItems" :absolute="true"/>
+  <ActionMenu ref="contextMenuRef" :items="contextMenuItems" :disabled-buttons="props.disabledButtons" :absolute="true"/>
 
   <div class="table-container">
 
@@ -134,16 +134,18 @@
 import {ref, computed} from 'vue';
 import type {Ticker} from '@/types/Ticker.ts';
 import {TimeFrame} from '@/types/Ticker.ts';
-import type { ActionMenuItem } from '@/types/ActionMenuItem.ts';
+import type {ActionMenuItem} from '@/types/ActionMenuItem.ts';
 import ActionMenu from '@/components/data-manager/action-menu/ActionMenu.vue';
 
 interface Props {
   tickers: Ticker[];
   loading: boolean;
+  disabledButtons?: Record<string, boolean>;
 }
 
-const props = defineProps<Props>();
-
+const props = withDefaults(defineProps<Props>(), {
+  disabledButtons: () => ({})
+})
 const headers = [
   {title: 'Symbol', key: 'symbol', sortable: true},
   {title: 'Instrument', key: 'instrument', sortable: true},
@@ -220,15 +222,30 @@ const filtersExpanded = ref(false);
 // Dummy favorites array - replace with real data later
 const favorites = ref<string[]>(['1', '3', '5']); // Example IDs
 
+const getSelectedTicker = (): Ticker | null => {
+  return selectedTicker.value;
+}
+const clearSelectedTicker = () => {
+  selectedTicker.value = null;
+  selectedTickerId.value = null;
+}
+
+defineExpose({
+  getSelectedTicker,
+  clearSelectedTicker
+});
+
 const showContextMenu = (event: MouseEvent, ticker: Ticker) => {
   event.preventDefault();
-  selectedTicker.value = ticker;
+  selectTicker(ticker);
   contextMenuRef.value?.show(event.clientX, event.clientY);
 };
 
 const selectTicker = (ticker: Ticker) => {
+  selectedTicker.value = ticker;
   selectedTickerId.value = ticker.id;
 };
+
 
 const isFavorite = (tickerId: string) => {
   return favorites.value.includes(tickerId);
@@ -292,7 +309,7 @@ const filteredTickers = computed(() => {
 
   // Filter by timeframes
   if (timeFrameFilter.value.length > 0) {
-    result = result.filter(t => timeFrameFilter.value.includes(t.timeFrame));
+    result = result.filter(t => t.timeFrame && timeFrameFilter.value.includes(t.timeFrame));
   }
 
   return result;
@@ -351,7 +368,7 @@ const toggleSort = (key: string) => {
   }
 };
 
-const formatDate = (date: Date) => {
-  return new Date(date).toLocaleDateString();
+const formatDate = (date: Date | null) => {
+  return date === null ? "" : new Date(date).toLocaleDateString();
 };
 </script>

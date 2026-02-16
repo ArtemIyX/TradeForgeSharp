@@ -11,6 +11,7 @@
         <v-list-item
           v-else
           @click="handleAction(item)"
+          :disabled="props.disabledButtons[item.key]"
         >
           <template v-slot:prepend v-if="item.icon">
             <v-icon :icon="item.icon" size="small"/>
@@ -29,9 +30,12 @@ import type { ActionButton, ActionMenuItem } from '@/types/ActionMenuItem.ts';
 interface Props {
   items: ActionMenuItem[];
   absolute?: boolean;
+  disabledButtons?: Record<string, boolean>;
 }
 
-defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  disabledButtons: () => ({})
+})
 
 const isOpen = ref(false);
 const menuX = ref(0);
