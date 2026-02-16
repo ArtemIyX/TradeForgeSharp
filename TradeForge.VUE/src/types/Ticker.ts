@@ -9,6 +9,17 @@
   category: string;
 }
 
+export interface TickerResponseModel {
+  id: string;
+  symbol: string;
+  instrument: string;
+  dateFrom: string;
+  dateTo: string;
+  totalRecords: number;
+  timeFrame: string;
+  category: string;
+}
+
 export enum TimeFrame {
   m1 = '1m',
   m5 = '5m',
@@ -19,4 +30,21 @@ export enum TimeFrame {
   daily = '1D',
   week = '1W',
   month = '1M'
+}
+
+export function convertToTicker(response: TickerResponseModel): Ticker {
+  return {
+    id: response.id,
+    symbol: response.symbol,
+    instrument: response.instrument,
+    dateFrom: new Date(response.dateFrom),
+    dateTo: new Date(response.dateTo),
+    totalRecords: response.totalRecords,
+    timeFrame: response.timeFrame as TimeFrame,
+    category: response.category,
+  };
+}
+
+export function convertToTickers(responses: TickerResponseModel[]): Ticker[] {
+  return responses.map(convertToTicker);
 }

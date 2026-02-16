@@ -45,7 +45,7 @@ import {onMounted, ref} from "vue";
 
 import tickersData from './tickers-dummy.json';
 
-import type {Ticker} from "@/types/Ticker";
+import {convertToTickers, type Ticker, type TickerResponseModel} from "@/types/Ticker";
 
 const tickersLoading = ref<boolean>(false);
 const tickers = ref<Ticker[]>([]);
@@ -63,7 +63,7 @@ const fetchTickers = async () => {
 
   await new Promise(resolve => setTimeout(resolve, 250));
 
-  tickers.value = tickersData as Ticker[];
+  tickers.value = convertToTickers(tickersData as TickerResponseModel[]);
   tickersLoading.value = false;
 };
 
