@@ -1,6 +1,6 @@
 ﻿<template>
   <DeleteTickerModal ref="deleteTickerModalRef" @delete="handleModalDelete"/>
-
+  <ClearTickerModal ref="clearTickerDataModalRef" @clear="handleModalClearData"/>
   <div class="data-manager">
     <div class="content-container">
 
@@ -62,12 +62,13 @@ import tickersData from './tickers-dummy.json';
 
 import {convertToTickers, type Ticker, type TickerResponseModel} from "@/types/Ticker";
 import DeleteTickerModal from "@/components/data-manager/delete-ticker-modal/DeleteTickerModal.vue";
+import ClearTickerModal from "@/components/data-manager/clear-ticker-modal/ClearTickerModal.vue";
 
 const tickersLoading = ref<boolean>(false);
 const tickers = ref<Ticker[]>([]);
 const dataManagerTableRef = ref<InstanceType<typeof DataManagerTable> | null>(null);
 const deleteTickerModalRef = ref<InstanceType<typeof DeleteTickerModal> | null>(null);
-
+const clearTickerDataModalRef = ref<InstanceType<typeof ClearTickerModal> | null>(null);
 
 const snackbar = useSnackbarStore();
 
@@ -107,7 +108,7 @@ const handleModalDelete = async () => {
     deleteTickerModalRef.value.startLoading();
     await new Promise(resolve => setTimeout(resolve, 750));
     deleteTickerModalRef.value.hide();
-    console.log("deleted", currentTicker.value);
+
     snackbar.show({
       message: `You successfully deleted ticker '${currentTicker.value?.symbol}'!`,
       color: 'warning',
@@ -121,7 +122,30 @@ const handleModalDelete = async () => {
 const handleViewData = () => console.log('View Data')
 const handleImport = () => console.log('Import')
 const handleExport = () => console.log('Export')
-const handleClearData = () => console.log('Clear Data')
+const handleClearData = () => {
+  if (clearTickerDataModalRef.value) {
+    if (currentTicker.value) {
+      clearTickerDataModalRef.value.show(currentTicker.value);
+    }
+  }
+}
+
+const handleModalClearData = async () => {
+  if (clearTickerDataModalRef.value) {
+    clearTickerDataModalRef.value.startLoading();
+    await new Promise(resolve => setTimeout(resolve, 750));
+    clearTickerDataModalRef.value.hide();
+
+    snackbar.show({
+      message: `You successfully cleared historical data of ticker '${currentTicker.value?.symbol}'!`,
+      color: 'warning',
+      timeout: 3000
+    });
+    if (dataManagerTableRef.value) {
+      dataManagerTableRef.value.clearSelectedTicker();
+    }
+  }
+}
 
 const handleClearSelection = () => {
   dataManagerTableRef?.value?.clearSelectedTicker();
