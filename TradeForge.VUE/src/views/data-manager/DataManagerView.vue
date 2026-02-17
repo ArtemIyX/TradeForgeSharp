@@ -150,12 +150,13 @@ const handleEdit = () => {
 
 /**
  * Handles the view ticker data action
- * TODO: Implement data viewing logic
  */
 const handleViewData = () => {
   console.log('View Data');
-  if(ohlcModalRef.value) {
-    ohlcModalRef.value.show()
+  if (ohlcModalRef.value) {
+    if (currentTicker.value) {
+      ohlcModalRef.value.show(currentTicker.value);
+    }
   }
 };
 

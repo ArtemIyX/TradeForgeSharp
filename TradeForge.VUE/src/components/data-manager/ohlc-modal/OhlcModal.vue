@@ -2,7 +2,7 @@
   <v-dialog v-model="dialog" max-width="90vw" scrollable>
     <v-card>
       <v-card-title class="d-flex align-center justify-space-between">
-        <span>{{ title }}</span>
+        <span>{{ ticker?.symbol }} — {{ ticker?.timeFrame }}</span>
         <v-btn icon="mdi-close" variant="text" @click="hide"/>
       </v-card-title>
 
@@ -10,11 +10,8 @@
 
       <v-card-text class="pa-0">
         <OhlcViewer
-          :data="data"
-          :drawings="drawings"
+          :data="ohlcItems"
           :loading="loading"
-          :chart-height="chartHeight"
-          :show-volume="showVolume"
           readonly
         />
       </v-card-text>
@@ -23,37 +20,35 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from 'vue';
-import type {OhlcData, ChartDrawing} from '@/types/OhlcData';
+import { ref } from 'vue';
+import type { Ticker } from '@/types/Ticker';
+import { convertToOhlcArray, type OhlcData, type OhlcResponseModel } from '@/types/OhlcData';
 import OhlcViewer from '@/components/data-manager/ohlc-viewer/OhlcViewer.vue';
-
-interface Props {
-  title?: string;
-  drawings?: ChartDrawing[];
-  loading?: boolean;
-  chartHeight?: string;
-  showVolume?: boolean;
-}
-
-withDefaults(defineProps<Props>(), {
-  title: 'OHLC Data',
-  drawings: () => [],
-  loading: false,
-  chartHeight: '600px',
-  showVolume: true,
-});
+import ohlcDummy from '@/assets/dummy/ohlc-dummy.json';
 
 const dialog = ref(false);
-const data = ref<OhlcData[]>([]);
+const loading = ref(false);
+const ticker = ref<Ticker | null>(null);
+const ohlcItems = ref<OhlcData[]>([]);
 
-const show = (ohlcData: OhlcData[]) => {
-  data.value = ohlcData;
+const show = async (t: Ticker) => {
+  ticker.value = t;
+  ohlcItems.value = [];
   dialog.value = true;
+  loading.value = true;
+
+  try {
+    // TODO: replace with real API call, e.g. await ohlcService.getByTicker(t.id)
+    await new Promise(resolve => setTimeout(resolve, 500));
+    ohlcItems.value = convertToOhlcArray(ohlcDummy as OhlcResponseModel[]);
+  } finally {
+    loading.value = false;
+  }
 };
 
 const hide = () => {
   dialog.value = false;
 };
 
-defineExpose({show, hide});
+defineExpose({ show, hide });
 </script>
