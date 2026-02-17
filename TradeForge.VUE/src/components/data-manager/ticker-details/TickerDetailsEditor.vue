@@ -4,7 +4,7 @@
     <!-- Header -->
     <v-card-title class="d-flex align-center justify-space-between pa-4">
       <div class="d-flex align-center gap-2">
-        <v-icon :icon="isEditing ? 'mdi-pencil' : 'mdi-tag-outline'" size="small" />
+        <v-icon :icon="isEditing ? 'mdi-pencil' : 'mdi-tag-outline'" size="small"/>
         <span class="ticker-symbol">{{ modelValue.symbol }}</span>
         <v-chip :color="categoryColor(modelValue.category)" size="x-small" variant="tonal">
           {{ modelValue.category }}
@@ -47,7 +47,7 @@
       </div>
     </v-card-title>
 
-    <v-divider />
+    <v-divider/>
 
     <v-card-text class="pa-4">
       <v-form ref="formRef" v-model="isFormValid">
@@ -117,7 +117,9 @@
             />
           </v-col>
 
-          <v-col cols="12"><v-divider class="my-1" /></v-col>
+          <v-col cols="12">
+            <v-divider class="my-1"/>
+          </v-col>
 
           <!-- Contract Size -->
           <v-col cols="12" sm="6" md="4">
@@ -217,28 +219,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-
-export interface TickerDetails {
-  id: string;
-  symbol: string;
-  instrument: string;
-  category: string;
-  contractSize: number;
-  units: string;
-  minVolume: number;
-  maxVolume: number;
-  volumeStep: number;
-  minTick: number;
-  leverage: number;
-}
+import {ref, watch} from 'vue';
+import {type TickerDetails} from "@/types/Ticker.ts";
 
 interface Props {
   modelValue: TickerDetails;
   readonly?: boolean;
 }
 
-const props = withDefaults(defineProps<Props>(), { readonly: false });
+const props = withDefaults(defineProps<Props>(), {readonly: false});
 
 const emit = defineEmits<{
   'update:modelValue': [value: TickerDetails];
@@ -252,32 +241,32 @@ const isEditing = ref(false);
 const isSaving = ref(false);
 const isFormValid = ref(true);
 const formRef = ref<any>(null);
-const draft = ref<TickerDetails>({ ...props.modelValue });
+const draft = ref<TickerDetails>({...props.modelValue});
 
 watch(() => props.modelValue, (val) => {
-  if (!isEditing.value) draft.value = { ...val };
-}, { deep: true });
+  if (!isEditing.value) draft.value = {...val};
+}, {deep: true});
 
 // ── Edit lifecycle ────────────────────────────────────────────────────────────
 
 const startEditing = () => {
-  draft.value = { ...props.modelValue };
+  draft.value = {...props.modelValue};
   isEditing.value = true;
   emit('editing', true);
 };
 
 const cancel = () => {
-  draft.value = { ...props.modelValue };
+  draft.value = {...props.modelValue};
   isEditing.value = false;
   formRef.value?.resetValidation();
   emit('editing', false);
 };
 
 const save = async () => {
-  const { valid } = await formRef.value.validate();
+  const {valid} = await formRef.value.validate();
   if (!valid) return;
   isSaving.value = true;
-  emit('save', { ...draft.value });
+  emit('save', {...draft.value});
 };
 
 const setSaving = (val: boolean) => {
@@ -288,7 +277,7 @@ const setSaving = (val: boolean) => {
   }
 };
 
-defineExpose({ cancel, setSaving });
+defineExpose({cancel, setSaving});
 
 // ── Validation ────────────────────────────────────────────────────────────────
 
