@@ -83,10 +83,10 @@ import {onMounted, ref} from 'vue'
 import GLineChart, {type LineChartDataPoint} from "@/components/shared/charts/GLineChart.vue";
 import GMultiLineChart from "@/components/shared/charts/GMultiLineChart.vue";
 
-import strategiesJSON from './strategies.json'
+import strategiesJSON from '@/assets/dummy/strategies-dummy.json'
 import OhlcTable from "@/components/data-manager/ohlc-table/OhlcTable.vue";
 
-import ohlcDummy from "./ohlc-dummy.json";
+import ohlcDummy from "@/assets/dummy/ohlc-dummy.json";
 import {
   convertToOhlc,
   convertToOhlcArray,

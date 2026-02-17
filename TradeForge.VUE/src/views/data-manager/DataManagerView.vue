@@ -72,7 +72,7 @@ import { useSnackbarStore } from '@/stores/Snackbar.store';
 import { convertToTickers, type Ticker, type TickerResponseModel } from "@/types/Ticker";
 
 // Dummy Data imports
-import tickersData from './tickers-dummy.json';
+import tickersData from '@/assets/dummy/tickers-dummy.json';
 
 // ============================================================================
 // STATE MANAGEMENT
