@@ -1,0 +1,111 @@
+﻿.table-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.pagination-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.25rem 1rem;
+  background-color: rgb(var(--v-theme-surface));
+  border-bottom: thin solid rgba(var(--v-theme-on-surface), 0.12);
+  flex-shrink: 0;
+}
+
+.pagination-info {
+  font-size: 0.75rem;
+  color: rgba(var(--v-theme-on-surface), 0.6);
+}
+
+.table-wrapper {
+  width: 100%;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  table-layout: fixed;
+}
+
+.table-head {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: rgb(var(--v-theme-surface));
+}
+
+.table-head th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  font-weight: 500;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.0892857143em;
+  color: rgba(var(--v-theme-on-surface), 0.6);
+  background-color: rgb(var(--v-theme-surface));
+  border-bottom: thin solid rgba(var(--v-theme-on-surface), 0.12);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.actions-column {
+  width: 6rem;
+  text-align: right !important;
+}
+
+.custom-table tbody td {
+  padding: 0.5rem 1rem;
+  border-bottom: thin solid rgba(var(--v-theme-on-surface), 0.12);
+  color: rgba(var(--v-theme-on-surface), 0.87);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.actions-cell {
+  text-align: right;
+  padding-right: 0.5rem !important;
+  white-space: nowrap;
+}
+
+.data-row {
+  cursor: pointer;
+}
+
+.data-row:hover {
+  background-color: rgba(var(--v-theme-on-surface), 0.04);
+}
+
+.data-row:nth-child(even) {
+  background-color: rgba(var(--v-theme-on-surface), 0.02);
+}
+
+.data-row:nth-child(even):hover {
+  background-color: rgba(var(--v-theme-on-surface), 0.06);
+}
+
+.text-center {
+  text-align: center;
+}
+
+.empty-state {
+  padding: 3rem 1rem;
+  color: rgba(var(--v-theme-on-surface), 0.38);
+  font-style: italic;
+  text-align: center;
+}
+
+.bullish {
+  color: rgb(var(--v-theme-success));
+}
+
+.bearish {
+  color: rgb(var(--v-theme-error));
+}

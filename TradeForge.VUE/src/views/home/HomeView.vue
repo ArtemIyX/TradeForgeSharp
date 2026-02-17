@@ -5,6 +5,11 @@
 <template>
   <v-container>
     <v-row>
+      <OhlcTable :items="ohlcItems"/>
+    </v-row>
+  </v-container>
+  <v-container>
+    <v-row>
       <v-col cols="12">
         <h2>Example 1: Trade Number vs Cumulative Profit</h2>
         <GLineChart
@@ -79,11 +84,24 @@ import GLineChart, {type LineChartDataPoint} from "@/components/shared/charts/GL
 import GMultiLineChart from "@/components/shared/charts/GMultiLineChart.vue";
 
 import strategiesJSON from './strategies.json'
-const strategyData = ref([]);
+import OhlcTable from "@/components/data-manager/ohlc-table/OhlcTable.vue";
 
-onMounted( () => {
+import ohlcDummy from "./ohlc-dummy.json";
+import {
+  convertToOhlc,
+  convertToOhlcArray,
+  type OhlcData,
+  type OhlcResponseModel
+} from "@/types/OhlcData.ts";
+
+const strategyData = ref([]);
+const ohlcItems = ref<OhlcData[]>([]);
+
+onMounted(() => {
   strategyData.value = strategiesJSON;
+  ohlcItems.value = convertToOhlcArray(ohlcDummy as OhlcResponseModel[]);
 })
+
 
 // Example 1: Trade number to cumulative profit
 const tradeData = ref<LineChartDataPoint[]>([
