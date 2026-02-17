@@ -12,7 +12,6 @@
       </div>
 
       <div class="d-flex align-center gap-2" v-if="!readonly">
-        <!-- View mode: Edit button -->
         <v-btn
           v-if="!isEditing"
           size="small"
@@ -23,7 +22,6 @@
           Edit
         </v-btn>
 
-        <!-- Edit mode: Cancel + Save -->
         <template v-else>
           <v-btn
             size="small"
@@ -56,50 +54,65 @@
 
           <!-- ID (always readonly) -->
           <v-col cols="12" sm="6">
-            <TickerField
+            <v-text-field
+              :model-value="draft.id"
               label="ID"
-              :value="draft.id"
-              readonly-always
+              density="compact"
+              variant="underlined"
+              readonly
+              hide-details
             />
           </v-col>
 
           <!-- Symbol -->
           <v-col cols="12" sm="6">
-            <TickerField
+            <v-text-field
               v-model="draft.symbol"
               label="Symbol"
-              :editing="isEditing"
-              :rules="[ruleNotEmpty]"
+              density="compact"
+              :variant="isEditing ? 'outlined' : 'underlined'"
+              :readonly="!isEditing"
+              :rules="isEditing ? [ruleNotEmpty] : []"
+              hide-details="auto"
             />
           </v-col>
 
           <!-- Instrument -->
           <v-col cols="12">
-            <TickerField
+            <v-text-field
               v-model="draft.instrument"
               label="Instrument"
-              :editing="isEditing"
-              :rules="[ruleNotEmpty]"
+              density="compact"
+              :variant="isEditing ? 'outlined' : 'underlined'"
+              :readonly="!isEditing"
+              :rules="isEditing ? [ruleNotEmpty] : []"
+              hide-details="auto"
             />
           </v-col>
 
           <!-- Category -->
           <v-col cols="12" sm="6">
-            <TickerField
+            <v-text-field
               v-model="draft.category"
               label="Category"
-              :editing="isEditing"
-              :rules="[ruleNotEmpty]"
+              density="compact"
+              :variant="isEditing ? 'outlined' : 'underlined'"
+              :readonly="!isEditing"
+              :rules="isEditing ? [ruleNotEmpty] : []"
+              hide-details="auto"
             />
           </v-col>
 
           <!-- Units -->
           <v-col cols="12" sm="6">
-            <TickerField
+            <v-text-field
               v-model="draft.units"
               label="Units"
-              :editing="isEditing"
-              :rules="[ruleNotEmpty]"
+              density="compact"
+              :variant="isEditing ? 'outlined' : 'underlined'"
+              :readonly="!isEditing"
+              :rules="isEditing ? [ruleNotEmpty] : []"
+              hide-details="auto"
             />
           </v-col>
 
@@ -107,67 +120,91 @@
 
           <!-- Contract Size -->
           <v-col cols="12" sm="6" md="4">
-            <TickerField
+            <v-text-field
               v-model.number="draft.contractSize"
               label="Contract Size"
               type="number"
-              :editing="isEditing"
-              :rules="[rulePositive]"
+              step="any"
+              density="compact"
+              :variant="isEditing ? 'outlined' : 'underlined'"
+              :readonly="!isEditing"
+              :rules="isEditing ? [rulePositive] : []"
+              hide-details="auto"
             />
           </v-col>
 
           <!-- Leverage -->
           <v-col cols="12" sm="6" md="4">
-            <TickerField
+            <v-text-field
               v-model.number="draft.leverage"
               label="Leverage"
               type="number"
-              :editing="isEditing"
-              :rules="[rulePositive]"
+              step="any"
+              density="compact"
+              :variant="isEditing ? 'outlined' : 'underlined'"
+              :readonly="!isEditing"
+              :rules="isEditing ? [rulePositive] : []"
+              hide-details="auto"
             />
           </v-col>
 
           <!-- Min Tick -->
           <v-col cols="12" sm="6" md="4">
-            <TickerField
+            <v-text-field
               v-model.number="draft.minTick"
               label="Min Tick"
               type="number"
-              :editing="isEditing"
-              :rules="[rulePositive]"
+              step="any"
+              density="compact"
+              :variant="isEditing ? 'outlined' : 'underlined'"
+              :readonly="!isEditing"
+              :rules="isEditing ? [rulePositive] : []"
+              hide-details="auto"
             />
           </v-col>
 
           <!-- Min Volume -->
           <v-col cols="12" sm="6" md="4">
-            <TickerField
+            <v-text-field
               v-model.number="draft.minVolume"
               label="Min Volume"
               type="number"
-              :editing="isEditing"
-              :rules="[rulePositive]"
+              step="any"
+              density="compact"
+              :variant="isEditing ? 'outlined' : 'underlined'"
+              :readonly="!isEditing"
+              :rules="isEditing ? [rulePositive] : []"
+              hide-details="auto"
             />
           </v-col>
 
           <!-- Max Volume -->
           <v-col cols="12" sm="6" md="4">
-            <TickerField
+            <v-text-field
               v-model.number="draft.maxVolume"
               label="Max Volume"
               type="number"
-              :editing="isEditing"
-              :rules="[rulePositive]"
+              step="any"
+              density="compact"
+              :variant="isEditing ? 'outlined' : 'underlined'"
+              :readonly="!isEditing"
+              :rules="isEditing ? [rulePositive] : []"
+              hide-details="auto"
             />
           </v-col>
 
           <!-- Volume Step -->
           <v-col cols="12" sm="6" md="4">
-            <TickerField
+            <v-text-field
               v-model.number="draft.volumeStep"
               label="Volume Step"
               type="number"
-              :editing="isEditing"
-              :rules="[rulePositive]"
+              step="any"
+              density="compact"
+              :variant="isEditing ? 'outlined' : 'underlined'"
+              :readonly="!isEditing"
+              :rules="isEditing ? [rulePositive] : []"
+              hide-details="auto"
             />
           </v-col>
 
@@ -180,9 +217,20 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import type {TickerDetails} from "@/types/Ticker.ts";
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+export interface TickerDetails {
+  id: string;
+  symbol: string;
+  instrument: string;
+  category: string;
+  contractSize: number;
+  units: string;
+  minVolume: number;
+  maxVolume: number;
+  volumeStep: number;
+  minTick: number;
+  leverage: number;
+}
 
 interface Props {
   modelValue: TickerDetails;
@@ -204,7 +252,6 @@ const isSaving = ref(false);
 const formRef = ref<any>(null);
 const draft = ref<TickerDetails>({ ...props.modelValue });
 
-// Keep draft in sync when modelValue changes externally (while not editing)
 watch(() => props.modelValue, (val) => {
   if (!isEditing.value) draft.value = { ...val };
 }, { deep: true });
@@ -220,18 +267,17 @@ const startEditing = () => {
 const cancel = () => {
   draft.value = { ...props.modelValue };
   isEditing.value = false;
+  formRef.value?.resetValidation();
   emit('editing', false);
 };
 
 const save = async () => {
   const { valid } = await formRef.value.validate();
   if (!valid) return;
-
   isSaving.value = true;
   emit('save', { ...draft.value });
 };
 
-// Called by parent to signal save is complete
 const setSaving = (val: boolean) => {
   isSaving.value = val;
   if (!val) {
@@ -239,8 +285,6 @@ const setSaving = (val: boolean) => {
     emit('editing', false);
   }
 };
-
-// ── Expose ────────────────────────────────────────────────────────────────────
 
 defineExpose({ cancel, setSaving });
 
@@ -270,44 +314,6 @@ const categoryColor = (cat: string) => {
 };
 </script>
 
-<!-- ── Sub-component: TickerField ───────────────────────────────────────────── -->
-<script lang="ts">
-// Inline sub-component so the file stays self-contained
-import { defineComponent, h, resolveComponent } from 'vue';
-
-export const TickerField = defineComponent({
-  name: 'TickerField',
-  props: {
-    modelValue: { type: [String, Number], default: '' },
-    label: { type: String, required: true },
-    editing: { type: Boolean, default: false },
-    readonlyAlways: { type: Boolean, default: false },
-    type: { type: String, default: 'text' },
-    rules: { type: Array, default: () => [] },
-  },
-  emits: ['update:modelValue'],
-  setup(props, { emit }) {
-    return () => {
-      const VTextField = resolveComponent('v-text-field') as any;
-
-      return h(VTextField, {
-        modelValue: props.modelValue,
-        label: props.label,
-        type: props.type,
-        step: props.type === 'number' ? 'any' : undefined,
-        density: 'compact',
-        variant: (props.readonlyAlways || !props.editing) ? 'underlined' : 'outlined',
-        readonly: props.readonlyAlways || !props.editing,
-        rules: (!props.readonlyAlways && props.editing) ? props.rules : [],
-        hideDetails: 'auto',
-        class: (!props.readonlyAlways && !props.editing) ? 'ticker-field-view' : '',
-        'onUpdate:modelValue': (v: any) => emit('update:modelValue', v),
-      });
-    };
-  },
-});
-</script>
-
 <style scoped>
 .ticker-editor {
   transition: box-shadow 0.2s;
@@ -321,13 +327,5 @@ export const TickerField = defineComponent({
   font-weight: 700;
   font-size: 1rem;
   letter-spacing: 0.05em;
-}
-
-:deep(.ticker-field-view .v-field__input) {
-  color: rgba(var(--v-theme-on-surface), 0.87);
-}
-
-:deep(.ticker-field-view .v-field__outline) {
-  display: none;
 }
 </style>
