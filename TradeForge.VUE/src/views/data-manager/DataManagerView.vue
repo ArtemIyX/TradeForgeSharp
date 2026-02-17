@@ -4,6 +4,7 @@
   <OhlcModal ref="ohlcModalRef"/>
   <EditTickerModal ref="editTickerModalRef"/>
   <CreateTickerModal ref="createTickerModalRef"/>
+  <TickerExportModal ref="exportTickerModalRef"/>
   <div class="data-manager">
     <div class="content-container">
 
@@ -80,6 +81,7 @@ import {convertToTickers, type Ticker, type TickerResponseModel} from "@/types/T
 import tickersData from '@/assets/dummy/tickers-dummy.json';
 import EditTickerModal from "@/components/data-manager/edit-ticker-modal/EditTickerModal.vue";
 import CreateTickerModal from "@/components/data-manager/create-ticker-modal/CreateTickerModal.vue";
+import TickerExportModal from "@/components/data-manager/ticker-export-modal/TickerExportModal.vue";
 
 // ============================================================================
 // STATE MANAGEMENT
@@ -98,6 +100,7 @@ const clearTickerDataModalRef = ref<InstanceType<typeof ClearTickerModal> | null
 const ohlcModalRef = ref<InstanceType<typeof OhlcModal> | null>(null);
 const editTickerModalRef = ref<InstanceType<typeof EditTickerModal> | null>(null);
 const createTickerModalRef = ref<InstanceType<typeof CreateTickerModal> | null>(null);
+const exportTickerModalRef = ref<InstanceType<typeof TickerExportModal> | null>(null);
 
 // Snackbar store instance for displaying notifications
 const snackbar = useSnackbarStore();
@@ -144,7 +147,7 @@ const disabledButtons = computed(() => {
  */
 const handleCreate = () => {
   console.log('Create');
-  if(createTickerModalRef.value) {
+  if (createTickerModalRef.value) {
     createTickerModalRef.value.open();
   }
 };
@@ -188,6 +191,11 @@ const handleImport = () => {
  */
 const handleExport = () => {
   console.log('Export');
+  if (exportTickerModalRef.value) {
+    if (currentTicker.value) {
+      exportTickerModalRef.value.open(currentTicker.value);
+    }
+  }
 };
 
 // ============================================================================
