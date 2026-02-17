@@ -8,10 +8,11 @@
 
       <v-divider/>
 
-      <v-card-text class="pa-0 modal-body">
+      <v-card-text class="pa-0 modal-body" >
         <OhlcViewer
           :data="ohlcItems"
           :loading="loading"
+          chartHeight="100%"
           readonly
         />
       </v-card-text>

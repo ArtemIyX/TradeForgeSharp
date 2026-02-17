@@ -1,5 +1,5 @@
 ﻿<template>
-  <v-card>
+  <v-card height="100%">
     <v-tabs v-model="activeTab" density="compact">
       <v-tab value="chart" prepend-icon="mdi-chart-waterfall">Chart</v-tab>
       <v-tab value="table" prepend-icon="mdi-table">Table</v-tab>
@@ -7,8 +7,9 @@
 
     <v-divider/>
 
-    <v-window v-model="activeTab">
-      <v-window-item value="chart">
+    <v-window v-model="activeTab" style=" height: 99%">
+      <v-window-item value="chart" style="height: 100%">
+
         <GCandlestickChart
           :data="data"
           :drawings="drawings"
@@ -17,7 +18,7 @@
         />
       </v-window-item>
 
-      <v-window-item value="table">
+      <v-window-item value="table" style="height: 100%">
         <OhlcTable
           ref="tableRef"
           :items="data"
