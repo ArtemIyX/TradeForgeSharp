@@ -5,6 +5,9 @@
 <template>
   <v-container>
     <v-row>
+      <OhlcViewer :data="ohlcItems" :readonly="true"/>
+    </v-row>
+    <v-row>
       <OhlcTable :items="ohlcItems" :readonly="true"/>
     </v-row>
   </v-container>
@@ -93,6 +96,7 @@ import {
   type OhlcData,
   type OhlcResponseModel
 } from "@/types/OhlcData.ts";
+import OhlcViewer from "@/components/data-manager/ohlc-viewer/OhlcViewer.vue";
 
 const strategyData = ref([]);
 const ohlcItems = ref<OhlcData[]>([]);

@@ -1,6 +1,7 @@
 ﻿<template>
   <DeleteTickerModal ref="deleteTickerModalRef" @delete="handleModalDelete"/>
   <ClearTickerModal ref="clearTickerDataModalRef" @clear="handleModalClearData"/>
+  <OhlcModal ref="ohlcModalRef"/>
   <div class="data-manager">
     <div class="content-container">
 
@@ -57,19 +58,21 @@
 // ============================================================================
 
 // Component imports
-import DataManagerToolbar from "@/components/data-manager/data-manager-toolbar/DataManagerToolbar.vue";
+import DataManagerToolbar
+  from "@/components/data-manager/data-manager-toolbar/DataManagerToolbar.vue";
 import DataManagerTable from "@/components/data-manager/data-manager-table/DataManagerTable.vue";
 import DeleteTickerModal from "@/components/data-manager/delete-ticker-modal/DeleteTickerModal.vue";
 import ClearTickerModal from "@/components/data-manager/clear-ticker-modal/ClearTickerModal.vue";
+import OhlcModal from "@/components/data-manager/ohlc-modal/OhlcModal.vue";
 
 // Vue composition API imports
-import { computed, onMounted, ref } from "vue";
+import {computed, onMounted, ref} from "vue";
 
 // Store imports
-import { useSnackbarStore } from '@/stores/Snackbar.store';
+import {useSnackbarStore} from '@/stores/Snackbar.store';
 
 // Type and utility imports
-import { convertToTickers, type Ticker, type TickerResponseModel } from "@/types/Ticker";
+import {convertToTickers, type Ticker, type TickerResponseModel} from "@/types/Ticker";
 
 // Dummy Data imports
 import tickersData from '@/assets/dummy/tickers-dummy.json';
@@ -88,6 +91,7 @@ const tickers = ref<Ticker[]>([]);
 const dataManagerTableRef = ref<InstanceType<typeof DataManagerTable> | null>(null);
 const deleteTickerModalRef = ref<InstanceType<typeof DeleteTickerModal> | null>(null);
 const clearTickerDataModalRef = ref<InstanceType<typeof ClearTickerModal> | null>(null);
+const ohlcModalRef = ref<InstanceType<typeof OhlcModal> | null>(null);
 
 // Snackbar store instance for displaying notifications
 const snackbar = useSnackbarStore();
@@ -150,6 +154,9 @@ const handleEdit = () => {
  */
 const handleViewData = () => {
   console.log('View Data');
+  if(ohlcModalRef.value) {
+    ohlcModalRef.value.show()
+  }
 };
 
 /**
