@@ -37,6 +37,7 @@
             color="primary"
             variant="flat"
             :loading="isSaving"
+            :disabled="isSaving || isFormValid === false"
             :prepend-icon="isSaving ? undefined : 'mdi-content-save'"
             @click="save"
           >
@@ -49,7 +50,7 @@
     <v-divider />
 
     <v-card-text class="pa-4">
-      <v-form ref="formRef">
+      <v-form ref="formRef" v-model="isFormValid">
         <v-row dense>
 
           <!-- ID (always readonly) -->
@@ -249,6 +250,7 @@ const emit = defineEmits<{
 
 const isEditing = ref(false);
 const isSaving = ref(false);
+const isFormValid = ref(true);
 const formRef = ref<any>(null);
 const draft = ref<TickerDetails>({ ...props.modelValue });
 
