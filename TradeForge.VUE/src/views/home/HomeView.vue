@@ -5,7 +5,7 @@
 <template>
   <v-container>
     <v-row>
-      <OhlcTable :items="ohlcItems"/>
+      <OhlcTable :items="ohlcItems" :readonly="true"/>
     </v-row>
   </v-container>
   <v-container>

@@ -122,6 +122,7 @@
         <span class="pagination-info">{{ currentPage }} / {{ totalPages || 1 }}</span>
         <v-btn icon="mdi-chevron-right" size="small" variant="text" :disabled="currentPage >= totalPages" @click="currentPage++"/>
         <v-btn
+          v-if="!readonly"
           size="small"
           variant="text"
           prepend-icon="mdi-plus"
@@ -143,17 +144,17 @@
           <th>Low</th>
           <th>Close</th>
           <th>Volume</th>
-          <th class="actions-column">Actions</th>
+          <th v-if="!readonly" class="actions-column">Actions</th>
         </tr>
         </thead>
         <tbody>
         <tr v-if="loading">
-          <td colspan="7" class="text-center" style="padding: 3rem 1rem">
+          <td :colspan="readonly ? 6 : 7" class="text-center" style="padding: 3rem 1rem">
             <v-progress-circular indeterminate size="24"/>
           </td>
         </tr>
         <tr v-else-if="!pagedItems.length">
-          <td colspan="7" class="empty-state">No OHLC data available</td>
+          <td :colspan="readonly ? 6 : 7" class="empty-state">No OHLC data available</td>
         </tr>
         <tr
           v-else
@@ -167,7 +168,7 @@
           <td :class="item.close >= item.open ? 'bullish' : 'bearish'">{{ item.low }}</td>
           <td :class="item.close >= item.open ? 'bullish' : 'bearish'">{{ item.close }}</td>
           <td>{{ item.volume != null ? item.volume.toLocaleString() : '—' }}</td>
-          <td class="actions-cell">
+          <td v-if="!readonly" class="actions-cell">
             <v-btn icon="mdi-pencil" size="x-small" variant="text" @click.stop="openEdit(item)"/>
             <v-btn icon="mdi-delete" size="x-small" variant="text" color="error" @click.stop="openDelete(item)"/>
           </td>
@@ -185,9 +186,10 @@ import type {OhlcData} from '@/types/OhlcData.ts';
 interface Props {
   items: OhlcData[];
   loading?: boolean;
+  readonly?: boolean;
 }
 
-const props = withDefaults(defineProps<Props>(), {loading: false});
+const props = withDefaults(defineProps<Props>(), {loading: false, readonly: false});
 
 const emit = defineEmits<{
   insert: [item: Omit<OhlcData, 'timestamp'> & { timestamp: Date }]
