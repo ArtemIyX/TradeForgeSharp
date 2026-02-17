@@ -2,6 +2,7 @@
   <DeleteTickerModal ref="deleteTickerModalRef" @delete="handleModalDelete"/>
   <ClearTickerModal ref="clearTickerDataModalRef" @clear="handleModalClearData"/>
   <OhlcModal ref="ohlcModalRef"/>
+  <EditTickerModal ref="editTickerModalRef"/>
   <div class="data-manager">
     <div class="content-container">
 
@@ -76,6 +77,7 @@ import {convertToTickers, type Ticker, type TickerResponseModel} from "@/types/T
 
 // Dummy Data imports
 import tickersData from '@/assets/dummy/tickers-dummy.json';
+import EditTickerModal from "@/components/data-manager/edit-ticker-modal/EditTickerModal.vue";
 
 // ============================================================================
 // STATE MANAGEMENT
@@ -92,6 +94,7 @@ const dataManagerTableRef = ref<InstanceType<typeof DataManagerTable> | null>(nu
 const deleteTickerModalRef = ref<InstanceType<typeof DeleteTickerModal> | null>(null);
 const clearTickerDataModalRef = ref<InstanceType<typeof ClearTickerModal> | null>(null);
 const ohlcModalRef = ref<InstanceType<typeof OhlcModal> | null>(null);
+const editTickerModalRef = ref<InstanceType<typeof EditTickerModal> | null>(null);
 
 // Snackbar store instance for displaying notifications
 const snackbar = useSnackbarStore();
@@ -146,6 +149,11 @@ const handleCreate = () => {
  */
 const handleEdit = () => {
   console.log('Edit');
+  if (editTickerModalRef.value) {
+    if (currentTicker.value) {
+      editTickerModalRef.value.open(currentTicker.value.id);
+    }
+  }
 };
 
 /**
