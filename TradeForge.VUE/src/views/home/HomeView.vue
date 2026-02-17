@@ -5,6 +5,9 @@
 <template>
   <v-container>
     <v-row>
+      <TickerDetailsEditor v-model="detailedTicker"/>
+    </v-row>
+    <v-row>
       <OhlcViewer :data="ohlcItems" :readonly="true"/>
     </v-row>
     <v-row>
@@ -96,7 +99,24 @@ import {
   type OhlcData,
   type OhlcResponseModel
 } from "@/types/OhlcData.ts";
+import {type TickerDetails} from "@/types/Ticker.ts";
 import OhlcViewer from "@/components/data-manager/ohlc-viewer/OhlcViewer.vue";
+
+import TickerDetailsEditor from "@/components/data-manager/ticker-details/TickerDetailsEditor.vue";
+
+const detailedTicker = ref<TickerDetails>({
+  id: "1",
+  symbol: "EURUSD",
+  instrument: "Euro / US Dollar",
+  category: "Forex",
+  contractSize: 100000,
+  units: "Lots",
+  minVolume: 0.01,
+  maxVolume: 100,
+  volumeStep: 0.01,
+  minTick: 0.00001,
+  leverage: 100,
+});
 
 const strategyData = ref([]);
 const ohlcItems = ref<OhlcData[]>([]);
