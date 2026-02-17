@@ -20,6 +20,20 @@ export interface TickerResponseModel {
   category: string;
 }
 
+export interface TickerDetails {
+  id: string;
+  symbol: string;
+  instrument: string;
+  category: string;
+  contractSize: number;
+  units: string;
+  minVolume: number;
+  maxVolume: number;
+  volumeStep: number;
+  minTick: number;
+  leverage: number;
+}
+
 export enum TimeFrame {
   m1 = '1m',
   m5 = '5m',
