@@ -8,7 +8,7 @@
 
       <v-divider/>
 
-      <v-card-text class="pa-0">
+      <v-card-text class="pa-0 modal-body">
         <OhlcViewer
           :data="ohlcItems"
           :loading="loading"
@@ -52,3 +52,10 @@ const hide = () => {
 
 defineExpose({ show, hide });
 </script>
+
+<style scoped>
+.modal-body {
+  height: 75vh;
+  overflow: auto;
+}
+</style>
