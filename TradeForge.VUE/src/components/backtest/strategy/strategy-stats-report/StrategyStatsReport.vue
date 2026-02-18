@@ -53,22 +53,20 @@
       <table class="custom-table">
         <tbody>
         <tr class="title-row">
-          <td colspan="6">Risk-Adjusted Ratios</td>
+          <td colspan="2">Risk-Adjusted Ratios</td>
         </tr>
-        <tr>
-          <template v-for="item in ratioItems" :key="item.key">
-            <td class="label">
-              <div class="label-with-tooltip">
-                <span>{{ item.label }}</span>
-                <v-tooltip :text="item.tooltip" max-width="18rem" location="top">
-                  <template #activator="{ props: tip }">
-                    <v-icon v-bind="tip" class="tooltip-icon" size="0.875rem">mdi-information-outline</v-icon>
-                  </template>
-                </v-tooltip>
-              </div>
-            </td>
-            <td class="value">{{ fmt(data.ratio[item.key]) }}</td>
-          </template>
+        <tr v-for="item in ratioItems" :key="item.key">
+          <td class="label-ratio">
+            <div class="label-with-tooltip">
+              <span>{{ item.label }}</span>
+              <v-tooltip :text="item.tooltip" location="top">
+                <template #activator="{ props: tip }">
+                  <v-icon v-bind="tip" class="tooltip-icon" size="0.875rem">mdi-information-outline</v-icon>
+                </template>
+              </v-tooltip>
+            </div>
+          </td>
+          <td class="value">{{ fmt(data.ratio[item.key]) }}</td>
         </tr>
         </tbody>
       </table>

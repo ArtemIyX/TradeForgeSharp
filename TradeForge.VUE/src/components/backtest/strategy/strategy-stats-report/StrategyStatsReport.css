@@ -39,11 +39,18 @@
 .label {
   color: rgba(var(--v-theme-on-surface), 0.6);
   font-size: 0.75rem;
+  text-align: right;
+}
+.label-ratio {
+  color: rgba(var(--v-theme-on-surface), 0.6);
+  font-size: 0.75rem;
+  text-align: right;
 }
 
 .label-with-tooltip {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 0.25rem;
 }
 
@@ -54,6 +61,6 @@
 }
 
 .value {
-  text-align: right;
+  text-align: left;
   font-weight: 500;
 }
