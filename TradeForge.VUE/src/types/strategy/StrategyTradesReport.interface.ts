@@ -1,4 +1,4 @@
-﻿export interface StrategyTradesReport {
+﻿export interface StrategyTradesReportData {
   wins: number;
   losses: number;
   canceledOrExpired: number;

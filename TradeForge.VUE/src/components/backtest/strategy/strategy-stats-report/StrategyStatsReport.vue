@@ -12,33 +12,33 @@
         </tr>
         <tr>
           <td class="label">Wins / Losses Ratio</td>
-          <td class="value">{{ fmt(data.stats.winLossRatio) }}</td>
+          <td class="value">{{ fmt(stats.winLossRatio) }}</td>
           <td class="label">Payout Ratio (Avg Win/Loss)</td>
-          <td class="value">{{ fmt(data.stats.payoutRatio) }}</td>
+          <td class="value">{{ fmt(stats.payoutRatio) }}</td>
           <td class="label">Average # of Bars in Trade</td>
-          <td class="value">{{ fmt(data.stats.avgBarsInTrade) }}</td>
+          <td class="value">{{ fmt(stats.avgBarsInTrade) }}</td>
         </tr>
         <tr>
           <td class="label">AHPR</td>
-          <td class="value">{{ fmt(data.stats.ahpr) }}</td>
+          <td class="value">{{ fmt(stats.ahpr) }}</td>
           <td class="label">Z-Score</td>
-          <td class="value">{{ fmt(data.stats.zScore) }}</td>
+          <td class="value">{{ fmt(stats.zScore) }}</td>
           <td class="label">Z-Probability</td>
-          <td class="value">{{ fmtPct(data.stats.zProbability) }}</td>
+          <td class="value">{{ fmtPct(stats.zProbability) }}</td>
         </tr>
         <tr>
           <td class="label">Expectancy</td>
-          <td class="value">{{ fmt(data.stats.expectancy) }}</td>
+          <td class="value">{{ fmt(stats.expectancy) }}</td>
           <td class="label">Deviation</td>
-          <td class="value">{{ fmtMoney(data.stats.deviation) }}</td>
+          <td class="value">{{ fmtMoney(stats.deviation) }}</td>
           <td class="label">Exposure</td>
-          <td class="value">{{ fmtPct(data.stats.exposure) }}</td>
+          <td class="value">{{ fmtPct(stats.exposure) }}</td>
         </tr>
         <tr>
           <td class="label">Stagnation in Days</td>
-          <td class="value">{{ data.stats.stagnationInDays }}</td>
+          <td class="value">{{ stats.stagnationInDays }}</td>
           <td class="label">Stagnation in %</td>
-          <td class="value">{{ fmtPct(data.stats.stagnationInPercent) }}</td>
+          <td class="value">{{ fmtPct(stats.stagnationInPercent) }}</td>
           <td></td>
           <td></td>
         </tr>
@@ -68,7 +68,7 @@
                 </v-tooltip>
               </div>
             </td>
-            <td class="value">{{ fmt(data.ratio[item.key]) }}</td>
+            <td class="value">{{ fmt(ratio[item.key]) }}</td>
           </template>
           <!-- fill remaining columns if chunk has < 3 items -->
           <template v-if="chunk.length < 3">
@@ -84,10 +84,14 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { StrategyReport } from '@/types/strategy/StrategyStatsReport.interface';
+import type {
+  StrategyRatioReport,
+  StrategyStatsReport
+} from '@/types/strategy/StrategyStatsReport.interface';
 
 interface Props {
-  data: StrategyReport;
+  ratio: StrategyRatioReport;
+  stats: StrategyStatsReport
 }
 
 defineProps<Props>();
@@ -104,7 +108,7 @@ function fmtMoney(v: number): string {
 }
 
 // ── Ratio definitions with tooltips ──────────────────────────────────────────
-const ratioItems: { key: keyof StrategyReport['ratio']; label: string; tooltip: string }[] = [
+const ratioItems: { key: keyof StrategyRatioReport; label: string; tooltip: string }[] = [
   {
     key: 'sharpeRatio',
     label: 'Sharpe Ratio',

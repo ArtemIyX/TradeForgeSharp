@@ -1,4 +1,4 @@
-﻿export interface StrategyRatioReport {
+﻿export interface StrategyRatioReportData {
   sharpeRatio: number;
   sortinoRatio: number;
   calmarRatio: number;
@@ -7,7 +7,7 @@
   marRatio: number;
 }
 
-export interface StrategyStatsReport {
+export interface StrategyStatsReportData {
   winLossRatio: number;
   payoutRatio: number;
   avgBarsInTrade: number;
@@ -25,8 +25,4 @@ export interface StrategyStatsReport {
 }
 
 
-export interface StrategyReport {
-  stats: StrategyStatsReport
-  ratio: StrategyRatioReport
-}
 
