@@ -1,0 +1,133 @@
+﻿<style scoped src="./StrategyStatsReport.css">
+
+</style>
+
+<template>
+  <div class="report-wrapper">
+
+    <!-- Strategy Stats -->
+    <div class="section-container">
+      <table class="custom-table">
+        <tbody>
+        <tr class="title-row">
+          <td colspan="6">Strategy</td>
+        </tr>
+        <tr>
+          <td class="label">Wins / Losses Ratio</td>
+          <td class="value">{{ fmt(data.stats.winLossRatio) }}</td>
+          <td class="label">Payout Ratio (Avg Win/Loss)</td>
+          <td class="value">{{ fmt(data.stats.payoutRatio) }}</td>
+          <td class="label">Average # of Bars in Trade</td>
+          <td class="value">{{ fmt(data.stats.avgBarsInTrade) }}</td>
+        </tr>
+        <tr>
+          <td class="label">AHPR</td>
+          <td class="value">{{ fmt(data.stats.ahpr) }}</td>
+          <td class="label">Z-Score</td>
+          <td class="value">{{ fmt(data.stats.zScore) }}</td>
+          <td class="label">Z-Probability</td>
+          <td class="value">{{ fmtPct(data.stats.zProbability) }}</td>
+        </tr>
+        <tr>
+          <td class="label">Expectancy</td>
+          <td class="value">{{ fmt(data.stats.expectancy) }}</td>
+          <td class="label">Deviation</td>
+          <td class="value">{{ fmtMoney(data.stats.deviation) }}</td>
+          <td class="label">Exposure</td>
+          <td class="value">{{ fmtPct(data.stats.exposure) }}</td>
+        </tr>
+        <tr>
+          <td class="label">Stagnation in Days</td>
+          <td class="value">{{ data.stats.stagnationInDays }}</td>
+          <td class="label">Stagnation in %</td>
+          <td class="value">{{ fmtPct(data.stats.stagnationInPercent) }}</td>
+          <td></td>
+          <td></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Ratios -->
+    <div class="section-container">
+      <table class="custom-table">
+        <tbody>
+        <tr class="title-row">
+          <td colspan="6">Risk-Adjusted Ratios</td>
+        </tr>
+        <tr>
+          <template v-for="item in ratioItems" :key="item.key">
+            <td class="label">
+              <div class="label-with-tooltip">
+                <span>{{ item.label }}</span>
+                <v-tooltip :text="item.tooltip" max-width="18rem" location="top">
+                  <template #activator="{ props: tip }">
+                    <v-icon v-bind="tip" class="tooltip-icon" size="0.875rem">mdi-information-outline</v-icon>
+                  </template>
+                </v-tooltip>
+              </div>
+            </td>
+            <td class="value">{{ fmt(data.ratio[item.key]) }}</td>
+          </template>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</template>
+
+<script setup lang="ts">
+import type { StrategyReport } from '@/types/StrategyStatsReport.interface';
+
+interface Props {
+  data: StrategyReport;
+}
+
+defineProps<Props>();
+
+// ── Formatters ────────────────────────────────────────────────────────────────
+function fmt(v: number): string {
+  return +v.toFixed(2) + '';
+}
+function fmtPct(v: number): string {
+  return `${+v.toFixed(2)} %`;
+}
+function fmtMoney(v: number): string {
+  return `$ ${+Math.abs(v).toFixed(2)}`;
+}
+
+// ── Ratio definitions with tooltips ──────────────────────────────────────────
+const ratioItems: { key: keyof StrategyReport['ratio']; label: string; tooltip: string }[] = [
+  {
+    key: 'sharpeRatio',
+    label: 'Sharpe Ratio',
+    tooltip: 'Measures excess return per unit of total risk (std deviation). Higher is better. Above 1.0 is considered acceptable, above 2.0 is strong.',
+  },
+  {
+    key: 'sortinoRatio',
+    label: 'Sortino Ratio',
+    tooltip: 'Like Sharpe, but only penalizes downside volatility. Better suited for asymmetric return distributions. Higher is better.',
+  },
+  {
+    key: 'calmarRatio',
+    label: 'Calmar Ratio',
+    tooltip: 'Annualized return divided by maximum drawdown. Measures return per unit of drawdown risk. Higher is better.',
+  },
+  {
+    key: 'sterlingRatio',
+    label: 'Sterling Ratio',
+    tooltip: 'Similar to Calmar but uses average drawdown instead of max. Less sensitive to a single extreme drawdown event.',
+  },
+  {
+    key: 'omegaRatio',
+    label: 'Omega Ratio',
+    tooltip: 'Ratio of probability-weighted gains to probability-weighted losses above/below a threshold. Above 1.0 means gains outweigh losses.',
+  },
+  {
+    key: 'marRatio',
+    label: 'MAR Ratio',
+    tooltip: 'Managed Account Ratio — compounded annual growth rate divided by max drawdown. A simple measure of return efficiency relative to risk.',
+  },
+];
+</script>

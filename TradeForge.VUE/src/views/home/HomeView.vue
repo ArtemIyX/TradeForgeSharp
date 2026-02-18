@@ -5,6 +5,9 @@
 <template>
   <v-container>
     <v-row>
+      <StrategyStatsReport :data="strategyReport"/>
+    </v-row>
+    <v-row>
       <TradeStatsReport :data="tradesReport"/>
     </v-row>
     <v-row>
@@ -115,6 +118,9 @@ import type {MonthlyReportItem, MonthlyReportMap} from "@/types/MonthlyReport.in
 import type {TradesReport} from "@/types/TradesReport.interface.ts";
 import TradeStatsReport
   from "@/components/backtest/strategy/trades-stats-report/TradeStatsReport.vue";
+import StrategyStatsReport
+  from "@/components/backtest/strategy/strategy-stats-report/StrategyStatsReport.vue";
+import type {StrategyReport} from "@/types/StrategyStatsReport.interface.ts";
 
 const detailedTicker = ref<TickerDetails>({
   id: "1",
@@ -152,6 +158,19 @@ const tradesReport = ref<TradesReport>({
   maxConsWins: 7, maxConsLosses: 14,
   avgConsWins: 1.58, avgConsLosses: 2.53,
   avgBarsInWins: 32.44, avgBarsInLosses: 11.69,
+});
+
+const strategyReport = ref<StrategyReport>({
+  stats: {
+    winLossRatio: 0.62, payoutRatio: 2.19, avgBarsInTrade: 19.65,
+    ahpr: 3.45, zScore: 0.69, zProbability: 24.51,
+    expectancy: 9.39, deviation: 77.9, exposure: 8.75,
+    stagnationInDays: 2321, stagnationInPercent: 37.84,
+  },
+  ratio: {
+    sharpeRatio: 1.82, sortinoRatio: 2.41, calmarRatio: 0.94,
+    sterlingRatio: 1.13, omegaRatio: 1.57, marRatio: 0.87,
+  }
 });
 
 onMounted(() => {
