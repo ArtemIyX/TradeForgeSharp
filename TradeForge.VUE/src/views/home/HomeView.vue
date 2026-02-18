@@ -5,6 +5,9 @@
 <template>
   <v-container>
     <v-row>
+      <MonthlyPerformanceTable :data="monthlyReportMap"/>
+    </v-row>
+    <v-row>
       <TickerDetailsEditor v-model="detailedTicker"/>
     </v-row>
     <v-row>
@@ -103,6 +106,9 @@ import {type TickerDetails} from "@/types/Ticker.interface.ts";
 import OhlcViewer from "@/components/data-manager/ohlc-viewer/OhlcViewer.vue";
 
 import TickerDetailsEditor from "@/components/data-manager/ticker-details/TickerDetailsEditor.vue";
+import MonthlyPerformanceTable
+  from "@/components/backtest/monthly-perfomance-table/MonthlyPerformanceTable.vue";
+import type {MonthlyReportItem, MonthlyReportMap} from "@/types/MonthlyReport.interface.ts";
 
 const detailedTicker = ref<TickerDetails>({
   id: "1",
@@ -120,6 +126,17 @@ const detailedTicker = ref<TickerDetails>({
 
 const strategyData = ref([]);
 const ohlcItems = ref<OhlcData[]>([]);
+
+const monthlyReportMap = ref<MonthlyReportMap>({
+  data: new Map<number, MonthlyReportItem>([
+    [2024, { profits: [105.1, 100, 100.2, 0, 0, 0, 0, 0, 0, 0, 0, 0] }],
+    [2023, { profits: [253.3, 79.6, -184, -92, 61.8, -80.4, 3.6, 35.5, -73.5, -9, 14, 206.2] }],
+    [2022, { profits: [261.6, 83, -7.4, -11.9, -92, -47.1, -39.7, -139.5, -145.2, 103.1, -138, -144.3] }],
+    [2021, { profits: [21.2, -92, 183.9, -45.6, -160.1, -221.8, 145.4, 29.8, 241.3, 88.5, 155.2, -90.5] }],
+    [2020, { profits: [-9.2, 144.6, 304, -59.4, 123.3, -24.2, -138, -55, 91.8, -46, 37, -28.3] }],
+    [2019, { profits: [-144.8, -12.9, 129, 203.5, 258, 113.8, -50.3, -144.2, 288.7, -36.3, 196.8, -40] }],
+  ])
+});
 
 onMounted(() => {
   strategyData.value = strategiesJSON;
