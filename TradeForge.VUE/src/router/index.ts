@@ -19,6 +19,11 @@ const router = createRouter({
       component: () => import("@/views/backtest/backtest-view/BackTestView.vue"),
     },
     {
+      path: "/result/:id",
+      name: "backtest-result",
+      component: () => import("@/views/backtest/backtest-result-view/BacktestResultView.vue"),
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: () => import('@/views/not-found/NotFoundView.vue')
