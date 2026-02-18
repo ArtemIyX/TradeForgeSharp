@@ -5,6 +5,9 @@
 <template>
   <v-container>
     <v-row>
+      <TradeStatsReport :data="tradesReport"/>
+    </v-row>
+    <v-row>
       <MonthlyPerformanceTable :data="monthlyReportMap"/>
     </v-row>
     <v-row>
@@ -109,6 +112,9 @@ import TickerDetailsEditor from "@/components/data-manager/ticker-details/Ticker
 import MonthlyPerformanceTable
   from "@/components/backtest/monthly-perfomance-table/MonthlyPerformanceTable.vue";
 import type {MonthlyReportItem, MonthlyReportMap} from "@/types/MonthlyReport.interface.ts";
+import type {TradesReport} from "@/types/TradesReport.interface.ts";
+import TradeStatsReport
+  from "@/components/backtest/strategy/trades-stats-report/TradeStatsReport.vue";
 
 const detailedTicker = ref<TickerDetails>({
   id: "1",
@@ -136,6 +142,16 @@ const monthlyReportMap = ref<MonthlyReportMap>({
     [2020, { profits: [-9.2, 144.6, 304, -59.4, 123.3, -24.2, -138, -55, 91.8, -46, 37, -28.3] }],
     [2019, { profits: [-144.8, -12.9, 129, 203.5, 258, 113.8, -50.3, -144.2, 288.7, -36.3, 196.8, -40] }],
   ])
+});
+
+const tradesReport = ref<TradesReport>({
+  wins: 254, losses: 408, canceledOrExpired: 0,
+  grossProfit: 23316.1, grossLoss: -17102.6,
+  avgWin: 91.8, avgLoss: -41.92,
+  largestWin: 175, largestLoss: -46,
+  maxConsWins: 7, maxConsLosses: 14,
+  avgConsWins: 1.58, avgConsLosses: 2.53,
+  avgBarsInWins: 32.44, avgBarsInLosses: 11.69,
 });
 
 onMounted(() => {
