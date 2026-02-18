@@ -1,13 +1,11 @@
-﻿<style scoped src="./StrategyStatsReport.css">
-
-</style>
+﻿<style scoped src="./StrategyStatsReport.css"></style>
 
 <template>
   <div class="report-wrapper">
-
-    <!-- Strategy Stats -->
     <div class="section-container">
       <table class="custom-table">
+
+        <!-- Strategy Stats -->
         <tbody>
         <tr class="title-row">
           <td colspan="6">Strategy</td>
@@ -45,37 +43,47 @@
           <td></td>
         </tr>
         </tbody>
-      </table>
-    </div>
 
-    <!-- Ratios -->
-    <div class="section-container">
-      <table class="custom-table">
+        <!-- Divider -->
         <tbody>
-        <tr class="title-row">
-          <td colspan="2">Risk-Adjusted Ratios</td>
-        </tr>
-        <tr v-for="item in ratioItems" :key="item.key">
-          <td class="label-ratio">
-            <div class="label-with-tooltip">
-              <span>{{ item.label }}</span>
-              <v-tooltip :text="item.tooltip" location="top">
-                <template #activator="{ props: tip }">
-                  <v-icon v-bind="tip" class="tooltip-icon" size="0.875rem">mdi-information-outline</v-icon>
-                </template>
-              </v-tooltip>
-            </div>
-          </td>
-          <td class="value">{{ fmt(data.ratio[item.key]) }}</td>
+        <tr class="divider-row">
+          <td colspan="6"></td>
         </tr>
         </tbody>
+
+        <!-- Risk-Adjusted Ratios -->
+        <tbody>
+        <tr class="title-row">
+          <td colspan="6">Risk-Adjusted Ratios</td>
+        </tr>
+        <tr v-for="(chunk, i) in ratioChunks" :key="i">
+          <template v-for="item in chunk" :key="item.key">
+            <td class="label-ratio">
+              <div class="label-with-tooltip">
+                <span>{{ item.label }}</span>
+                <v-tooltip :text="item.tooltip" location="top">
+                  <template #activator="{ props: tip }">
+                    <v-icon v-bind="tip" class="tooltip-icon" size="0.875rem">mdi-information-outline</v-icon>
+                  </template>
+                </v-tooltip>
+              </div>
+            </td>
+            <td class="value">{{ fmt(data.ratio[item.key]) }}</td>
+          </template>
+          <!-- fill remaining columns if chunk has < 3 items -->
+          <template v-if="chunk.length < 3">
+            <td v-for="n in (3 - chunk.length) * 2" :key="'empty-' + n"></td>
+          </template>
+        </tr>
+        </tbody>
+
       </table>
     </div>
-
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import type { StrategyReport } from '@/types/StrategyStatsReport.interface';
 
 interface Props {
@@ -128,4 +136,14 @@ const ratioItems: { key: keyof StrategyReport['ratio']; label: string; tooltip: 
     tooltip: 'Managed Account Ratio — compounded annual growth rate divided by max drawdown. A simple measure of return efficiency relative to risk.',
   },
 ];
+
+// Chunk ratios into rows of 3 (to match the 6-column layout: label+value × 3)
+const ratioChunks = computed(() => {
+  const size = 3;
+  const result = [];
+  for (let i = 0; i < ratioItems.length; i += size) {
+    result.push(ratioItems.slice(i, i + size));
+  }
+  return result;
+});
 </script>

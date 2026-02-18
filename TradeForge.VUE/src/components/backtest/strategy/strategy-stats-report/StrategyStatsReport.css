@@ -36,6 +36,13 @@
   letter-spacing: 0.04em;
 }
 
+.divider-row td {
+  padding: 0;
+  height: 0.1875rem;
+  background-color: rgba(var(--v-theme-on-surface), 0.12);
+  border: none;
+}
+
 .label {
   color: rgba(var(--v-theme-on-surface), 0.6);
   font-size: 0.75rem;
