@@ -5,6 +5,9 @@
 <template>
   <v-container>
     <v-row>
+      <StrategyPerformanceReport :data="exampleReport"/>
+    </v-row>
+    <v-row>
       <StrategyStatsReport :data="strategyReport"/>
     </v-row>
     <v-row>
@@ -114,13 +117,19 @@ import OhlcViewer from "@/components/data-manager/ohlc-viewer/OhlcViewer.vue";
 import TickerDetailsEditor from "@/components/data-manager/ticker-details/TickerDetailsEditor.vue";
 import MonthlyPerformanceTable
   from "@/components/backtest/monthly-perfomance-table/MonthlyPerformanceTable.vue";
-import type {MonthlyReportItem, MonthlyReportMap} from "@/types/MonthlyReport.interface.ts";
-import type {TradesReport} from "@/types/TradesReport.interface.ts";
+import type {MonthlyReportItem, MonthlyReportMap} from "@/types/strategy/MonthlyReport.interface.ts";
+import type {TradesReport} from "@/types/strategy/TradesReport.interface.ts";
 import TradeStatsReport
   from "@/components/backtest/strategy/trades-stats-report/TradeStatsReport.vue";
 import StrategyStatsReport
   from "@/components/backtest/strategy/strategy-stats-report/StrategyStatsReport.vue";
-import type {StrategyReport} from "@/types/StrategyStatsReport.interface.ts";
+import type {StrategyReport} from "@/types/strategy/StrategyStatsReport.interface.ts";
+import type {
+  StrategyPerformanceReportData
+} from "@/types/strategy/StrategyPerformanceReport.interface.ts";
+import StrategyPerformanceReport
+  from "@/components/backtest/strategy/strategy-performance-report/StrategyPerformanceReport.vue";
+
 
 const detailedTicker = ref<TickerDetails>({
   id: "1",
@@ -149,6 +158,25 @@ const monthlyReportMap = ref<MonthlyReportMap>({
     [2019, { profits: [-144.8, -12.9, 129, 203.5, 258, 113.8, -50.3, -144.2, 288.7, -36.3, 196.8, -40] }],
   ])
 });
+
+const exampleReport: StrategyPerformanceReportData = {
+  totaProfit: 6213.5,
+  profitInPips: 6213.5,
+  yearlyAvgProfit: 388.31,
+  yearlyAvgProfitPercent: 3.88,
+  cagr: 3.07,
+
+  numberOfTrades: 662,
+  profitFactor: 1.36,
+  returnDdRatio: 5.37,
+  winningPercentage: 38.37,
+
+  drawdown: 1156.4,
+  drawdownPercent: 8.13,
+  dailyAvgProfit: 1.01,
+  monthlyAvgProfit: 30.76,
+  avgTradeProfit: 9.39,
+}
 
 const tradesReport = ref<TradesReport>({
   wins: 254, losses: 408, canceledOrExpired: 0,
