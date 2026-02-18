@@ -35,7 +35,7 @@
 
 <script setup lang="ts">
 import {ref} from 'vue';
-import type {OhlcData, ChartDrawing} from '@/types/OhlcData';
+import type {OhlcData, ChartDrawing} from '@/types/OhlcData.interface.ts';
 import GCandlestickChart from '@/components/shared/charts/GCandlestickChart.vue';
 import OhlcTable from '@/components/data-manager/ohlc-table/OhlcTable.vue';
 

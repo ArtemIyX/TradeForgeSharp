@@ -75,7 +75,7 @@ import {computed, onMounted, ref} from "vue";
 import {useSnackbarStore} from '@/stores/Snackbar.store';
 
 // Type and utility imports
-import {convertToTickers, type Ticker, type TickerResponseModel} from "@/types/Ticker";
+import {convertToTickers, type Ticker, type TickerResponseModel} from "@/types/Ticker.interface.ts";
 
 // Dummy Data imports
 import tickersData from '@/assets/dummy/tickers-dummy.json';

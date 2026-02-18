@@ -189,7 +189,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import type { Ticker } from '@/types/Ticker'
+import type { Ticker } from '@/types/Ticker.interface.ts'
 
 // ─── Emits ────────────────────────────────────────────────────────────────────
 const emit = defineEmits<{

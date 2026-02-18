@@ -132,9 +132,9 @@
 
 <script setup lang="ts">
 import {ref, computed} from 'vue';
-import type {Ticker} from '@/types/Ticker.ts';
-import {TimeFrame} from '@/types/Ticker.ts';
-import type {ActionMenuItem} from '@/types/ActionMenuItem.ts';
+import type {Ticker} from '@/types/Ticker.interface.ts';
+import {TimeFrame} from '@/types/Ticker.interface.ts';
+import type {ActionMenuItem} from '@/types/ActionMenuItem.interface.ts';
 import ActionMenu from '@/components/data-manager/action-menu/ActionMenu.vue';
 
 interface Props {

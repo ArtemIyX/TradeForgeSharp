@@ -220,7 +220,7 @@
 
 <script setup lang="ts">
 import {ref, watch} from 'vue';
-import {type TickerDetails} from "@/types/Ticker.ts";
+import {type TickerDetails} from "@/types/Ticker.interface.ts";
 
 interface Props {
   modelValue: TickerDetails;

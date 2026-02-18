@@ -174,7 +174,7 @@
 
 <script setup lang="ts">
 import {ref} from 'vue';
-import {type TickerDetails} from '@/types/Ticker.ts';
+import {type TickerDetails} from "@/types/Ticker.interface.ts";
 
 type CreateTickerForm = Omit<TickerDetails, 'id'>;
 

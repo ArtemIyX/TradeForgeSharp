@@ -51,7 +51,7 @@
 
 <script setup lang="ts">
 import {ref} from 'vue';
-import type {Ticker} from '@/types/Ticker';
+import type {Ticker} from '@/types/Ticker.interface.ts';
 
 interface Props {
 

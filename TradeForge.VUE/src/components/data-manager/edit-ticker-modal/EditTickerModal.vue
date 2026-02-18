@@ -30,7 +30,7 @@
 <script setup lang="ts">
 import {ref} from 'vue';
 import TickerDetailsEditor from "@/components/data-manager/ticker-details/TickerDetailsEditor.vue";
-import {type TickerDetails} from "@/types/Ticker.ts";
+import {type TickerDetails} from "@/types/Ticker.interface.ts";
 
 const dialog = ref(false);
 const loading = ref(false);

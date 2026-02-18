@@ -22,8 +22,8 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { Ticker } from '@/types/Ticker';
-import { convertToOhlcArray, type OhlcData, type OhlcResponseModel } from '@/types/OhlcData';
+import type { Ticker } from '@/types/Ticker.interface.ts';
+import { convertToOhlcArray, type OhlcData, type OhlcResponseModel } from '@/types/OhlcData.interface.ts';
 import OhlcViewer from '@/components/data-manager/ohlc-viewer/OhlcViewer.vue';
 import ohlcDummy from '@/assets/dummy/ohlc-dummy.json';
 

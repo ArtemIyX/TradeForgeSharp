@@ -10,7 +10,7 @@
 
 <script setup lang="ts">
 import {computed} from 'vue';
-import type {OhlcData, ChartDrawing} from '@/types/OhlcData';
+import type {OhlcData, ChartDrawing} from '@/types/OhlcData.interface.ts';
 
 interface Props {
   data: OhlcData[];

@@ -181,7 +181,7 @@
 
 <script setup lang="ts">
 import {ref, computed, watch} from 'vue';
-import type {OhlcData} from '@/types/OhlcData.ts';
+import type {OhlcData} from '@/types/OhlcData.interface.ts';
 
 interface Props {
   items: OhlcData[];

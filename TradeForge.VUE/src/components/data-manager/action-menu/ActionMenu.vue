@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { ActionButton, ActionMenuItem } from '@/types/ActionMenuItem.ts';
+import type { ActionButton, ActionMenuItem } from '@/types/ActionMenuItem.interface.ts';
 
 interface Props {
   items: ActionMenuItem[];

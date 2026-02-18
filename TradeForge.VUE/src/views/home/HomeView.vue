@@ -98,8 +98,8 @@ import {
   convertToOhlcArray,
   type OhlcData,
   type OhlcResponseModel
-} from "@/types/OhlcData.ts";
-import {type TickerDetails} from "@/types/Ticker.ts";
+} from "@/types/OhlcData.interface.ts";
+import {type TickerDetails} from "@/types/Ticker.interface.ts";
 import OhlcViewer from "@/components/data-manager/ohlc-viewer/OhlcViewer.vue";
 
 import TickerDetailsEditor from "@/components/data-manager/ticker-details/TickerDetailsEditor.vue";
