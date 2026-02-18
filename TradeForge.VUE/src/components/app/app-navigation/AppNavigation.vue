@@ -58,6 +58,11 @@ const navigationItems = ref<NavigationItem[]>([
     icon: 'mdi-database',
     path: '/data-manager',
   },
+  {
+    title: 'Back Test',
+    icon: 'mdi-chart-timeline-variant',
+    path: '/backtest',
+  },
 ]);
 </script>
 
