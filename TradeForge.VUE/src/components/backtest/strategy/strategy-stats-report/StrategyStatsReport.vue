@@ -84,7 +84,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { StrategyReport } from '@/types/StrategyStatsReport.interface';
+import type { StrategyReport } from '@/types/strategy/StrategyStatsReport.interface';
 
 interface Props {
   data: StrategyReport;

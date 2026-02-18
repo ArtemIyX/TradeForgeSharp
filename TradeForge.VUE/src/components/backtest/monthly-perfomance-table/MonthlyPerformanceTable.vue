@@ -44,7 +44,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { MonthlyReportMap } from '@/types/MonthlyReport.interface.ts';
+import type { MonthlyReportMap } from '@/types/strategy/MonthlyReport.interface.ts';
 
 interface Props {
   data: MonthlyReportMap;

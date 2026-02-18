@@ -162,10 +162,10 @@ const tradesReport = ref<TradesReport>({
 
 const strategyReport = ref<StrategyReport>({
   stats: {
-    winLossRatio: 0.62, payoutRatio: 2.19, avgBarsInTrade: 19.65,
-    ahpr: 3.45, zScore: 0.69, zProbability: 24.51,
+    winLossRatio: 0.2, payoutRatio: 0.2, avgBarsInTrade: 19.65,
+    ahpr: 3.45, zScore: 1, zProbability: 24.51,
     expectancy: 9.39, deviation: 77.9, exposure: 8.75,
-    stagnationInDays: 2321, stagnationInPercent: 37.84,
+    stagnationInDays: 5, stagnationInPercent: 37.84,
   },
   ratio: {
     sharpeRatio: 1.82, sortinoRatio: 2.41, calmarRatio: 0.94,

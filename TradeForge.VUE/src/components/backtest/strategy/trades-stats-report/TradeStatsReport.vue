@@ -71,7 +71,7 @@
 </template>
 
 <script setup lang="ts">
-import type {TradesReport} from '@/types/TradesReport.interface';
+import type {TradesReport} from '@/types/strategy/TradesReport.interface';
 
 interface Props {
   data: TradesReport;
