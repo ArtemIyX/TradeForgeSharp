@@ -44,7 +44,7 @@
           <td>
             <span class="close-type-badge">{{ trade.closeType }}</span>
           </td>
-          <td :class="['td-right', trade.profitOrLoss >= 0 ? 'profit-positive' : 'profit-negative']">
+          <td :class="['td-right', plClass(trade.profitOrLoss)]">
             {{ formatMoney(trade.profitOrLoss) }}
           </td>
           <td class="td-right">{{ formatMoney(trade.balanceAfter) }}</td>
@@ -82,6 +82,12 @@ function formatDateTime(date: string): string {
 
 function formatPrice(value: number): string {
   return value.toFixed(5);
+}
+
+function plClass(value: number): string {
+  if (value > 0) return 'profit-positive';
+  if (value < 0) return 'profit-negative';
+  return '';
 }
 
 function formatMoney(value: number): string {

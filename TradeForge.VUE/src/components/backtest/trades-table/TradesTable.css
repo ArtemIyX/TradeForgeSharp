@@ -47,7 +47,7 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: rgba(var(--v-theme-on-surface), 0.6);
-  background-color: rgb(var(--v-theme-surface));
+  background-color: rgb(var(--v-theme-surface)) !important;
   border-bottom: thin solid rgba(var(--v-theme-on-surface), 0.12);
   white-space: nowrap;
   text-align: left;
@@ -67,26 +67,26 @@
 }
 
 .data-row:nth-child(even) {
-  background-color: rgba(var(--v-theme-on-surface), 0.02);
+  background-color: rgba(var(--v-theme-on-surface), 0.02) !important;
 }
 
 .data-row:hover {
-  background-color: rgba(var(--v-theme-on-surface), 0.05);
+  background-color: rgba(var(--v-theme-on-surface), 0.05) !important;
 }
 
 /* Win / loss row accent */
 .row-win {
-  border-left: 0.175rem solid rgba(var(--v-theme-success), 0.5);
+  border-left: 0.175rem solid rgba(var(--v-theme-success), 0.5) !important;
 }
 
 .row-loss {
-  border-left: 0.175rem solid rgba(var(--v-theme-error), 0.5);
+  border-left: 0.175rem solid rgba(var(--v-theme-error), 0.5) !important;
 }
 
 /* Specific cells */
 .td-ticket {
   font-weight: 600;
-  color: rgba(var(--v-theme-on-surface), 0.6);
+  color: rgba(var(--v-theme-on-surface), 0.6) !important;
   font-size: 0.75rem;
 }
 
@@ -107,12 +107,12 @@
 
 .td-time {
   font-size: 0.75rem;
-  color: rgba(var(--v-theme-on-surface), 0.6);
+  color: rgba(var(--v-theme-on-surface), 0.6) !important;
 }
 
 .td-comment {
   font-size: 0.75rem;
-  color: rgba(var(--v-theme-on-surface), 0.5);
+  color: rgba(var(--v-theme-on-surface), 0.5) !important;
   max-width: 12rem;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -120,12 +120,12 @@
 
 /* P/L colors */
 .profit-positive {
-  color: rgb(var(--v-theme-success));
+  color: rgb(var(--v-theme-success)) !important;
   font-weight: 600;
 }
 
 .profit-negative {
-  color: rgb(var(--v-theme-error));
+  color: rgb(var(--v-theme-error)) !important;
   font-weight: 600;
 }
 
