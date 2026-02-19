@@ -27,7 +27,7 @@
       </v-window-item>
 
       <v-window-item value="trades">
-
+        <TradesTable :items="trades"/>
       </v-window-item>
     </v-window>
   </v-card>
@@ -63,20 +63,45 @@ import GCandlestickChart from "@/components/shared/charts/GCandlestickChart.vue"
 import {onMounted, ref} from "vue";
 
 import type {StrategyReportData} from "@/types/strategy/StategyReport.interface.ts";
-import type {MonthlyReportItem} from "@/types/strategy/MonthlyReport.interface.ts";
+import type {
+  MonthlyReportItem,
+  MonthlyReportMap
+} from "@/types/strategy/MonthlyReport.interface.ts";
 import StrategyReportTab
   from "@/components/backtest/strategy/strategy-report-tab/StrategyReportTab.vue";
+import TradesTable from "@/components/backtest/trades-table/TradesTable.vue";
+import type {StrategyTradeItem} from "@/types/strategy/StrategyTradeItem.interface.ts";
+import tradesDummy from "@/assets/dummy/trades-dummy.json";
+
+/*
+import type {
+  StrategyPerformanceReportData
+} from "@/types/strategy/StrategyPerformanceReport.interface.ts";
+import type {
+  StrategyRatioReportData,
+  StrategyStatsReportData
+} from "@/types/strategy/StrategyStatsReport.interface.ts";
+import type {StrategyTradesReportData} from "@/types/strategy/StrategyTradesReport.interface.ts";
+*/
 
 const route = useRoute()
 const id = route.params.id // string
 
 const activeTab = ref<string>('stats');
 
-const report = ref<StrategyReportData>({});
+const report = ref<StrategyReportData>({
+  performance: null,
+  ratio: null,
+  stats: null,
+  trades: null,
+  months: null,
+});
 
 const bLoading = ref<boolean>(false);
 
-const fetchReport = async (reportId) => {
+const trades = ref<StrategyTradeItem[]>(tradesDummy as StrategyTradeItem[]);
+
+const fetchReport = async (reportId : any) => {
   bLoading.value = true;
   await new Promise(resolve => setTimeout(resolve, 250));
   report.value = {
@@ -137,6 +162,7 @@ const fetchReport = async (reportId) => {
   }
   bLoading.value = false;
 }
+
 
 onMounted(() => {
   if (id) {
