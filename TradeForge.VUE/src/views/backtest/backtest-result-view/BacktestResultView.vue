@@ -17,17 +17,23 @@
     <v-tabs v-model="activeTab" density="compact">
       <v-tab value="stats" prepend-icon="mdi-file-chart-outline">Stats</v-tab>
       <v-tab value="trades" prepend-icon="mdi-format-list-bulleted">List of trades</v-tab>
+      <v-tab value="equity" prepend-icon="mdi-chart-areaspline-variant">Equity</v-tab>
     </v-tabs>
 
     <v-divider/>
 
     <v-window v-model="activeTab">
       <v-window-item value="stats">
-       <StrategyReportTab :data="report"/>
+        <StrategyReportTab :data="report"/>
       </v-window-item>
 
       <v-window-item value="trades">
         <TradesTable :items="trades"/>
+      </v-window-item>
+
+      <v-window-item value="equity">
+        <EquityTab :closeByClose="closeByCloseEquity" :by-time="byTimeEquity"
+                   :openEquity="openEquity"/>
       </v-window-item>
     </v-window>
   </v-card>
@@ -73,16 +79,13 @@ import TradesTable from "@/components/backtest/trades-table/TradesTable.vue";
 import type {StrategyTradeItem} from "@/types/strategy/StrategyTradeItem.interface.ts";
 import tradesDummy from "@/assets/dummy/trades-dummy.json";
 
-/*
-import type {
-  StrategyPerformanceReportData
-} from "@/types/strategy/StrategyPerformanceReport.interface.ts";
-import type {
-  StrategyRatioReportData,
-  StrategyStatsReportData
-} from "@/types/strategy/StrategyStatsReport.interface.ts";
-import type {StrategyTradesReportData} from "@/types/strategy/StrategyTradesReport.interface.ts";
-*/
+import closeByCloseDummy from '@/assets/dummy/equity/close-by-close.json'
+import byTimeDummy from '@/assets/dummy/equity/by-time.json'
+import openEquityDummy from '@/assets/dummy/equity/open.json'
+import EquityTab, {
+  type EquityByTimePoint,
+  type EquityCloseByClosePoint, type OpenEquityPoint
+} from "@/components/backtest/strategy/equity-tab/equity-tab.vue";
 
 const route = useRoute()
 const id = route.params.id // string
@@ -97,11 +100,15 @@ const report = ref<StrategyReportData>({
   months: null,
 });
 
+const closeByCloseEquity = ref<EquityCloseByClosePoint[]>(closeByCloseDummy as EquityCloseByClosePoint[]);
+const byTimeEquity = ref<EquityByTimePoint[]>(byTimeDummy as EquityByTimePoint[]);
+const openEquity = ref<OpenEquityPoint[]>(openEquityDummy as OpenEquityPoint[]);
+
 const bLoading = ref<boolean>(false);
 
 const trades = ref<StrategyTradeItem[]>(tradesDummy as StrategyTradeItem[]);
 
-const fetchReport = async (reportId : any) => {
+const fetchReport = async (reportId: any) => {
   bLoading.value = true;
   await new Promise(resolve => setTimeout(resolve, 250));
   report.value = {
