@@ -3,8 +3,16 @@
 
 </style>
 <template>
-  <TradesTable :items="trades"/>
-  <StrategyReportTab :data="strategyReportData" />
+  <GBarChart  :data="monthlyPnl"
+              positive-color="#4CAF50"
+              negative-color="#F44336"
+              :show-labels="true"
+              :zoom="true"
+              x-axis-name="Month"
+              y-axis-name="P&L ($)"
+              :y-formatter="(v) => `$${v.toFixed(0)}`"/>
+<!--  <TradesTable :items="trades"/>
+  <StrategyReportTab :data="strategyReportData" />-->
 <!--  <v-container>
     <v-row>
       <StrategyPerformanceReport :data="exampleReport"/>
@@ -99,7 +107,7 @@
 
 </template>
 <script setup lang="ts">
-import {onMounted, ref} from 'vue'
+import {computed, onMounted, ref} from 'vue'
 import GLineChart, {type LineChartDataPoint} from "@/components/shared/charts/GLineChart.vue";
 import GMultiLineChart from "@/components/shared/charts/GMultiLineChart.vue";
 
@@ -145,6 +153,9 @@ import TradesTable from "@/components/backtest/trades-table/TradesTable.vue";
 
 import tradesDummy from '@/assets/dummy/trades-dummy.json'
 import type { StrategyTradeItem } from '@/types/strategy/StrategyTradeItem.interface'
+
+import GBarChart, { type BarChartDataPoint } from '@/components/shared/charts/GBarChart.vue'
+
 
 const trades = ref<StrategyTradeItem[]>(tradesDummy as StrategyTradeItem[]);
 
@@ -223,6 +234,18 @@ const strategyReportData = ref<StrategyReportData>( {
     ])
   }
 });
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const monthlyPnl = computed<BarChartDataPoint[]>(() => {
+  const year = 2023
+  const item = strategyReportData.value.months?.data.get(year)
+  if (!item) return []
+
+  return item.profits.map((profit, i) => ({
+    x: `${MONTHS[i]} ${year}`,
+    y: profit,
+  }))
+})
 
 onMounted(() => {
   strategyData.value = strategiesJSON;
