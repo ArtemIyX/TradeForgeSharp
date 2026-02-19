@@ -1,5 +1,5 @@
 ﻿<template>
-  <v-card height="100vh">
+  <v-card class="scrollable-card">
     <!-- loading overlay -->
     <v-overlay
       :model-value="bLoading"
@@ -21,12 +21,12 @@
 
     <v-divider/>
 
-    <v-window v-model="activeTab" style=" height: 95%;">
-      <v-window-item value="stats" style="height: 100%;">
-        <StrategyReportTab :data="report"/>
+    <v-window v-model="activeTab">
+      <v-window-item value="stats">
+       <StrategyReportTab :data="report"/>
       </v-window-item>
 
-      <v-window-item value="trades" style="height: 100%; background-color: red">
+      <v-window-item value="trades">
 
       </v-window-item>
     </v-window>
@@ -34,7 +34,27 @@
 </template>
 
 <style scoped>
+.scrollable-card {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
 
+.scrollable-card :deep(.v-window) {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.scrollable-card :deep(.v-window__container) {
+  height: 100%;
+}
+
+.scrollable-card :deep(.v-window-item) {
+  height: 100%;
+  overflow-y: auto;
+}
 </style>
 <script setup lang="ts">
 import {useRoute} from 'vue-router'

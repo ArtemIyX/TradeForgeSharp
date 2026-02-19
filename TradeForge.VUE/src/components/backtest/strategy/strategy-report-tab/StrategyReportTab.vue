@@ -50,6 +50,50 @@
   </div>
 </template>
 
+
+
+<style scoped>
+
+.strategy-report-tab {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* The inner tabs window fills remaining space */
+.tabs-window {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Target the inner vuetify wrappers */
+.tabs-window :deep(.v-tabs-window__container) {
+  height: 100%;
+}
+
+.tabs-window :deep(.v-window-item) {
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* your existing styles */
+.monthly-wrapper {
+  border: thin solid rgba(var(--v-theme-on-surface), 0.12);
+}
+
+.empty-section {
+  padding: 1.5rem;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: rgba(var(--v-theme-on-surface), 0.38);
+  font-style: italic;
+  border: thin solid rgba(var(--v-theme-on-surface), 0.12);
+  border-radius: 0.25rem;
+}
+</style>
+
 <script setup lang="ts">
 import { ref } from 'vue';
 import type { StrategyReportData } from '@/types/strategy/StategyReport.interface';
@@ -66,43 +110,3 @@ defineProps<Props>();
 
 const activeTab = ref('stats');
 </script>
-
-<style scoped>
-.strategy-report-tab {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  padding: 0.75rem;
-}
-
-.stats-combined {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.report-tabs {
-  border-bottom: thin solid rgba(var(--v-theme-on-surface), 0.12);
-}
-
-.tabs-window {
-  padding-top: 0.75rem;
-}
-
-.monthly-wrapper {
-  border: thin solid rgba(var(--v-theme-on-surface), 0.12);
-  border-radius: 0.25rem;
-  overflow: hidden;
-  min-height: 12rem;
-}
-
-.empty-section {
-  padding: 1.5rem;
-  text-align: center;
-  font-size: 0.8125rem;
-  color: rgba(var(--v-theme-on-surface), 0.38);
-  font-style: italic;
-  border: thin solid rgba(var(--v-theme-on-surface), 0.12);
-  border-radius: 0.25rem;
-}
-</style>
