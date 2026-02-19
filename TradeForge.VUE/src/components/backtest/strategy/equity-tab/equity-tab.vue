@@ -11,7 +11,7 @@
     <v-window v-model="activeTab" class="equity-tab__window">
 
       <!-- Tab 1: Equity close by close -->
-      <v-window-item value="close-by-close">
+      <v-window-item value="close-by-close" class="equity-tab__item">
         <GLineChart
           :data="closeByCloseData"
           :x-formatter="(v) => `#${v}`"
@@ -21,12 +21,12 @@
           :zoom="true"
           x-axis-name="Trade Number"
           y-axis-name="Balance ($)"
-          height="450px"
+          height="100%"
         />
       </v-window-item>
 
       <!-- Tab 2: Equity by time -->
-      <v-window-item value="by-time">
+      <v-window-item value="by-time" class="equity-tab__item">
         <GLineChart
           :data="byTimeData"
           :x-formatter="formatDate"
@@ -36,12 +36,12 @@
           :zoom="true"
           x-axis-name="Date"
           y-axis-name="Balance ($)"
-          height="450px"
+          height="100%"
         />
       </v-window-item>
 
       <!-- Tab 3: Open equity (equity + balance by time) -->
-      <v-window-item value="open-equity">
+      <v-window-item value="open-equity" class="equity-tab__item">
         <GMultiLineChart
           :series="openEquitySeries"
           :x-formatter="formatDate"
@@ -50,7 +50,7 @@
           :show-legend="true"
           x-axis-name="Date"
           y-axis-name="Value ($)"
-          height="450px"
+          height="100%"
         />
       </v-window-item>
 
@@ -129,16 +129,28 @@ function formatDate(value: any): string {
 <style scoped>
 .equity-tab {
   width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   border: thin solid rgba(var(--v-theme-on-surface), 0.12);
   border-radius: 0.25rem;
   overflow: hidden;
 }
 
 .equity-tab__tabs {
+  flex-shrink: 0;
   background-color: rgba(var(--v-theme-on-surface), 0.02);
 }
 
 .equity-tab__window {
+  flex: 1;
+  min-height: 0;
   padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.equity-tab__item {
+  height: 100%;
 }
 </style>
