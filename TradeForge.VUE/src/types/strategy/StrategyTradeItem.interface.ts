@@ -3,12 +3,12 @@
   ticket: number; // trade id to find in chart
   symbol: string; // symbol name
 
-  openTime: Date;
+  openTime: string;
   openPrice: number;
 
   size: number; // lots
 
-  closeTime: Date;
+  closeTime: string;
   closePrice: number;
 
   profitOrLoss: number;
@@ -21,3 +21,5 @@
 
   comment: string;
 }
+
+

@@ -1,0 +1,151 @@
+﻿.trades-table-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border: thin solid rgba(var(--v-theme-on-surface), 0.12);
+  border-radius: 0.25rem;
+  overflow: hidden;
+}
+
+.table-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(var(--v-theme-on-surface), 0.6);
+  padding: 0.5rem 1rem;
+  border-bottom: thin solid rgba(var(--v-theme-on-surface), 0.12);
+  flex-shrink: 0;
+}
+
+/* Scrollable body, sticky header */
+.table-wrapper {
+  flex: 1;
+  overflow: auto;
+  width: 100%;
+}
+
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+  table-layout: auto;
+}
+
+/* Sticky header */
+.table-head {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.table-head th {
+  padding: 0.6rem 0.75rem;
+  font-weight: 500;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(var(--v-theme-on-surface), 0.6);
+  background-color: rgb(var(--v-theme-surface));
+  border-bottom: thin solid rgba(var(--v-theme-on-surface), 0.12);
+  white-space: nowrap;
+  text-align: left;
+}
+
+.th-right {
+  text-align: right;
+}
+
+/* Body rows */
+.custom-table tbody td {
+  padding: 0.4rem 0.75rem;
+  border-bottom: thin solid rgba(var(--v-theme-on-surface), 0.07);
+  color: rgba(var(--v-theme-on-surface), 0.87);
+  white-space: nowrap;
+  text-align: left;
+}
+
+.data-row:nth-child(even) {
+  background-color: rgba(var(--v-theme-on-surface), 0.02);
+}
+
+.data-row:hover {
+  background-color: rgba(var(--v-theme-on-surface), 0.05);
+}
+
+/* Win / loss row accent */
+.row-win {
+  border-left: 0.175rem solid rgba(var(--v-theme-success), 0.5);
+}
+
+.row-loss {
+  border-left: 0.175rem solid rgba(var(--v-theme-error), 0.5);
+}
+
+/* Specific cells */
+.td-ticket {
+  font-weight: 600;
+  color: rgba(var(--v-theme-on-surface), 0.6);
+  font-size: 0.75rem;
+}
+
+.td-symbol {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.td-price {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.775rem;
+}
+
+.td-right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.td-time {
+  font-size: 0.75rem;
+  color: rgba(var(--v-theme-on-surface), 0.6);
+}
+
+.td-comment {
+  font-size: 0.75rem;
+  color: rgba(var(--v-theme-on-surface), 0.5);
+  max-width: 12rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* P/L colors */
+.profit-positive {
+  color: rgb(var(--v-theme-success));
+  font-weight: 600;
+}
+
+.profit-negative {
+  color: rgb(var(--v-theme-error));
+  font-weight: 600;
+}
+
+/* Close type badge */
+.close-type-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.1rem 0.4rem;
+  border-radius: 0.2rem;
+  background-color: rgba(var(--v-theme-on-surface), 0.08);
+  color: rgba(var(--v-theme-on-surface), 0.7);
+}
+
+/* Empty state */
+.empty-state {
+  padding: 3rem 1rem;
+  color: rgba(var(--v-theme-on-surface), 0.38);
+  font-style: italic;
+  text-align: center;
+}

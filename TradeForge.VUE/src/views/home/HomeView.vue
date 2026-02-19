@@ -3,6 +3,7 @@
 
 </style>
 <template>
+  <TradesTable :items="trades"/>
   <StrategyReportTab :data="strategyReportData" />
 <!--  <v-container>
     <v-row>
@@ -140,7 +141,12 @@ import type {
 import type {StrategyReportData} from "@/types/strategy/StategyReport.interface.ts";
 import StrategyReportTab
   from "@/components/backtest/strategy/strategy-report-tab/StrategyReportTab.vue";
+import TradesTable from "@/components/backtest/trades-table/TradesTable.vue";
 
+import tradesDummy from '@/assets/dummy/trades-dummy.json'
+import type { StrategyTradeItem } from '@/types/strategy/StrategyTradeItem.interface'
+
+const trades = ref<StrategyTradeItem[]>(tradesDummy as StrategyTradeItem[]);
 
 const detailedTicker = ref<TickerDetails>({
   id: "1",
