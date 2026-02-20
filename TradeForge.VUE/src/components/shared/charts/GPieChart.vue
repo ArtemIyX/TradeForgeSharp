@@ -1,9 +1,23 @@
 ﻿<template>
-  <v-chart :option="chartOption" :style="{ height: height, width: '100%' }" autoresize />
+  <div v-if="!props.data || props.data.length === 0" class="no-data">
+    No data
+  </div>
+  <v-chart v-else :option="chartOption" :style="{ height: height, width: '100%' }" autoresize/>
 </template>
-
+<style scoped>
+.no-data {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 10rem;
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.875rem;
+  font-style: italic;
+}
+</style>
 <script setup lang="ts">
-import { computed } from 'vue'
+import {computed} from 'vue'
 
 export interface PieChartSlice {
   name: string
@@ -97,7 +111,7 @@ const chartOption = computed(() => ({
     ? {
       text: props.title,
       left: 'center',
-      textStyle: { fontSize: 16, fontWeight: 'normal' },
+      textStyle: {fontSize: 16, fontWeight: 'normal'},
     }
     : undefined,
 
@@ -108,7 +122,7 @@ const chartOption = computed(() => ({
       left: ['left', 'right'].includes(props.legendPosition) ? props.legendPosition : 'center',
       top: props.legendPosition === 'top' ? (props.title ? '12%' : '3%') : undefined,
       bottom: props.legendPosition === 'bottom' ? '2%' : undefined,
-      data: props.data.map(d => d.name),
+      data: (props.data ?? []).map(d => d.name),
     }
     : undefined,
 
@@ -168,8 +182,8 @@ const chartOption = computed(() => ({
           show: true,
           formatter: (p: any) => props.labelFormatter(p.name, p.value, p.percent),
         }
-        : { show: false },
-      labelLine: { show: props.showLabels },
+        : {show: false},
+      labelLine: {show: props.showLabels},
       animationType: props.animate ? 'expansion' : 'scale',
       animationEasing: 'cubicOut',
     },

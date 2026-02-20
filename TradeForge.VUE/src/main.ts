@@ -11,7 +11,7 @@ import {use} from 'echarts/core'
 
 // Import required ECharts components
 import {CanvasRenderer} from 'echarts/renderers'
-import {CandlestickChart, LineChart, BarChart} from 'echarts/charts'
+import {CandlestickChart, LineChart, BarChart, ScatterChart, PieChart} from 'echarts/charts'
 import {
   TitleComponent,
   TooltipComponent,
@@ -19,7 +19,8 @@ import {
   GridComponent,
   DataZoomComponent,
   MarkLineComponent,
-  MarkPointComponent
+  MarkPointComponent,
+  GraphicComponent
 } from 'echarts/components'
 
 // Register components
@@ -34,7 +35,10 @@ use([
   GridComponent,
   DataZoomComponent,
   MarkLineComponent,
-  MarkPointComponent
+  MarkPointComponent,
+  ScatterChart,
+  GraphicComponent,
+  PieChart
 ])
 
 import App from './App.vue'

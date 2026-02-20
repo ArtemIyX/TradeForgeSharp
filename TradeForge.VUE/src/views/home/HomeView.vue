@@ -1,301 +1,40 @@
-﻿<style scoped>
-
-
-</style>
-<template>
-  <GBarChart  :data="monthlyPnl"
-              positive-color="#4CAF50"
-              negative-color="#F44336"
-              :show-labels="true"
-              :zoom="true"
-              x-axis-name="Month"
-              y-axis-name="P&L ($)"
-              :y-formatter="(v) => `$${v.toFixed(0)}`"/>
-<!--  <TradesTable :items="trades"/>
-  <StrategyReportTab :data="strategyReportData" />-->
-<!--  <v-container>
+﻿<template>
+  <v-container fluid>
     <v-row>
-      <StrategyPerformanceReport :data="exampleReport"/>
-    </v-row>
-    <v-row>
-      <StrategyStatsReport :ratio="strategyRatio" :stats="strategyStats"/>
-    </v-row>
-    <v-row>
-      <TradeStatsReport :data="tradesReport"/>
-    </v-row>
-    <v-row>
-      <MonthlyPerformanceTable :data="monthlyReportMap"/>
-    </v-row>
-    <v-row>
-      <TickerDetailsEditor v-model="detailedTicker"/>
-    </v-row>
-    <v-row>
-      <OhlcViewer :data="ohlcItems" :readonly="true"/>
-    </v-row>
-    <v-row>
-      <OhlcTable :items="ohlcItems" :readonly="true"/>
+      <v-col>
+        <TradeAnalyticsReport :data="analyticsData" :loading="isLoading"/>
+      </v-col>
     </v-row>
   </v-container>
-  <v-container>
-    <v-row>
-      <v-col cols="12">
-        <h2>Example 1: Trade Number vs Cumulative Profit</h2>
-        <GLineChart
-          :data="tradeData"
-          :x-formatter="(v) => `Trade #${v}`"
-          :y-formatter="(v) => `$${v.toFixed(2)}`"
-          line-color="#4CAF50"
-          :fill-gradient="true"
-          title="Cumulative Profit by Trade"
-          x-axis-name="Trade Number"
-          y-axis-name="Profit ($)"
-          :smoothed="true"
-        />
-      </v-col>
-    </v-row>
-
-    <v-row>
-      <v-col cols="12">
-        <h2>Example 2: Date vs Balance</h2>
-        <GLineChart
-          :data="balanceData"
-          :x-formatter="formatDate"
-          :y-formatter="(v) => `$${v.toLocaleString()}`"
-          line-color="#FF9800"
-          :fill-gradient="false"
-          title="Account Balance Over Time"
-          x-axis-name="Date"
-          y-axis-name="Balance ($)"
-        />
-      </v-col>
-    </v-row>
-
-    <v-row>
-      <v-col cols="12">
-        <h2>Example 3: Date vs Asset Price</h2>
-        <GLineChart
-          :data="priceData"
-          :x-formatter="formatDate"
-          :y-formatter="(v) => `$${v.toFixed(2)}`"
-          line-color="#2196F3"
-          :fill-gradient="true"
-          title="Asset Price History"
-          x-axis-name="Date"
-          y-axis-name="Price ($)"
-          height="500px"
-          :zoom="true"
-        />
-      </v-col>
-    </v-row>
-
-    <v-row>
-      <v-col cols="12">
-        <h2>Example 4: Multi line chart</h2>
-        <GMultiLineChart
-          :series="strategyData"
-          title="Strategy Performance Comparison"
-          xAxisName="Month"
-          yAxisName="Return (%)"
-          :yFormatter="(v) => v.toFixed(2) + '$'"
-          height="500px"
-          :zoom="true"
-          :smoothed="false"
-        />
-      </v-col>
-    </v-row>
-  </v-container>-->
-
 </template>
+
 <script setup lang="ts">
-import {computed, onMounted, ref} from 'vue'
-import GLineChart, {type LineChartDataPoint} from "@/components/shared/charts/GLineChart.vue";
-import GMultiLineChart from "@/components/shared/charts/GMultiLineChart.vue";
+import {ref, onMounted} from 'vue'
+import {tradeAnalyticsDummy} from './tradeanalyticsdummy.ts'
+import type {TradeAnalyticsData} from '@/types/strategy/TradeAnalyticsReport.interface'
 
-import strategiesJSON from '@/assets/dummy/strategies-dummy.json'
-import OhlcTable from "@/components/data-manager/ohlc-table/OhlcTable.vue";
+import TradeAnalyticsReport
+  from "@/components/backtest/strategy/trade-analytics-report/TradeAnalyticsReport.vue";
 
-import ohlcDummy from "@/assets/dummy/ohlc-dummy.json";
-import {
-  convertToOhlc,
-  convertToOhlcArray,
-  type OhlcData,
-  type OhlcResponseModel
-} from "@/types/OhlcData.interface.ts";
-import {type TickerDetails} from "@/types/Ticker.interface.ts";
-import OhlcViewer from "@/components/data-manager/ohlc-viewer/OhlcViewer.vue";
+const isLoading = ref(false)
+const analyticsData = ref<TradeAnalyticsData | null>(null)
 
-import TickerDetailsEditor from "@/components/data-manager/ticker-details/TickerDetailsEditor.vue";
-import MonthlyPerformanceTable
-  from "@/components/backtest/monthly-perfomance-table/MonthlyPerformanceTable.vue";
-import type {
-  MonthlyReportItem,
-  MonthlyReportMap
-} from "@/types/strategy/MonthlyReport.interface.ts";
+const fetchAnalyticsData = async () => {
+  isLoading.value = true
+  try {
+    // Replace with your actual API call:
+    // analyticsData.value = await backtestService.getAnalytics(strategyId)
 
-import TradeStatsReport
-  from "@/components/backtest/strategy/trades-stats-report/TradeStatsReport.vue";
-import StrategyStatsReport
-  from "@/components/backtest/strategy/strategy-stats-report/StrategyStatsReport.vue";
-
-import type {
-  StrategyPerformanceReportData
-} from "@/types/strategy/StrategyPerformanceReport.interface.ts";
-import StrategyPerformanceReport
-  from "@/components/backtest/strategy/strategy-performance-report/StrategyPerformanceReport.vue";
-import type {StrategyTradesReportData} from "@/types/strategy/StrategyTradesReport.interface.ts";
-import type {
-  StrategyRatioReportData, StrategyStatsReportData
-} from "@/types/strategy/StrategyStatsReport.interface.ts";
-import type {StrategyReportData} from "@/types/strategy/StategyReport.interface.ts";
-import StrategyReportTab
-  from "@/components/backtest/strategy/strategy-report-tab/StrategyReportTab.vue";
-import TradesTable from "@/components/backtest/trades-table/TradesTable.vue";
-
-import tradesDummy from '@/assets/dummy/trades-dummy.json'
-import type { StrategyTradeItem } from '@/types/strategy/StrategyTradeItem.interface'
-
-import GBarChart, { type BarChartDataPoint } from '@/components/shared/charts/GBarChart.vue'
-
-
-const trades = ref<StrategyTradeItem[]>(tradesDummy as StrategyTradeItem[]);
-
-const detailedTicker = ref<TickerDetails>({
-  id: "1",
-  symbol: "EURUSD",
-  instrument: "Euro / US Dollar",
-  category: "Forex",
-  contractSize: 100000,
-  units: "Lots",
-  minVolume: 0.01,
-  maxVolume: 100,
-  volumeStep: 0.01,
-  minTick: 0.00001,
-  leverage: 100,
-});
-
-const strategyData = ref([]);
-const ohlcItems = ref<OhlcData[]>([]);
-
-
-
-const strategyReportData = ref<StrategyReportData>( {
-  performance: {
-    totaProfit: 6213.5,
-    profitInPips: 6213.5,
-    yearlyAvgProfit: 388.31,
-    yearlyAvgProfitPercent: 3.88,
-    cagr: 3.07,
-
-    numberOfTrades: 662,
-    profitFactor: 1.36,
-    returnDdRatio: 5.37,
-    winningPercentage: 38.37,
-
-    drawdown: 1156.4,
-    drawdownPercent: 8.13,
-    dailyAvgProfit: 1.01,
-    monthlyAvgProfit: 30.76,
-    avgTradeProfit: 9.39,
-  },
-  ratio: {
-    sharpeRatio: 1.82, sortinoRatio: 2.41, calmarRatio: 0.94,
-    sterlingRatio: 1.13, omegaRatio: 1.57, marRatio: 0.87,
-  },
-  stats: {
-    winLossRatio: 0.2, payoutRatio: 0.2, avgBarsInTrade: 19.65,
-    ahpr: 3.45, zScore: 1, zProbability: 24.51,
-    expectancy: 9.39, deviation: 77.9, exposure: 8.75,
-    stagnationInDays: 5, stagnationInPercent: 37.84,
-
-  },
-  trades: {
-    wins: 254, losses: 408, canceledOrExpired: 0,
-    grossProfit: 23316.1, grossLoss: -17102.6,
-    avgWin: 91.8, avgLoss: -41.92,
-    largestWin: 175, largestLoss: -46,
-    maxConsWins: 7, maxConsLosses: 14,
-    avgConsWins: 1.58, avgConsLosses: 2.53,
-    avgBarsInWins: 32.44, avgBarsInLosses: 11.69,
-  },
-  months: {
-    data: new Map<number, MonthlyReportItem>([
-      [2024, {profits: [105.1, 100, 100.2, 0, 0, 0, 0, 0, 0, 0, 0, 0]}],
-      [2023, {profits: [253.3, 79.6, -184, -92, 61.8, -80.4, 3.6, 35.5, -73.5, -9, 14, 206.2]}],
-      [2022, {profits: [261.6, 83, -7.4, -11.9, -92, -47.1, -39.7, -139.5, -145.2, 103.1, -138, -144.3]}],
-      [2021, {profits: [21.2, -92, 183.9, -45.6, -160.1, -221.8, 145.4, 29.8, 241.3, 88.5, 155.2, -90.5]}],
-      [2020, {profits: [-9.2, 144.6, 304, -59.4, 123.3, -24.2, -138, -55, 91.8, -46, 37, -28.3]}],
-      [2019, {profits: [-144.8, -12.9, 129, 203.5, 258, 113.8, -50.3, -144.2, 288.7, -36.3, 196.8, -40]}],
-      [2018, {profits: [105.1, 100, 100.2, 0, 0, 0, 0, 0, 0, 0, 0, 0]}],
-      [2017, {profits: [253.3, 79.6, -184, -92, 61.8, -80.4, 3.6, 35.5, -73.5, -9, 14, 206.2]}],
-      [2016, {profits: [261.6, 83, -7.4, -11.9, -92, -47.1, -39.7, -139.5, -145.2, 103.1, -138, -144.3]}],
-      [2015, {profits: [21.2, -92, 183.9, -45.6, -160.1, -221.8, 145.4, 29.8, 241.3, 88.5, 155.2, -90.5]}],
-      [2014, {profits: [-9.2, 144.6, 304, -59.4, 123.3, -24.2, -138, -55, 91.8, -46, 37, -28.3]}],
-      [2013, {profits: [-144.8, -12.9, 129, 203.5, 258, 113.8, -50.3, -144.2, 288.7, -36.3, 196.8, -40]}],
-    ])
+    // Simulated delay with dummy data
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    analyticsData.value = tradeAnalyticsDummy
+    console.log("hello", analyticsData.value );
+  } finally {
+    isLoading.value = false
   }
-});
-
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const monthlyPnl = computed<BarChartDataPoint[]>(() => {
-  const year = 2023
-  const item = strategyReportData.value.months?.data.get(year)
-  if (!item) return []
-
-  return item.profits.map((profit, i) => ({
-    x: `${MONTHS[i]} ${year}`,
-    y: profit,
-  }))
-})
-
-onMounted(() => {
-  strategyData.value = strategiesJSON;
-  ohlcItems.value = convertToOhlcArray(ohlcDummy as OhlcResponseModel[]);
-})
-
-
-// Example 1: Trade number to cumulative profit
-const tradeData = ref<LineChartDataPoint[]>([
-  {x: 1, y: 150},
-  {x: 2, y: 280},
-  {x: 3, y: 220},
-  {x: 4, y: 390},
-  {x: 5, y: 520},
-  {x: 6, y: 480},
-  {x: 7, y: 650},
-  {x: 8, y: 780},
-  {x: 9, y: 920},
-  {x: 10, y: 1100}
-])
-
-// Example 2: Date to balance
-const balanceData = ref<LineChartDataPoint[]>([
-  {x: '2024-01-01', y: 10000},
-  {x: '2024-02-01', y: 12500},
-  {x: '2024-03-01', y: 11800},
-  {x: '2024-04-01', y: 15200},
-  {x: '2024-05-01', y: 17600},
-  {x: '2024-06-01', y: 16900},
-  {x: '2024-07-01', y: 19300},
-  {x: '2024-08-01', y: 21500}
-])
-
-// Example 3: Date to asset price
-const priceData = ref<LineChartDataPoint[]>([
-  {x: '2024-01-01', y: 45.23},
-  {x: '2024-01-08', y: 47.56},
-  {x: '2024-01-15', y: 46.12},
-  {x: '2024-01-22', y: 49.87},
-  {x: '2024-01-29', y: 52.34},
-  {x: '2024-02-05', y: 51.23},
-  {x: '2024-02-12', y: 54.67},
-  {x: '2024-02-19', y: 56.89},
-  {x: '2024-02-26', y: 55.45}
-])
-
-const formatDate = (value: any): string => {
-  const date = new Date(value)
-  return date.toLocaleDateString('en-US', {month: 'short', day: 'numeric'})
 }
 
+onMounted (() => {
+  fetchAnalyticsData();
+})
 </script>
-
