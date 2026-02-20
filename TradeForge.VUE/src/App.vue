@@ -9,13 +9,14 @@
       </v-container>
     </v-main>
 
-
+    <AppFooter />
   </v-app>
 </template>
 
 <script setup lang="ts">
 import AppNavigation from "@/components/app/app-navigation/AppNavigation.vue";
 import AppSnackBar from "@/components/app/app-snackbar/AppSnackBar.vue";
+import AppFooter from "@/components/app/app-footer/AppFooter.vue";
 
 </script>
 
