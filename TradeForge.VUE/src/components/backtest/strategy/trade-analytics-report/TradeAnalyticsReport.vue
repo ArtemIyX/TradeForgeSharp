@@ -9,287 +9,178 @@
       <!-- Row 1: PnL Overview -->
       <div class="analytics-report__section-title">P&amp;L Overview</div>
       <div class="analytics-report__grid analytics-report__grid--wide">
-        <AnalyticsCard title="P&L by Year">
-          <GBarChart
-            v-if="data?.pnlByYear"
-            :data="data.pnlByYear"
-            positive-color="#4CAF50"
-            negative-color="#F44336"
-            :y-formatter="fmtMoney"
-            height="16rem"
-          />
-          <NoData v-else />
-        </AnalyticsCard>
+        <v-card class="analytics-card">
+          <v-card-title class="analytics-card__title">P&L by Year</v-card-title>
+          <v-card-text class="analytics-card__body">
+            <GBarChart
+              v-if="data?.pnlByYear"
+              :data="data.pnlByYear"
+              positive-color="#4CAF50"
+              negative-color="#F44336"
+              :y-formatter="fmtMoney"
+              height="16rem"
+            />
+            <NoData v-else />
+          </v-card-text>
+        </v-card>
 
-        <AnalyticsCard title="Long vs Short P&L">
-          <GBarChart
-            v-if="data?.longShortPnl"
-            :data="longShortPnlData"
-            positive-color="#4CAF50"
-            negative-color="#F44336"
-            :y-formatter="fmtMoney"
-            height="16rem"
-          />
-          <NoData v-else />
-        </AnalyticsCard>
+        <v-card class="analytics-card">
+          <v-card-title class="analytics-card__title">Long vs Short P&L</v-card-title>
+          <v-card-text class="analytics-card__body">
+            <GBarChart
+              v-if="data?.longShortPnl"
+              :data="longShortPnlData"
+              positive-color="#4CAF50"
+              negative-color="#F44336"
+              :y-formatter="fmtMoney"
+              height="16rem"
+            />
+            <NoData v-else />
+          </v-card-text>
+        </v-card>
       </div>
 
       <!-- Row 2: Pie charts -->
       <div class="analytics-report__section-title">Composition</div>
       <div class="analytics-report__grid analytics-report__grid--quad">
-        <AnalyticsCard title="Long vs Short Trades">
-          <GPieChart
-            v-if="data?.longShortTrades"
-            :data="longShortTradesPie"
-            height="16rem"
-          />
-          <NoData v-else />
-        </AnalyticsCard>
+        <v-card class="analytics-card">
+          <v-card-title class="analytics-card__title">Long vs Short Trades</v-card-title>
+          <v-card-text class="analytics-card__body">
+            <GPieChart v-if="data?.longShortTrades" :data="longShortTradesPie" height="16rem" />
+            <NoData v-else />
+          </v-card-text>
+        </v-card>
 
-        <AnalyticsCard title="Profit / Loss">
-          <GPieChart
-            v-if="data?.profitLossPie"
-            :data="profitLossPieSlices"
-            height="16rem"
-          />
-          <NoData v-else />
-        </AnalyticsCard>
+        <v-card class="analytics-card">
+          <v-card-title class="analytics-card__title">Profit / Loss</v-card-title>
+          <v-card-text class="analytics-card__body">
+            <GPieChart v-if="data?.profitLossPie" :data="profitLossPieSlices" height="16rem" />
+            <NoData v-else />
+          </v-card-text>
+        </v-card>
 
-        <AnalyticsCard title="Long Profit / Loss">
-          <GPieChart
-            v-if="data?.longProfitLossPie"
-            :data="longProfitLossSlices"
-            height="16rem"
-          />
-          <NoData v-else />
-        </AnalyticsCard>
+        <v-card class="analytics-card">
+          <v-card-title class="analytics-card__title">Long Profit / Loss</v-card-title>
+          <v-card-text class="analytics-card__body">
+            <GPieChart v-if="data?.longProfitLossPie" :data="longProfitLossSlices" height="16rem" />
+            <NoData v-else />
+          </v-card-text>
+        </v-card>
 
-        <AnalyticsCard title="Short Profit / Loss">
-          <GPieChart
-            v-if="data?.shortProfitLossPie"
-            :data="shortProfitLossSlices"
-            height="16rem"
-          />
-          <NoData v-else />
-        </AnalyticsCard>
+        <v-card class="analytics-card">
+          <v-card-title class="analytics-card__title">Short Profit / Loss</v-card-title>
+          <v-card-text class="analytics-card__body">
+            <GPieChart v-if="data?.shortProfitLossPie" :data="shortProfitLossSlices" height="16rem" />
+            <NoData v-else />
+          </v-card-text>
+        </v-card>
       </div>
 
       <!-- Row 3: Duration scatter -->
       <div class="analytics-report__section-title">Duration Analysis</div>
       <div class="analytics-report__grid analytics-report__grid--full">
-        <AnalyticsCard title="P&L Growth by Duration">
-          <GScatterChart
-            v-if="data?.pnlByDuration"
-            :series="pnlByDurationSeries"
-            :x-formatter="fmtDuration"
-            :y-formatter="fmtMoney"
-            x-axis-name="Duration"
-            y-axis-name="Profit / Loss ($)"
-            height="18rem"
-            :zoom="true"
-          />
-          <NoData v-else />
-        </AnalyticsCard>
+        <v-card class="analytics-card">
+          <v-card-title class="analytics-card__title">P&L Growth by Duration</v-card-title>
+          <v-card-text class="analytics-card__body">
+            <GScatterChart
+              v-if="data?.pnlByDuration"
+              :series="pnlByDurationSeries"
+              :x-formatter="fmtDuration"
+              :y-formatter="fmtMoney"
+              x-axis-name="Duration"
+              y-axis-name="Profit / Loss ($)"
+              height="18rem"
+              :zoom="true"
+            />
+            <NoData v-else />
+          </v-card-text>
+        </v-card>
       </div>
 
       <!-- Row 4: P&L by time period -->
       <div class="analytics-report__section-title">P&amp;L by Period</div>
       <div class="analytics-report__grid analytics-report__grid--quad">
-        <AnalyticsCard title="P&L by Hour">
-          <GBarChart
-            v-if="data?.pnlByHour"
-            :data="data.pnlByHour"
-            positive-color="#4CAF50"
-            negative-color="#F44336"
-            :y-formatter="fmtMoney"
-            height="16rem"
-          />
-          <NoData v-else />
-        </AnalyticsCard>
-
-        <AnalyticsCard title="P&L by Weekday">
-          <GBarChart
-            v-if="data?.pnlByWeekday"
-            :data="data.pnlByWeekday"
-            positive-color="#4CAF50"
-            negative-color="#F44336"
-            :y-formatter="fmtMoney"
-            height="16rem"
-          />
-          <NoData v-else />
-        </AnalyticsCard>
-
-        <AnalyticsCard title="P&L by Month">
-          <GBarChart
-            v-if="data?.pnlByMonth"
-            :data="data.pnlByMonth"
-            positive-color="#4CAF50"
-            negative-color="#F44336"
-            :y-formatter="fmtMoney"
-            height="16rem"
-          />
-          <NoData v-else />
-        </AnalyticsCard>
-
-        <AnalyticsCard title="P&L by Day">
-          <GBarChart
-            v-if="data?.pnlByDay"
-            :data="data.pnlByDay"
-            positive-color="#4CAF50"
-            negative-color="#F44336"
-            :y-formatter="fmtMoney"
-            height="16rem"
-          />
-          <NoData v-else />
-        </AnalyticsCard>
+        <v-card class="analytics-card" v-for="item in pnlByPeriodCards" :key="item.title">
+          <v-card-title class="analytics-card__title">{{ item.title }}</v-card-title>
+          <v-card-text class="analytics-card__body">
+            <GBarChart
+              v-if="item.chartData"
+              :data="item.chartData"
+              positive-color="#4CAF50"
+              negative-color="#F44336"
+              :y-formatter="fmtMoney"
+              height="16rem"
+            />
+            <NoData v-else />
+          </v-card-text>
+        </v-card>
       </div>
 
       <!-- Row 5: Trade count by period -->
       <div class="analytics-report__section-title">Trades by Period</div>
       <div class="analytics-report__grid analytics-report__grid--quad">
-        <AnalyticsCard title="Trades by Hour">
-          <GBarChart
-            v-if="data?.tradesByDay"
-            :data="data.tradesByDay"
-            bar-color="#5C6BC0"
-            height="16rem"
-          />
-          <NoData v-else />
-        </AnalyticsCard>
-
-        <AnalyticsCard title="Trades by Weekday">
-          <GBarChart
-            v-if="data?.tradesByWeekday"
-            :data="data.tradesByWeekday"
-            bar-color="#5C6BC0"
-            height="16rem"
-          />
-          <NoData v-else />
-        </AnalyticsCard>
-
-        <AnalyticsCard title="Trades by Month">
-          <GBarChart
-            v-if="data?.tradesByMonth"
-            :data="data.tradesByMonth"
-            bar-color="#5C6BC0"
-            height="16rem"
-          />
-          <NoData v-else />
-        </AnalyticsCard>
-
-        <AnalyticsCard title="Trades by Day">
-          <GBarChart
-            v-if="data?.tradesByDay"
-            :data="data.tradesByDay"
-            bar-color="#5C6BC0"
-            height="16rem"
-          />
-          <NoData v-else />
-        </AnalyticsCard>
+        <v-card class="analytics-card" v-for="item in tradesByPeriodCards" :key="item.title">
+          <v-card-title class="analytics-card__title">{{ item.title }}</v-card-title>
+          <v-card-text class="analytics-card__body">
+            <GBarChart
+              v-if="item.chartData"
+              :data="item.chartData"
+              bar-color="#5C6BC0"
+              height="16rem"
+            />
+            <NoData v-else />
+          </v-card-text>
+        </v-card>
       </div>
 
       <div class="analytics-report__grid analytics-report__grid--half">
-        <AnalyticsCard title="Trades by Year">
-          <GBarChart
-            v-if="data?.tradesByYear"
-            :data="data.tradesByYear"
-            bar-color="#5C6BC0"
-            height="16rem"
-          />
-          <NoData v-else />
-        </AnalyticsCard>
+        <v-card class="analytics-card">
+          <v-card-title class="analytics-card__title">Trades by Year</v-card-title>
+          <v-card-text class="analytics-card__body">
+            <GBarChart
+              v-if="data?.tradesByYear"
+              :data="data.tradesByYear"
+              bar-color="#5C6BC0"
+              height="16rem"
+            />
+            <NoData v-else />
+          </v-card-text>
+        </v-card>
       </div>
 
       <!-- Row 6: Win/Loss counts grouped -->
       <div class="analytics-report__section-title">Win / Loss Count</div>
       <div class="analytics-report__grid analytics-report__grid--quad">
-        <AnalyticsCard title="Wins / Losses by Hour">
-          <GGroupBarChart
-            v-if="data?.winLossByHour"
-            :series="buildWinLossSeries(data.winLossByHour)"
-            height="16rem"
-            :show-legend="true"
-          />
-          <NoData v-else />
-        </AnalyticsCard>
-
-        <AnalyticsCard title="Wins / Losses by Weekday">
-          <GGroupBarChart
-            v-if="data?.winLossByWeekday"
-            :series="buildWinLossSeries(data.winLossByWeekday)"
-            height="16rem"
-            :show-legend="true"
-          />
-          <NoData v-else />
-        </AnalyticsCard>
-
-        <AnalyticsCard title="Wins / Losses by Month">
-          <GGroupBarChart
-            v-if="data?.winLossByMonth"
-            :series="buildWinLossSeries(data.winLossByMonth)"
-            height="16rem"
-            :show-legend="true"
-          />
-          <NoData v-else />
-        </AnalyticsCard>
-
-        <AnalyticsCard title="Wins / Losses by Day">
-          <GGroupBarChart
-            v-if="data?.winLossByDay"
-            :series="buildWinLossSeries(data.winLossByDay)"
-            height="16rem"
-            :show-legend="true"
-          />
-          <NoData v-else />
-        </AnalyticsCard>
+        <v-card class="analytics-card" v-for="item in winLossCountCards" :key="item.title">
+          <v-card-title class="analytics-card__title">{{ item.title }}</v-card-title>
+          <v-card-text class="analytics-card__body">
+            <GGroupBarChart
+              v-if="item.groupedData"
+              :series="buildWinLossSeries(item.groupedData)"
+              height="16rem"
+              :show-legend="true"
+            />
+            <NoData v-else />
+          </v-card-text>
+        </v-card>
       </div>
 
       <!-- Row 7: Win/Loss profit grouped -->
       <div class="analytics-report__section-title">Win / Loss Profit</div>
       <div class="analytics-report__grid analytics-report__grid--quad">
-        <AnalyticsCard title="Wins / Losses Profit by Hour">
-          <GGroupBarChart
-            v-if="data?.winLossProfitByHour"
-            :series="buildWinLossProfitSeries(data.winLossProfitByHour)"
-            :y-formatter="fmtMoney"
-            height="16rem"
-            :show-legend="true"
-          />
-          <NoData v-else />
-        </AnalyticsCard>
-
-        <AnalyticsCard title="Wins / Losses Profit by Weekday">
-          <GGroupBarChart
-            v-if="data?.winLossProfitByWeekday"
-            :series="buildWinLossProfitSeries(data.winLossProfitByWeekday)"
-            :y-formatter="fmtMoney"
-            height="16rem"
-            :show-legend="true"
-          />
-          <NoData v-else />
-        </AnalyticsCard>
-
-        <AnalyticsCard title="Wins / Losses Profit by Month">
-          <GGroupBarChart
-            v-if="data?.winLossProfitByMonth"
-            :series="buildWinLossProfitSeries(data.winLossProfitByMonth)"
-            :y-formatter="fmtMoney"
-            height="16rem"
-            :show-legend="true"
-          />
-          <NoData v-else />
-        </AnalyticsCard>
-
-        <AnalyticsCard title="Wins / Losses Profit by Day">
-          <GGroupBarChart
-            v-if="data?.winLossProfitByDay"
-            :series="buildWinLossProfitSeries(data.winLossProfitByDay)"
-            :y-formatter="fmtMoney"
-            height="16rem"
-            :show-legend="true"
-          />
-          <NoData v-else />
-        </AnalyticsCard>
+        <v-card class="analytics-card" v-for="item in winLossProfitCards" :key="item.title">
+          <v-card-title class="analytics-card__title">{{ item.title }}</v-card-title>
+          <v-card-text class="analytics-card__body">
+            <GGroupBarChart
+              v-if="item.groupedData"
+              :series="buildWinLossProfitSeries(item.groupedData)"
+              :y-formatter="fmtMoney"
+              height="16rem"
+              :show-legend="true"
+            />
+            <NoData v-else />
+          </v-card-text>
+        </v-card>
       </div>
     </template>
   </div>
@@ -320,22 +211,16 @@ const props = withDefaults(defineProps<Props>(), {
   loading: false,
 })
 
-// ── Inline sub-components ─────────────────────────────────────────────────────
-
-const AnalyticsCard = defineComponent({
-  props: { title: String },
-  setup(p, { slots }) {
-    return () =>
-      h('div', { class: 'analytics-card' }, [
-        h('div', { class: 'analytics-card__title' }, p.title),
-        h('div', { class: 'analytics-card__body' }, slots.default?.()),
-      ])
-  },
-})
+// ── Inline no-data component ──────────────────────────────────────────────────
 
 const NoData = defineComponent({
   setup() {
-    return () => h('div', { class: 'analytics-no-data' }, 'No data')
+    return () =>
+      h(
+        'div',
+        { class: 'analytics-no-data' },
+        h('span', { class: 'text-medium-emphasis font-italic text-body-2' }, 'No data'),
+      )
   },
 })
 
@@ -411,6 +296,36 @@ const pnlByDurationSeries = computed((): ScatterChartSeries[] => {
     { name: 'Loss', data: losses, color: '#F44336' },
   ]
 })
+
+// ── Card config arrays (reduces template repetition) ─────────────────────────
+
+const pnlByPeriodCards = computed(() => [
+  { title: 'P&L by Hour',    chartData: props.data?.pnlByHour },
+  { title: 'P&L by Weekday', chartData: props.data?.pnlByWeekday },
+  { title: 'P&L by Month',   chartData: props.data?.pnlByMonth },
+  { title: 'P&L by Day',     chartData: props.data?.pnlByDay },
+])
+
+const tradesByPeriodCards = computed(() => [
+  { title: 'Trades by Hour',    chartData: props.data?.tradesByHour },
+  { title: 'Trades by Weekday', chartData: props.data?.tradesByWeekday },
+  { title: 'Trades by Month',   chartData: props.data?.tradesByMonth },
+  { title: 'Trades by Day',     chartData: props.data?.tradesByDay },
+])
+
+const winLossCountCards = computed(() => [
+  { title: 'Wins / Losses by Hour',    groupedData: props.data?.winLossByHour },
+  { title: 'Wins / Losses by Weekday', groupedData: props.data?.winLossByWeekday },
+  { title: 'Wins / Losses by Month',   groupedData: props.data?.winLossByMonth },
+  { title: 'Wins / Losses by Day',     groupedData: props.data?.winLossByDay },
+])
+
+const winLossProfitCards = computed(() => [
+  { title: 'Wins / Losses Profit by Hour',    groupedData: props.data?.winLossProfitByHour },
+  { title: 'Wins / Losses Profit by Weekday', groupedData: props.data?.winLossProfitByWeekday },
+  { title: 'Wins / Losses Profit by Month',   groupedData: props.data?.winLossProfitByMonth },
+  { title: 'Wins / Losses Profit by Day',     groupedData: props.data?.winLossProfitByDay },
+])
 
 // ── Grouped bar helpers ───────────────────────────────────────────────────────
 
@@ -515,17 +430,13 @@ function buildWinLossProfitSeries(d: WinLossProfitGroupedData): GroupedBarSeries
   }
 }
 
-/* ── Card ── */
+/* ── Card overrides ── */
 .analytics-card {
-  border: thin solid rgba(var(--v-theme-on-surface), 0.12);
-  border-radius: 0.25rem;
-  overflow: hidden;
-  background-color: rgb(var(--v-theme-surface));
   display: flex;
   flex-direction: column;
 }
 
-.analytics-card__title {
+.analytics-card :deep(.v-card-title.analytics-card__title) {
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -533,9 +444,10 @@ function buildWinLossProfitSeries(d: WinLossProfitGroupedData): GroupedBarSeries
   padding: 0.5rem 0.75rem;
   border-bottom: thin solid rgba(var(--v-theme-on-surface), 0.08);
   background-color: rgba(var(--v-theme-on-surface), 0.02);
+  line-height: 1.4;
 }
 
-.analytics-card__body {
+.analytics-card :deep(.v-card-text.analytics-card__body) {
   flex: 1;
   padding: 0.5rem;
   display: flex;
@@ -548,8 +460,5 @@ function buildWinLossProfitSeries(d: WinLossProfitGroupedData): GroupedBarSeries
   align-items: center;
   justify-content: center;
   height: 16rem;
-  color: rgba(var(--v-theme-on-surface), 0.3);
-  font-size: 0.875rem;
-  font-style: italic;
 }
 </style>
