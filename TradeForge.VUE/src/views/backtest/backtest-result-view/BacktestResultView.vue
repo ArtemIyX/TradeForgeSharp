@@ -18,6 +18,7 @@
       <v-tab value="stats" prepend-icon="mdi-file-chart-outline">Stats</v-tab>
       <v-tab value="trades" prepend-icon="mdi-format-list-bulleted">List of trades</v-tab>
       <v-tab value="equity" prepend-icon="mdi-chart-areaspline-variant">Equity</v-tab>
+      <v-tab value="analysis" prepend-icon="mdi-chart-bar">Analysis</v-tab>
     </v-tabs>
 
     <v-divider/>
@@ -34,6 +35,10 @@
       <v-window-item value="equity">
         <EquityTab :closeByClose="closeByCloseEquity" :by-time="byTimeEquity"
                    :openEquity="openEquity"/>
+      </v-window-item>
+
+      <v-window-item value="analysis">
+        <TradeAnalyticsReport :data="analyticsData"/>
       </v-window-item>
     </v-window>
   </v-card>
@@ -86,6 +91,12 @@ import EquityTab, {
   type EquityByTimePoint,
   type EquityCloseByClosePoint, type OpenEquityPoint
 } from "@/components/backtest/strategy/equity-tab/equity-tab.vue";
+
+import {tradeAnalyticsDummy} from './tradeanalyticsdummy.ts';
+import type {TradeAnalyticsData} from '@/types/strategy/TradeAnalyticsReport.interface'
+
+import TradeAnalyticsReport
+  from "@/components/backtest/strategy/trade-analytics-report/TradeAnalyticsReport.vue";
 
 const route = useRoute()
 const id = route.params.id // string
@@ -167,9 +178,22 @@ const fetchReport = async (reportId: any) => {
       ])
     }
   }
+
+  await fetchAnalyticsData();
   bLoading.value = false;
 }
 
+
+const analyticsData = ref<TradeAnalyticsData | null>(null)
+
+const fetchAnalyticsData = async () => {
+  try {
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    analyticsData.value = tradeAnalyticsDummy
+  } finally {
+
+  }
+}
 
 onMounted(() => {
   if (id) {
