@@ -76,7 +76,9 @@ const chartOption = computed(() => {
     // Create series for each dataset
     allSeries = props.series.map((seriesItem, index) => {
       const color = seriesItem.color || defaultColors[index % defaultColors.length]
-      const yData = seriesItem.data.map(d => d.y)
+      const yData = xAxisData.map(x =>
+        seriesItem.data.find(d => d.x === x)?.y ?? null
+      )
 
       return {
         name: seriesItem.name,
