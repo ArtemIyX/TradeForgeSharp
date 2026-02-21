@@ -1,0 +1,385 @@
+﻿<style scoped src="./DataManagerTable.css"/>
+
+<template>
+  <ActionMenu ref="contextMenuRef" :items="contextMenuItems" :disabled-buttons="props.disabledButtons" :absolute="true"/>
+
+  <div class="table-container">
+
+    <div class="filters-header">
+      <v-btn
+        @click="filtersExpanded = !filtersExpanded"
+        variant="text"
+        size="small"
+        prepend-icon="mdi-filter-variant"
+      >
+        Filters
+        <v-icon :icon="filtersExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'" end/>
+      </v-btn>
+
+      <v-chip
+        v-if="hasActiveFilters"
+        size="small"
+        color="primary"
+        class="filter-badge"
+      >
+        {{ activeFiltersCount }}
+      </v-chip>
+    </div>
+
+    <v-expand-transition>
+      <div v-show="filtersExpanded" class="filters-section">
+        <v-text-field
+          v-model="nameFilter"
+          label="Search by Symbol or Instrument"
+          density="compact"
+          clearable
+          hide-details
+          class="filter-field"
+        />
+
+        <v-select
+          v-model="categoryFilter"
+          :items="categoryOptions"
+          label="Category"
+          density="compact"
+          clearable
+          hide-details
+          class="filter-field"
+        />
+
+        <v-select
+          v-model="timeFrameFilter"
+          :items="timeFrameOptions"
+          label="Timeframes"
+          density="compact"
+          multiple
+          chips
+          clearable
+          hide-details
+          class="filter-field"
+        />
+
+        <v-btn
+          @click="resetFilters"
+          variant="outlined"
+          size="small"
+          class="reset-btn"
+        >
+          Reset
+        </v-btn>
+      </div>
+    </v-expand-transition>
+
+    <div class="table-wrapper">
+      <table class="custom-table">
+        <thead class="table-head">
+        <tr>
+          <th class="favorite-column"></th>
+          <th
+            v-for="header in headers"
+            :key="header.key"
+            @click="toggleSort(header.key)"
+            class="sortable-header"
+          >
+            {{ header.title }}
+            <span class="sort-indicator">
+            <template v-if="sortBy === header.key">
+              {{ sortDirection === 'asc' ? '↑' : '↓' }}
+            </template>
+          </span>
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-if="loading">
+          <td :colspan="headers.length" class="text-center">
+            <v-progress-circular indeterminate size="24"/>
+          </td>
+        </tr>
+        <tr v-else-if="!tickers.length">
+          <td :colspan="headers.length" class="text-center empty-state">
+            No data available
+          </td>
+        </tr>
+        <tr v-else v-for="ticker in filteredAndSortedTickers" :key="ticker.id"
+            class="data-row"
+            :class="{ 'selected': selectedTickerId === ticker.id }"
+            @click="selectTicker(ticker)"
+            @contextmenu="showContextMenu($event, ticker)">
+          <td class="favorite-cell">
+            <v-icon
+              :icon="isFavorite(ticker.id) ? 'mdi-star' : 'mdi-star-outline'"
+              :color="isFavorite(ticker.id) ? 'yellow-darken-2' : ''"
+              size="small"
+              @click.stop="toggleFavorite(ticker.id)"
+              class="favorite-icon"
+            />
+          </td>
+          <td>{{ ticker.symbol }}</td>
+          <td>{{ ticker.instrument }}</td>
+          <td>{{ ticker.category }}</td>
+          <td>{{ ticker.timeFrame }}</td>
+          <td>{{ formatDate(ticker.dateFrom) }}</td>
+          <td>{{ formatDate(ticker.dateTo) }}</td>
+          <td>{{ ticker.totalRecords.toLocaleString() }}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>
+
+
+<script setup lang="ts">
+import {ref, computed} from 'vue';
+import type {Ticker} from '@/types/Ticker.interface.ts';
+import {TimeFrame} from '@/types/Ticker.interface.ts';
+import type {ActionMenuItem} from '@/types/ActionMenuItem.interface.ts';
+import ActionMenu from '@/components/data-manager/action-menu/ActionMenu.vue';
+
+interface Props {
+  tickers: Ticker[];
+  loading: boolean;
+  disabledButtons?: Record<string, boolean>;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  disabledButtons: () => ({})
+})
+
+const emit = defineEmits<{
+  edit: []
+  delete: []
+  viewData: []
+  import: []
+  export: []
+  clearData: [],
+  clearSelection: []
+}>();
+
+const headers = [
+  {title: 'Symbol', key: 'symbol', sortable: true},
+  {title: 'Instrument', key: 'instrument', sortable: true},
+  {title: 'Category', key: 'category', sortable: true},
+  {title: 'Timeframe', key: 'timeFrame', sortable: true},
+  {title: 'Date From', key: 'dateFrom', sortable: true},
+  {title: 'Date To', key: 'dateTo', sortable: true},
+  {title: 'Records', key: 'totalRecords', sortable: true},
+];
+
+const contextMenuRef = ref<InstanceType<typeof ActionMenu> | null>(null);
+const selectedTicker = ref<Ticker | null>(null);
+const selectedTickerId = ref<string | null>(null);
+
+const contextMenuItems = computed<ActionMenuItem[]>(() => [
+  {
+    type: 'button',
+    key: 'edit',
+    label: 'Edit',
+    icon: 'mdi-pencil',
+    action: () => emit('edit')
+  },
+  {
+    type: 'button',
+    key: 'delete',
+    label: 'Delete',
+    icon: 'mdi-delete',
+    action: () => emit('delete')
+  },
+  {
+    type: 'button',
+    key: 'view-data',
+    label: 'View data',
+    icon: 'mdi-eye',
+    action: () => emit('viewData')
+  },
+  {
+    type: 'divider',
+    key: 'divider-1'
+  },
+  {
+    type: 'button',
+    key: 'import',
+    label: 'Import',
+    icon: 'mdi-import',
+    action: () => emit('import')
+  },
+  {
+    type: 'button',
+    key: 'export',
+    label: 'Export',
+    icon: 'mdi-export',
+    action: () => emit('export')
+  },
+  {
+    type: 'divider',
+    key: 'divider-2'
+  },
+  {
+    type: 'button',
+    key: 'clear-data',
+    label: 'Clear Data',
+    icon: 'mdi-delete-sweep',
+    action: () => emit('clearData')
+  },
+]);
+
+const sortBy = ref<string | null>(null);
+const sortDirection = ref<'asc' | 'desc'>('asc');
+const nameFilter = ref('');
+const categoryFilter = ref<string | null>(null);
+const timeFrameFilter = ref<TimeFrame[]>([]);
+const filtersExpanded = ref(false);
+// Dummy favorites array - replace with real data later
+const favorites = ref<string[]>(['1', '3', '5']); // Example IDs
+
+const getSelectedTicker = (): Ticker | null => {
+  return selectedTicker.value;
+}
+const clearSelectedTicker = () => {
+  selectedTicker.value = null;
+  selectedTickerId.value = null;
+}
+
+defineExpose({
+  getSelectedTicker,
+  clearSelectedTicker
+});
+
+const showContextMenu = (event: MouseEvent, ticker: Ticker) => {
+  event.preventDefault();
+  selectTicker(ticker);
+  contextMenuRef.value?.show(event.clientX, event.clientY);
+};
+
+const selectTicker = (ticker: Ticker) => {
+  selectedTicker.value = ticker;
+  selectedTickerId.value = ticker.id;
+};
+
+
+const isFavorite = (tickerId: string) => {
+  return favorites.value.includes(tickerId);
+};
+
+const toggleFavorite = (tickerId: string) => {
+  const index = favorites.value.indexOf(tickerId);
+  if (index > -1) {
+    favorites.value.splice(index, 1);
+  } else {
+    favorites.value.push(tickerId);
+  }
+  // TODO: Save to backend or localStorage
+};
+
+const hasActiveFilters = computed(() => {
+  return !!(nameFilter.value ||
+    (categoryFilter.value && categoryFilter.value !== 'None') ||
+    timeFrameFilter.value.length > 0);
+});
+
+const activeFiltersCount = computed(() => {
+  let count = 0;
+  if (nameFilter.value) count++;
+  if (categoryFilter.value && categoryFilter.value !== 'None') count++;
+  if (timeFrameFilter.value.length > 0) count++;
+  return count;
+});
+
+const categoryOptions = computed(() => {
+  const categories = new Set(props.tickers.map(t => t.category));
+  return ['None', ...Array.from(categories)].sort();
+});
+
+const timeFrameOptions = computed(() => {
+  return Object.values(TimeFrame);
+});
+
+const resetFilters = () => {
+  nameFilter.value = '';
+  categoryFilter.value = null;
+  timeFrameFilter.value = [];
+};
+
+const filteredTickers = computed(() => {
+  let result = props.tickers;
+
+  // Filter by name (symbol or instrument)
+  if (nameFilter.value) {
+    const search = nameFilter.value.toLowerCase();
+    result = result.filter(t =>
+      t.symbol.toLowerCase().includes(search) ||
+      t.instrument.toLowerCase().includes(search)
+    );
+  }
+
+  // Filter by category
+  if (categoryFilter.value && categoryFilter.value !== 'None') {
+    result = result.filter(t => t.category === categoryFilter.value);
+  }
+
+  // Filter by timeframes
+  if (timeFrameFilter.value.length > 0) {
+    result = result.filter(t => t.timeFrame && timeFrameFilter.value.includes(t.timeFrame));
+  }
+
+  return result;
+});
+
+const filteredAndSortedTickers = computed(() => {
+  let result = filteredTickers.value;
+
+  // Apply sorting if specified
+  if (sortBy.value) {
+    result = [...result].sort((a, b) => {
+      const key = sortBy.value as keyof Ticker;
+      let aVal = a[key];
+      let bVal = b[key];
+
+      // Handle dates
+      if (key === 'dateFrom' || key === 'dateTo') {
+        aVal = new Date(aVal as Date).getTime();
+        bVal = new Date(bVal as Date).getTime();
+      }
+
+      // Handle numbers
+      if (typeof aVal === 'number' && typeof bVal === 'number') {
+        return sortDirection.value === 'asc' ? aVal - bVal : bVal - aVal;
+      }
+
+      // Handle strings
+      const aStr = String(aVal).toLowerCase();
+      const bStr = String(bVal).toLowerCase();
+
+      if (sortDirection.value === 'asc') {
+        return aStr.localeCompare(bStr);
+      } else {
+        return bStr.localeCompare(aStr);
+      }
+    });
+  }
+
+  // Sort favorites to top
+  return [...result].sort((a, b) => {
+    const aIsFav = isFavorite(a.id);
+    const bIsFav = isFavorite(b.id);
+
+    if (aIsFav && !bIsFav) return -1;
+    if (!aIsFav && bIsFav) return 1;
+    return 0;
+  });
+});
+
+const toggleSort = (key: string) => {
+  if (sortBy.value === key) {
+    sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortBy.value = key;
+    sortDirection.value = 'asc';
+  }
+};
+
+const formatDate = (date: Date | null) => {
+  return date === null ? "" : new Date(date).toLocaleDateString();
+};
+</script>
