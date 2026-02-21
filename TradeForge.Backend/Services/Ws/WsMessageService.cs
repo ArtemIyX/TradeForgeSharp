@@ -1,21 +1,18 @@
-﻿using System.Net;
-using System.Net.WebSockets;
+﻿using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Connections;
 using TradeForge.Backend.Data.Handlers;
 using TradeForge.Backend.Data.Requests.Ws;
 using TradeForge.Backend.Data.Responses;
-using TradeForge.Backend.Data.Responses.Ws;
 
 namespace TradeForge.Backend.Services.Ws;
 
 public class WsMessageService(
     WsMessageChannel channel,
     IWsHubService hub,
-    IWsActionHandlerRegistry registry,
-    ILogger<WsMessageService> logger,
     IServiceScopeFactory scopeFactory,
+    ILogger<WsMessageService> logger,
     IHostApplicationLifetime lifetime)
     : BackgroundService
 {
@@ -107,6 +104,25 @@ public class WsMessageService(
         }
     }
 
+    private async Task HandleActionAsync(WebSocket ws, string userId, BaseRequest request, CancellationToken ct)
+    {
+        // Each message gets its own scope so handlers can depend on some services,
+        // repositories, or any other scoped/transient service safely.
+        await using var scope = scopeFactory.CreateAsyncScope();
+
+        var registry = scope.ServiceProvider.GetRequiredService<IWsActionHandlerRegistry>();
+        var handlerType = registry.Resolve(request.Action);
+
+        if (handlerType is null)
+        {
+            logger.LogWarning("Unknown action {Action} from {UserId}", request.Action, userId);
+            return;
+        }
+
+        var handler = (IWsActionHandler)scope.ServiceProvider.GetRequiredService(handlerType);
+        await handler.HandleAsync(ws, userId, request, ct);
+    }
+
     private async Task<string?> ReadMessageAsync(WebSocket ws, CancellationToken stoppingToken)
     {
         var buffer = new byte[1024 * 4];
@@ -127,22 +143,6 @@ public class WsMessageService(
         } while (!result.EndOfMessage);
 
         return Encoding.UTF8.GetString(ms.ToArray());
-    }
-
-    private async Task HandleActionAsync(WebSocket ws, string userId, BaseRequest request,
-        CancellationToken cancellationToken = default)
-    {
-        var handlerType = registry.Resolve(request.Action);
-
-        if (handlerType is null)
-        {
-            logger.LogWarning("Unknown action {Action} from {UserId}", request.Action, userId);
-            return;
-        }
-
-        await using var scope = scopeFactory.CreateAsyncScope();
-        var handler = (IWsActionHandler)scope.ServiceProvider.GetRequiredService(handlerType);
-        await handler.HandleAsync(ws, userId, request, cancellationToken);
     }
 
     private async Task SendAsync(WebSocket ws, object response)
