@@ -69,7 +69,7 @@ public class WsHubService(ILogger<WsHubService> logger) : IWsHubService
                 {
                     await socket.CloseAsync(
                         WebSocketCloseStatus.NormalClosure,
-                        "Kicked",
+                        "Server shutting down",
                         CancellationToken.None // don't use stoppingToken here, it's already cancelled
                     );
                 }
