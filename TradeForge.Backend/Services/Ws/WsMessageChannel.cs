@@ -1,7 +1,7 @@
 ﻿using System.Net.WebSockets;
 using System.Threading.Channels;
 
-namespace TradeForge.Backend.Services;
+namespace TradeForge.Backend.Services.Ws;
 
 public class WsMessageChannel
 {

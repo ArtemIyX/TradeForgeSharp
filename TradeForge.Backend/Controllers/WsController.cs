@@ -6,6 +6,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using TradeForge.Backend.Data.Responses;
 using TradeForge.Backend.Services;
+using TradeForge.Backend.Services.Ws;
 
 namespace TradeForge.Backend.Controllers;
 

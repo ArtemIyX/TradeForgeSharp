@@ -2,7 +2,7 @@
 using System.Net.WebSockets;
 using System.Text;
 
-namespace TradeForge.Backend.Services;
+namespace TradeForge.Backend.Services.Ws;
 
 public interface IWsHubService
 {

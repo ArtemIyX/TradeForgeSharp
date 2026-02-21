@@ -3,16 +3,19 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Connections;
+using TradeForge.Backend.Data.Handlers;
 using TradeForge.Backend.Data.Requests.Ws;
 using TradeForge.Backend.Data.Responses;
 using TradeForge.Backend.Data.Responses.Ws;
 
-namespace TradeForge.Backend.Services;
+namespace TradeForge.Backend.Services.Ws;
 
 public class WsMessageService(
     WsMessageChannel channel,
     IWsHubService hub,
+    IWsActionHandlerRegistry registry,
     ILogger<WsMessageService> logger,
+    IServiceScopeFactory scopeFactory,
     IHostApplicationLifetime lifetime)
     : BackgroundService
 {
@@ -70,7 +73,7 @@ public class WsMessageService(
                         continue;
                     }
 
-                    await HandleActionAsync(ws, userId, request);
+                    await HandleActionAsync(ws, userId, request, stoppingToken);
                 }
                 catch (WebSocketException ex)
                 {
@@ -113,8 +116,8 @@ public class WsMessageService(
         do
         {
             result = await ws.ReceiveAsync(buffer, stoppingToken);
-        
-            logger.LogDebug("Received frame: Type={Type}, Count={Count}, EndOfMessage={End}", 
+
+            logger.LogDebug("Received frame: Type={Type}, Count={Count}, EndOfMessage={End}",
                 result.MessageType, result.Count, result.EndOfMessage);
 
             if (result.MessageType == WebSocketMessageType.Close)
@@ -126,23 +129,20 @@ public class WsMessageService(
         return Encoding.UTF8.GetString(ms.ToArray());
     }
 
-    private async Task HandleActionAsync(WebSocket ws, string userId, BaseRequest request)
+    private async Task HandleActionAsync(WebSocket ws, string userId, BaseRequest request,
+        CancellationToken cancellationToken = default)
     {
-        switch (request.Action)
-        {
-            case "ping":
-                var response = new BaseResponse(
-                    StatusCode: (int)HttpStatusCode.OK,
-                    Message: "pong",
-                    Payload: new PingResponsePayload()
-                );
-                await SendAsync(ws, response);
-                break;
+        var handlerType = registry.Resolve(request.Action);
 
-            default:
-                logger.LogWarning("Unknown action {Action} from {UserId}", request.Action, userId);
-                break;
+        if (handlerType is null)
+        {
+            logger.LogWarning("Unknown action {Action} from {UserId}", request.Action, userId);
+            return;
         }
+
+        await using var scope = scopeFactory.CreateAsyncScope();
+        var handler = (IWsActionHandler)scope.ServiceProvider.GetRequiredService(handlerType);
+        await handler.HandleAsync(ws, userId, request, cancellationToken);
     }
 
     private async Task SendAsync(WebSocket ws, object response)
