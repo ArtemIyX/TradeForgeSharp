@@ -1,8 +1,13 @@
+using Serilog;
 using TradeForge.Backend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateLogger();
+builder.Host.UseSerilog();
 
 {
     builder.Services.AddSingleton<IWsHubService, WsHubService>();
@@ -15,4 +20,11 @@ var app = builder.Build();
 app.UseWebSockets(); // Enable WebSocket middleware
 app.MapControllers();
 
-app.Run();
+try
+{
+    app.Run();
+}
+finally
+{
+    await Log.CloseAndFlushAsync();
+}

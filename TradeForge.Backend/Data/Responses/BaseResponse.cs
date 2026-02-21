@@ -5,4 +5,7 @@ public record BaseResponse(
     string Message = "",
     object? Payload = null,
     string ErrorMessage = ""
-);
+)
+{
+    public DateTime Timestamp { get; init; } = DateTime.UtcNow;
+}

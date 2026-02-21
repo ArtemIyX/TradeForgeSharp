@@ -9,5 +9,5 @@ namespace TradeForge.Backend.Controllers;
 public class HomeController : ControllerBase
 {
     [HttpGet]
-    public IActionResult Get() => Ok(new BaseResponse((int)HttpStatusCode.OK, null, ""));
+    public IActionResult Get() => Ok(new BaseResponse((int)HttpStatusCode.OK, "Connection is OK", ""));
 }
