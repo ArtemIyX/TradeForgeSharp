@@ -21,7 +21,7 @@ public class WsMessageService(
         lifetime.ApplicationStopping.Register(() =>
         {
             logger.LogInformation("Server shutting down, closing all WebSocket connections...");
-            hub.CloseAllAsync().GetAwaiter().GetResult();
+            hub.CloseAllAsync("Server shutting down", stoppingToken).GetAwaiter().GetResult();
         });
 
         await foreach (var (userId, ws, tcs) in channel.Reader.ReadAllAsync(stoppingToken))
@@ -96,7 +96,7 @@ public class WsMessageService(
         }
         finally
         {
-            await hub.RemoveSocketAsync(userId);
+            await hub.RemoveSocketAsync(userId, "HandleMessagesAsync", stoppingToken);
         }
     }
 
