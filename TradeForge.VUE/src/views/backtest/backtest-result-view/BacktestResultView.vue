@@ -46,10 +46,11 @@
 
 <style scoped>
 .scrollable-card {
-  height: 100vh;
+  height: calc(100vh - var(--v-layout-top) - var(--v-layout-bottom));
+  overflow-y: hidden;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+
 }
 
 .scrollable-card :deep(.v-window) {

@@ -59,7 +59,7 @@
         <div class="footer-item">
           <v-icon size="0.65rem" class="mr-1" color="rgba(255,255,255,0.4)">mdi-cpu-64-bit</v-icon>
           <span class="footer-label">CPU</span>
-          <span class="footer-value" :class="cpuWarnClass">{{ cpu }}%</span>
+          <span class="footer-value" :class="cpuWarnClass">{{ cpu.toFixed(1) }}%</span>
           <div class="mini-bar ml-1">
             <div class="mini-bar-fill" :class="cpuWarnClass" :style="{ width: cpu + '%' }" />
           </div>
@@ -141,7 +141,7 @@ onUnmounted(() => clearInterval(ticker))
   background-color: rgb(var(--v-theme-surface));
   border-top: thin solid rgba(var(--v-theme-on-surface), 0.1);
   min-height: 1.75rem;
-  font-family: 'JetBrains Mono', 'Fira Mono', monospace;
+
 }
 
 .footer-inner {

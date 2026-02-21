@@ -4,7 +4,7 @@
     <AppNavigation/>
 
     <v-main>
-      <v-container fluid style="height: 100%; padding: 0;">
+      <v-container fluid style="height: 100%; padding: 0; overflow: hidden">
         <router-view/>
       </v-container>
     </v-main>

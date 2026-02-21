@@ -38,18 +38,19 @@
 </template>
 <style scoped>
 .data-manager {
-  height: 100vh;
+  height: calc(100vh - var(--v-layout-top) - var(--v-layout-bottom));
+  overflow-y: hidden;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
 }
 
 .content-container {
   display: flex;
   flex-direction: column;
-  height: 100%;
+/*  height: 100%;*/
+  flex: 1;
   overflow: hidden;
-
+  min-height: 0;
 }
 
 </style>
