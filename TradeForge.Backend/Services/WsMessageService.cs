@@ -94,9 +94,13 @@ public class WsMessageService(
                 }
             }
         }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Unhandled error handling message from {UserId}: {ExType}", userId, ex.GetType().Name);
+        }
         finally
         {
-            await hub.RemoveSocketAsync(userId, "HandleMessagesAsync", stoppingToken);
+            await hub.RemoveSocketAsync(userId, "HandleMessagesAsync", CancellationToken.None);
         }
     }
 
@@ -109,6 +113,9 @@ public class WsMessageService(
         do
         {
             result = await ws.ReceiveAsync(buffer, stoppingToken);
+        
+            logger.LogDebug("Received frame: Type={Type}, Count={Count}, EndOfMessage={End}", 
+                result.MessageType, result.Count, result.EndOfMessage);
 
             if (result.MessageType == WebSocketMessageType.Close)
                 return null;

@@ -67,11 +67,12 @@ public class WsHubService(ILogger<WsHubService> logger) : IWsHubService
             {
                 if (socket.State == WebSocketState.Open)
                 {
-                    await socket.CloseAsync(
-                        WebSocketCloseStatus.NormalClosure,
-                        reason,
-                        cancellationToken
-                    );
+                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, reason, cancellationToken);
+                }
+                else if (socket.State == WebSocketState.CloseReceived)
+                {
+                    // Client already sent close frame, we just need to send ours back
+                    await socket.CloseOutputAsync(WebSocketCloseStatus.NormalClosure, reason, cancellationToken);
                 }
             }
             catch (Exception ex)
