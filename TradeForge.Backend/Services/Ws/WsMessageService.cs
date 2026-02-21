@@ -12,6 +12,7 @@ public class WsMessageService(
     WsMessageChannel channel,
     IWsHubService hub,
     IServiceScopeFactory scopeFactory,
+    IWsErrorSender wsErrorSender,
     ILogger<WsMessageService> logger,
     IHostApplicationLifetime lifetime)
     : BackgroundService
@@ -33,9 +34,14 @@ public class WsMessageService(
                     await SendAsync(ws, new BaseResponse(StatusCode: 200, Message: "Connected"));
                     await HandleMessagesAsync(ws, userId, stoppingToken);
                 }
+                catch (Exception ex)
+                {
+                    await wsErrorSender.SendAndCloseAsync(ws, ex,
+                        logger);
+                }
                 finally
                 {
-                    tcs.SetResult(); // signal controller to return
+                    tcs.SetResult();
                 }
             }, stoppingToken);
         }
@@ -43,57 +49,57 @@ public class WsMessageService(
 
     private async Task HandleMessagesAsync(WebSocket ws, string userId, CancellationToken stoppingToken)
     {
-        try
+        /*try
+        {*/
+        while (ws.State == WebSocketState.Open && !stoppingToken.IsCancellationRequested)
         {
-            while (ws.State == WebSocketState.Open && !stoppingToken.IsCancellationRequested)
+            /*try
+            {*/
+            var message = await ReadMessageAsync(ws, stoppingToken);
+
+            if (message is null)
             {
-                try
-                {
-                    var message = await ReadMessageAsync(ws, stoppingToken);
-
-                    if (message is null)
-                    {
-                        await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", stoppingToken);
-                        break;
-                    }
-
-                    logger.LogInformation("Message from {UserId}: {Message}", userId, message);
-
-                    var request = JsonSerializer.Deserialize<BaseRequest>(message, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
-
-                    if (request is null)
-                    {
-                        logger.LogWarning("Invalid message from {UserId}", userId);
-                        continue;
-                    }
-
-                    await HandleActionAsync(ws, userId, request, stoppingToken);
-                }
-                catch (WebSocketException ex)
-                {
-                    logger.LogWarning(ex, "WebSocket error for {UserId}", userId);
-                    break;
-                }
-                catch (ConnectionAbortedException)
-                {
-                    logger.LogInformation("Client {UserId} disconnected", userId);
-                    break;
-                }
-                catch (OperationCanceledException)
-                {
-                    logger.LogInformation("Connection cancelled for {UserId}", userId);
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    logger.LogError(ex, "Error handling message from {UserId}", userId);
-                    break;
-                }
+                await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", stoppingToken);
+                break;
             }
+
+            logger.LogInformation("Message from {UserId}: {Message}", userId, message);
+
+            var request = JsonSerializer.Deserialize<BaseRequest>(message, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            if (request is null)
+            {
+                logger.LogWarning("Invalid message from {UserId}", userId);
+                continue;
+            }
+
+            await HandleActionAsync(ws, userId, request, stoppingToken);
+            /*}
+            catch (WebSocketException ex)
+            {
+                logger.LogWarning(ex, "WebSocket error for {UserId}", userId);
+                break;
+            }
+            catch (ConnectionAbortedException)
+            {
+                logger.LogInformation("Client {UserId} disconnected", userId);
+                break;
+            }
+            catch (OperationCanceledException)
+            {
+                logger.LogInformation("Connection cancelled for {UserId}", userId);
+                break;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error handling message from {UserId}", userId);
+                break;
+            }*/
         }
+        /*}
         catch (Exception ex)
         {
             logger.LogError(ex, "Unhandled error handling message from {UserId}: {ExType}", userId, ex.GetType().Name);
@@ -101,7 +107,7 @@ public class WsMessageService(
         finally
         {
             await hub.RemoveSocketAsync(userId, "HandleMessagesAsync", CancellationToken.None);
-        }
+        }*/
     }
 
     private async Task HandleActionAsync(WebSocket ws, string userId, BaseRequest request, CancellationToken ct)

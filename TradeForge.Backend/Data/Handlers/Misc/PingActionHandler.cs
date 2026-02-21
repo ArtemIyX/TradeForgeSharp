@@ -20,7 +20,10 @@ public class PingActionHandler : IWsActionHandler
             Payload: new PingResponsePayload()
         );
         var json = JsonSerializer.Serialize(response);
-        var bytes = Encoding.UTF8.GetBytes(json);
-        await ws.SendAsync(bytes, WebSocketMessageType.Text, true, ct);
+
+        throw new Exception("Test exception from ping action");
+        
+        /*var bytes = Encoding.UTF8.GetBytes(json);
+        await ws.SendAsync(bytes, WebSocketMessageType.Text, true, ct);*/
     }
 }

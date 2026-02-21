@@ -24,7 +24,7 @@ public class ExceptionHandlingMiddleware(
     ILogger<ExceptionHandlingMiddleware> logger,
     IHostEnvironment env)
 {
-    public async Task Invoke3Async(HttpContext context)
+    public async Task InvokeAsync(HttpContext context)
     {
         try
         {
