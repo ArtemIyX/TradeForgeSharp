@@ -9,6 +9,8 @@ using TradeForge.Backend.Services;
 
 namespace TradeForge.Backend.Controllers;
 
+[ApiController]
+[Route("ws")]
 public class WsController(IWsHubService hub, WsMessageChannel channel, ILogger<WsController> logger) : ControllerBase
 {
     [HttpGet]
@@ -44,6 +46,7 @@ public class WsController(IWsHubService hub, WsMessageChannel channel, ILogger<W
 
             // hand off to background service and return immediately
             await channel.Writer.WriteAsync((userId, ws));
+            
         }
         catch (Exception ex)
         {
