@@ -9,19 +9,39 @@ using TradeForge.Backend.Data.Responses.Ws;
 
 namespace TradeForge.Backend.Services;
 
-public class WsMessageService(WsMessageChannel channel, IWsHubService hub, ILogger<WsMessageService> logger)
+public class WsMessageService(
+    WsMessageChannel channel,
+    IWsHubService hub,
+    ILogger<WsMessageService> logger,
+    IHostApplicationLifetime lifetime)
     : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await foreach (var (userId, ws) in channel.Reader.ReadAllAsync(stoppingToken))
+        lifetime.ApplicationStopping.Register(() =>
         {
-            // fire and forget per connection, not blocking the loop
-            _ = Task.Run(() => HandleMessagesAsync(ws, userId, stoppingToken), stoppingToken);
+            logger.LogInformation("Server shutting down, closing all WebSocket connections...");
+            hub.CloseAllAsync().GetAwaiter().GetResult();
+        });
+
+        await foreach (var (userId, ws, tcs) in channel.Reader.ReadAllAsync(stoppingToken))
+        {
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await SendAsync(ws, new BaseResponse(StatusCode: 200, Message: "Connected"));
+                    await HandleMessagesAsync(ws, userId, stoppingToken);
+                }
+                finally
+                {
+                    tcs.SetResult(); // signal controller to return
+                }
+            }, stoppingToken);
         }
     }
 
-   private async Task HandleMessagesAsync(WebSocket ws, string userId, CancellationToken stoppingToken)
+    private async Task HandleMessagesAsync(WebSocket ws, string userId, CancellationToken stoppingToken)
     {
         try
         {
@@ -94,8 +114,7 @@ public class WsMessageService(WsMessageChannel channel, IWsHubService hub, ILogg
                 return null;
 
             ms.Write(buffer, 0, result.Count);
-        }
-        while (!result.EndOfMessage);
+        } while (!result.EndOfMessage);
 
         return Encoding.UTF8.GetString(ms.ToArray());
     }

@@ -5,9 +5,9 @@ namespace TradeForge.Backend.Services;
 
 public class WsMessageChannel
 {
-    private readonly Channel<(string UserId, WebSocket Socket)> _channel =
-        Channel.CreateUnbounded<(string, WebSocket)>();
+    private readonly Channel<(string UserId, WebSocket Socket, TaskCompletionSource Tcs)> _channel =
+        Channel.CreateUnbounded<(string, WebSocket, TaskCompletionSource)>();
 
-    public ChannelWriter<(string UserId, WebSocket Socket)> Writer => _channel.Writer;
-    public ChannelReader<(string UserId, WebSocket Socket)> Reader => _channel.Reader;
+    public ChannelWriter<(string UserId, WebSocket Socket, TaskCompletionSource Tcs)> Writer => _channel.Writer;
+    public ChannelReader<(string UserId, WebSocket Socket, TaskCompletionSource Tcs)> Reader => _channel.Reader;
 }

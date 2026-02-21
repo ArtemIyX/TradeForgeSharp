@@ -14,9 +14,10 @@ public interface IWsHubService
 
     public bool IsConnected(string userId);
     public Task SendToAsync(string userId, string message);
+    public Task CloseAllAsync();
 }
 
-public class WsHubService : IWsHubService
+public class WsHubService(ILogger<WsHubService> logger) : IWsHubService
 {
     private readonly ConcurrentDictionary<string, WebSocket> _sockets = new();
 
@@ -31,6 +32,12 @@ public class WsHubService : IWsHubService
         var id = Guid.NewGuid().ToString();
         _sockets[id] = socket;
         return id;
+    }
+
+    public async Task CloseAllAsync()
+    {
+        var closeTasks = _sockets.Keys.Select(userId => RemoveSocketAsync(userId));
+        await Task.WhenAll(closeTasks);
     }
 
     public async Task SendToAsync(string userId, string message)
@@ -56,16 +63,25 @@ public class WsHubService : IWsHubService
     {
         if (_sockets.TryRemove(id, out var socket))
         {
-            if (socket.State == WebSocketState.Open)
+            try
             {
-                await socket.CloseAsync(
-                    WebSocketCloseStatus.NormalClosure,
-                    "Connection closed",
-                    CancellationToken.None
-                );
+                if (socket.State == WebSocketState.Open)
+                {
+                    await socket.CloseAsync(
+                        WebSocketCloseStatus.NormalClosure,
+                        "Server shutting down",
+                        CancellationToken.None // don't use stoppingToken here, it's already cancelled
+                    );
+                }
             }
-
-            socket.Dispose();
+            catch (Exception ex)
+            {
+                logger.LogWarning(ex, "Error closing socket for {UserId}", id);
+            }
+            finally
+            {
+                socket.Dispose();
+            }
         }
     }
 }

@@ -45,8 +45,10 @@ public class WsController(IWsHubService hub, WsMessageChannel channel, ILogger<W
             }
 
             // hand off to background service and return immediately
-            await channel.Writer.WriteAsync((userId, ws));
             
+            var tcs = new TaskCompletionSource();
+            await channel.Writer.WriteAsync((userId, ws, tcs));
+            await tcs.Task;
         }
         catch (Exception ex)
         {
