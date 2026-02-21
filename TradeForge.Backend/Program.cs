@@ -1,4 +1,5 @@
 using Serilog;
+using TradeForge.Backend.Data.Extensions;
 using TradeForge.Backend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,7 +9,7 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateLogger();
 builder.Host.UseSerilog();
-
+builder.Services.AddWsActions();
 {
     builder.Services.AddSingleton<IWsHubService, WsHubService>();
     builder.Services.AddSingleton<WsMessageChannel>();

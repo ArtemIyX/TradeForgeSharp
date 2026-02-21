@@ -11,6 +11,7 @@ namespace TradeForge.Backend.Services;
 
 public class WsMessageService(
     WsMessageChannel channel,
+    IWsActionRegistry registry,
     IWsHubService hub,
     ILogger<WsMessageService> logger,
     IHostApplicationLifetime lifetime)
@@ -96,7 +97,7 @@ public class WsMessageService(
         }
         finally
         {
-            await hub.RemoveSocketAsync(userId);
+            //await hub.RemoveSocketAsync(userId);
         }
     }
 
@@ -121,21 +122,15 @@ public class WsMessageService(
 
     private async Task HandleActionAsync(WebSocket ws, string userId, BaseRequest request)
     {
-        switch (request.Action)
-        {
-            case "ping":
-                var response = new BaseResponse(
-                    StatusCode: (int)HttpStatusCode.OK,
-                    Message: "pong",
-                    Payload: new PingResponsePayload()
-                );
-                await SendAsync(ws, response);
-                break;
+        var handler = registry.GetHandler(request.Action);
 
-            default:
-                logger.LogWarning("Unknown action {Action} from {UserId}", request.Action, userId);
-                break;
+        if (handler is null)
+        {
+            logger.LogWarning("Unknown action {Action} from {UserId}", request.Action, userId);
+            return;
         }
+
+        await handler.HandleAsync(ws, userId, request);
     }
 
     private async Task SendAsync(WebSocket ws, object response)
