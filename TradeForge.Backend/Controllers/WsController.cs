@@ -1,10 +1,8 @@
 ﻿using System.Net;
 using System.Net.WebSockets;
-using System.Security.Claims;
-using System.Text;
-using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
-using TradeForge.Backend.Data.Responses;
+using TradeForge.Backend.Data.Middleware;
+using TradeForge.Backend.Middleware;
 using TradeForge.Backend.Services;
 using TradeForge.Backend.Services.Ws;
 
@@ -35,26 +33,21 @@ public class WsController(IWsHubService hub, WsMessageChannel channel, ILogger<W
             return;
         }
 
-        try
-        {
-            var ws = await HttpContext.WebSockets.AcceptWebSocketAsync();
+        var ws = await HttpContext.WebSockets.AcceptWebSocketAsync();
 
-            if (!hub.TryAddSocket(userId, ws))
-            {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.Conflict;
-                return;
-            }
+        // Tell ExceptionHandlingMiddleware that the handshake is complete so it
+        // knows to send a WS error frame instead of an HTTP ProblemDetails body
+        // if anything throws beyond this point.
+        HttpContext.Items[WsContextKeys.ActiveSocket] = ws;
 
-            // hand off to background service and return immediately
-            
-            var tcs = new TaskCompletionSource();
-            await channel.Writer.WriteAsync((userId, ws, tcs));
-            await tcs.Task;
-        }
-        catch (Exception ex)
+        if (!hub.TryAddSocket(userId, ws))
         {
-            logger.LogError(ex, "Unexpected error for user {UserId}", userId);
-            HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            HttpContext.Response.StatusCode = (int)HttpStatusCode.Conflict;
+            return;
         }
+
+        var tcs = new TaskCompletionSource();
+        await channel.Writer.WriteAsync((userId, ws, tcs));
+        await tcs.Task;
     }
 }
